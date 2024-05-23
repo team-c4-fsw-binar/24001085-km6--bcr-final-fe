@@ -1,5 +1,25 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import RiwayatPage from "./pages/RiwayatPemesanan";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <>
+        <RiwayatPage />
+      </>
+    ),
+  },
+]);
+
 const App = () => {
-  return <div>Hello Travel Sky!</div>;
+  return (
+    <>
+      <RouterProvider router={router} />
+    </>
+  );
 };
 
 export default App;
