@@ -7,6 +7,7 @@
 .text-total{
     color: #7126B5;
 }
+
 /* Shadow */
 .shadow {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -114,4 +115,36 @@
 .btn-simpan:hover {
     background-color: #7126B5;
     border: none;
+    border-radius: 12px;
+    font-size: 20px;
+}
+
+.btn-simpan-selected,
+.btn-simpan-selected:hover {
+    background-color: #D0D0D0;
+    border: none;
+    border-radius: 12px;
+    font-size: 20px;
+}
+
+/* button lanjut-bayar */
+.btn-lanjut-bayar,
+.btn-lanjut-bayar:hover {
+    background-color: #FF0000;
+    border: none;
+    border-radius: 12px;
+    font-size: 20px;
+}
+
+/* alert */
+.alert-custom-red{
+    background-color: #FF0000;
+    color: #FFFFFF;
+    font-size: 16px;
+}
+
+.alert-custom-green{
+    background-color: #73CA5C;
+    color: #FFFFFF;
+    font-size: 16px;
 }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Card, Button, Container, Form, Row, Col } from "react-bootstrap";
 import "./checkout.css";
+import informationIcon from "../../assets/information.svg";
 
 const CheckoutPage = () => {
     const [hasFamilyName, setHasFamilyName] = useState(true);
@@ -51,6 +52,12 @@ const CheckoutPage = () => {
                         <h4 className="fw-bold title-navigation">
                             Selesai
                         </h4>
+                    </div>
+                    <div class="alert alert-custom-red text-center" role="alert">
+                        Selesaikan dalam 00:15:00
+                    </div>
+                    <div class="alert alert-custom-green text-center" role="alert">
+                        Data Anda berhasil tersimpan!
                     </div>
                 </Container>
             </div>
@@ -186,56 +193,70 @@ const CheckoutPage = () => {
                         <Button className="btn btn-simpan w-100 py-2 mb-3" type="submit">
                             Simpan
                         </Button>
+                        <Button className="btn btn-simpan-selected w-100 py-2 mb-3" type="submit">
+                            Simpan
+                        </Button>
                     </Col>
                     <Col sm={6} className="my-3">
                         <Card className="p-4 mb-4">
-                            <div className="border-bottom">
+                            <div className="border-bottom pb-2">
                                 <h5>Detail Penerbangan</h5>
                                 <div className="d-flex">
-                                    <h5 className="fw-bold me-auto">
-                                        <p>07:00</p>
+                                    <h5 className="fw-bold me-auto my-0">
+                                        <p className="my-0">07:00</p>
                                     </h5>
-                                    <p className="fw-bold text-keberangkatan">Keberangkatan</p>
+                                    <p className="fw-bold text-keberangkatan my-0">Keberangkatan</p>
                                 </div>
-                                <p>3 Maret 2023</p>
+                                <p className="my-0">3 Maret 2023</p>
                                 <div className="d-flex">
-                                    <div className="me-auto">
-                                        <p>Soekarno Hatta</p>
-                                    </div>
-                                    <p>Terminal 1A Domestik</p>
+                                    <p className="me-auto my-0">Soekarno Hatta</p>
+                                    <p className="my-0">Terminal 1A Domestik</p>
                                 </div>
                             </div>
-                            <div className="border-bottom">
-                                <p className="fw-bold">Jet Air - Economy</p>
-                                <p className="fw-bold">JT - 203</p>
-                                <p className="fw-bold">Informasi:</p>
-                                <p>Baggage 20 kg</p>
-                                <p>Cabin Baggage 7 kg</p>
-                                <p>In Flight Entertainment</p>
+                            <div className="border-bottom py-2">
+                                <p className="fw-bold my-0">Jet Air - Economy</p>
+                                <p className="fw-bold my-0">JT - 203</p>
+                                <img src={informationIcon} alt="information" />
+                                <p className="fw-bold my-0">Informasi:</p>
+                                <p className="my-0">Baggage 20 kg</p>
+                                <p className="my-0">Cabin Baggage 7 kg</p>
+                                <p className="my-0">In Flight Entertainment</p>
                             </div>
-                            <div className="border-bottom">
+                            <div className="border-bottom py-2">
                                 <div className="d-flex">
                                     <h5 className="fw-bold me-auto">
-                                        <p>11:00</p>
+                                        <p className="my-0">11:00</p>
                                     </h5>
-                                    <p className="fw-bold text-kedatangan">Kedatangan</p>
+                                    <p className="fw-bold text-kedatangan my-0">Kedatangan</p>
                                 </div>
-                                <p>3 Maret 2023</p>
-                                <p>Melbourne International Airport</p>
+                                <p className="my-0">3 Maret 2023</p>
+                                <p className="my-0">Melbourne International Airport</p>
                             </div>
-                            <div className="border-bottom pt-2">
+                            <div className="border-bottom py-2">
                                 <h5>Rincian Harga</h5>
-                                <p>2 Adults - IDR 9.550.000</p>
-                                <p>1 Baby - IDR 0</p>
-                                <p>Tax - IDR 300.000</p>
+                                <div className="d-flex">
+                                    <p className="me-auto my-0">2 Adults</p>
+                                    <p className="my-0">IDR 9.550.000</p>
+                                </div>
+                                <div className="d-flex">
+                                    <p className="me-auto my-0">1 Baby</p>
+                                    <p className="my-0">IDR 0</p>
+                                </div>
+                                <div className="d-flex">
+                                    <p className="me-auto my-0">Tax</p>
+                                    <p className="my-0">IDR 300.000</p>
+                                </div>
                             </div>
-                            <div className="d-flex pt-4">
+                            <div className="d-flex pt-2">
                                 <h5 className="fw-bold me-auto">
                                     <p>Total</p>
                                 </h5>
                                 <h4 className="fw-bold text-total">IDR 9.850.000</h4>
                             </div>
                         </Card>
+                        <Button className="btn btn-lanjut-bayar w-100 py-4 mb-3" type="submit">
+                            Lanjut Bayar
+                        </Button>
                     </Col>
                 </Row>
             </Container>
