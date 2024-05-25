@@ -1,0 +1,8 @@
+/* card */
+.card {
+    border: none;
+}
+
+.card-body {
+    border-bottom: 1px solid #dee2e6;
+}
