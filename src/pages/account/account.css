@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Font */
+.font-body-regular-10 {
+    font-weight: 400;
+    font-size: 10px;
+}
+.font-body-regular-12 {
+    font-weight: 400;
+    font-size: 12px;
+}
+.font-body-regular-14 {
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.font-body-medium-10 {
+    font-weight: 500;
+    font-size: 10px;
+}
+.font-body-medium-12 {
+    font-weight: 500;
+    font-size: 12px;
+}
+.font-body-medium-14 {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.font-body-bold-10 {
+    font-weight: 700;
+    font-size: 10px;
+}
+.font-body-bold-12 {
+    font-weight: 700;
+    font-size: 12px;
+}
+.font-body-bold-14 {
+    font-weight: 700;
+    font-size: 14px;
+}
+/* ----------------------- */
+
+.font-title-regular-16 {
+    font-weight: 400;
+    font-size: 16px;
+}
+.font-title-regular-18 {
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.font-title-medium-16 {
+    font-weight: 500;
+    font-size: 16px;
+}
+.font-title-medium-18 {
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.font-title-bold-16 {
+    font-weight: 700;
+    font-size: 16px;
+}
+.font-title-bold-18 {
+    font-weight: 700;
+    font-size: 18px;
+}
+/* ----------------------- */
+
+.font-heading-regular-20 {
+    font-weight: 400;
+    font-size: 20px;
+}
+.font-heading-regular-24 {
+    font-weight: 400;
+    font-size: 24px;
+}
+
+.font-heading-medium-20 {
+    font-weight: 500;
+    font-size: 20px;
+}
+.font-heading-medium-24 {
+    font-weight: 500;
+    font-size: 24px;
+}
+
+.font-heading-bold-20 {
+    font-weight: 700;
+    font-size: 20px;
+}
+.font-heading-bold-24 {
+    font-weight: 700;
+    font-size: 24px;
+}
+
+/* button beranda */
+.bg-beranda{
+    background-color: #A06ECE;
+    border-radius: 12px;
+    width: 95%;
+}
+
+.text-beranda {
+    text-decoration: none;
+    color: #FFFFFF;
+}
+
+/* sidebar */
+.sidebar {
+    border-bottom: 1px solid #E5E5E5;
+    width: 100%;
+}
+
+.sidebar-body {
+    text-decoration: none;
+    color: #000000;
+}
+
+/* Card Header */
+.card-header {
+    background-color: #A06ECE;
+    color: #FFFFFF;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* Form Label */
+.form-label {
+    color: #4B1979;
+}
+
+/* Form Control */
+.form-control {
+    border-radius: 4px;
+    border-color: #CED4DA;
+}
+
+/* button simpan */
+.btn-simpan,
+.btn-simpan:hover {
+    background-color: #4B1979;
+    border: none;
+    border-radius: 12px;
+}
+
+.text-version {
+    color: #8A8A8A ;
+}

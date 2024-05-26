@@ -5,6 +5,7 @@ import {
   NotFoundPage,
   OTPPage,
   RegisterPage,
+  AccountPage,
 } from "./pages";
 
 const router = createBrowserRouter([
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
   {
     path: "/*",
     element: <NotFoundPage />,
+  },
+  {
+    path: "/account",
+    element: <AccountPage />,
   },
 ]);
 
