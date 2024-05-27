@@ -12,7 +12,7 @@ const CheckoutPage = () => {
     const [time, setTime] = useState("");
     const [expired, setExpired] = useState(new Date('2024-05-27T19:20:00'));
     const [isExpired, setIsExpired] = useState(false);
-    const [isSaved, setIsSaved] = useState(true);
+    const [isSaved, setIsSaved] = useState(false);
 
     const [seats, setSeats] = useState(
         Array.from({ length: 12 }, (_, rowIndex) =>
@@ -24,22 +24,26 @@ const CheckoutPage = () => {
             }))
         )
     );
-    
-    useEffect(()=>{
-        const interval = setInterval(()=>{
+
+    useEffect(() => {
+        const interval = setInterval(() => {
             setTime(Date.now());
             console.log(time);
-        },1000)
-        if(expired<time){
+        }, 1000)
+        if (expired < time) {
             setIsExpired(true);
             setError("Maaf, Waktu pemesanan habis. Silahkan ulangi lagi!")
         }
-        console.log(expired<time);
+        console.log(expired < time);
         return () => clearInterval(interval);
-    },[time])
+    }, [time])
 
     const handleToggle = () => {
         setHasFamilyName(!hasFamilyName);
+    };
+
+    const simpan = () => {
+        setIsSaved(true);
     };
 
     const handleSeatClick = (rowIndex, colIndex) => {
@@ -75,31 +79,31 @@ const CheckoutPage = () => {
                             Selesai
                         </h4>
                     </div>
-                    {!user&&(
-                    <div className="alert alert-custom-red mx-3 mt-4 d-flex justify-content-between align-items-center font-title-medium-16" role="alert">
-                        <span className="flex-grow-1 text-center">Anda harus login terlebih dahulu!</span>
-                        <a variant="link" href="/">
-                            <Image src={icons.closeIcon} alt="close" className="me-1" />
-                        </a>
-                    </div>
+                    {!user && (
+                        <div className="alert alert-custom-red mx-3 mt-4 d-flex justify-content-between align-items-center font-title-medium-16" role="alert">
+                            <span className="flex-grow-1 text-center">Anda harus login terlebih dahulu!</span>
+                            <a variant="link" href="/">
+                                <Image src={icons.closeIcon} alt="close" className="me-1" />
+                            </a>
+                        </div>
                     )}
-                    {!success&&!error&&user&&(
-                    <div className="alert alert-custom-red mx-3 mt-4 text-center font-title-medium-16" role="alert">
-                        Selesaikan dalam 00:15:00
-                    </div>
+                    {!success && !error && user && (
+                        <div className="alert alert-custom-red mx-3 mt-4 text-center font-title-medium-16" role="alert">
+                            Selesaikan dalam 00:15:00
+                        </div>
                     )}
-                    {success&&(
-                    <div className="alert alert-custom-green mx-3 mt-4 text-center font-title-medium-16" role="alert">
-                        {success}
-                    </div>
+                    {success && (
+                        <div className="alert alert-custom-green mx-3 mt-4 text-center font-title-medium-16" role="alert">
+                            {success}
+                        </div>
                     )}
-                    {error&&(
-                    <div className="alert alert-custom-red mx-3 mt-4 d-flex justify-content-between align-items-center font-title-medium-16" role="alert">
-                        <span className="flex-grow-1 text-center">{error}</span>
-                        <a variant="link" href="/">
-                            <Image src={icons.closeIcon} alt="close" className="me-1" />
-                        </a>
-                    </div>
+                    {error && (
+                        <div className="alert alert-custom-red mx-3 mt-4 d-flex justify-content-between align-items-center font-title-medium-16" role="alert">
+                            <span className="flex-grow-1 text-center">{error}</span>
+                            <a variant="link" href="/">
+                                <Image src={icons.closeIcon} alt="close" className="me-1" />
+                            </a>
+                        </div>
                     )}
                 </Container>
             </div>
@@ -114,7 +118,9 @@ const CheckoutPage = () => {
                                 <span className="flex-grow-1 text-start position-relative">
                                     Data Diri Pemesan
                                 </span>
-                                <Image src={icons.checklistIcon} alt="checklist" className="ms-2" />
+                                {isSaved && (
+                                    <Image src={icons.checklistIcon} alt="checklist" className="ms-2" />
+                                )}
                             </p>
                             <Form>
                                 <Form.Group controlId="formNamaLengkap" className="mb-3">
@@ -158,7 +164,9 @@ const CheckoutPage = () => {
                                 <span className="flex-grow-1 text-start position-relative">
                                     Data Diri Penumpang
                                 </span>
-                                <Image src={icons.checklistIcon} alt="checklist" className="ms-2" />
+                                {isSaved && (
+                                    <Image src={icons.checklistIcon} alt="checklist" className="ms-2" />
+                                )}
                             </p>
                             <Form>
                                 <Form.Group controlId="formTitle" className="mb-3">
@@ -218,15 +226,19 @@ const CheckoutPage = () => {
                             <h4 className="mb-3 font-heading-bold-20">
                                 Pilih Kursi
                             </h4>
-                            <p className="card-seat mb-3 text-center font-body-medium-14">
-                                Economy - 64 Seats Available
-                            </p>
-                            <p className="card-seat-chosen mb-3 font-body-medium-14 d-flex justify-align-content-between align-items-center">
-                                <span className="flex-grow-1 text-start position-relative">
-                                    Economy - 2 Seats Chosen
-                                </span>
-                                <Image src={icons.checklistIcon} alt="checklist" className="ms-2" />
-                            </p>
+                            {!isSaved && (
+                                <p className="card-seat mb-3 text-center font-body-medium-14">
+                                    Economy - 64 Seats Available
+                                </p>
+                            )}
+                            {isSaved && (
+                                <p className="card-seat-chosen mb-3 font-body-medium-14 d-flex justify-align-content-between align-items-center">
+                                    <span className="flex-grow-1 text-start position-relative">
+                                        Economy - 2 Seats Chosen
+                                    </span>
+                                    <Image src={icons.checklistIcon} alt="checklist" className="ms-2" />
+                                </p>
+                            )}
                             <div className="seat-selection">
                                 {seats.map((row, rowIndex) => (
                                     <div key={rowIndex} className="seat-row">
@@ -236,6 +248,7 @@ const CheckoutPage = () => {
                                                 className={`seat ${seat.reserved ? 'reserved' : seat.selected ? 'selected' : ''}`}
                                                 onClick={() => handleSeatClick(rowIndex, colIndex)}
                                                 disabled={seat.reserved}
+                                                variant=""
                                             >
                                                 {seat.row}{seat.col}
                                             </Button>
@@ -245,7 +258,7 @@ const CheckoutPage = () => {
                             </div>
                         </Card>
                         <div className="text-center w-100">
-                            <Button className={`btn ${isSaved?"btn-simpan-selected":"btn-simpan"} w-75 py-2 mb-3 shadow font-heading-medium-20`} type="submit">
+                            <Button onClick={simpan} disabled={isSaved ? true : false} className={`btn ${isSaved ? "btn-simpan-selected" : "btn-simpan"} w-75 py-2 mb-3 shadow font-heading-medium-20`} type="submit" variant="">
                                 Simpan
                             </Button>
                         </div>
@@ -305,9 +318,11 @@ const CheckoutPage = () => {
                                 <h4 className="font-title-bold-18 text-total">IDR 9.850.000</h4>
                             </div>
                         </Card>
-                        <Button className="btn btn-lanjut-bayar w-100 py-2 mb-3 font-heading-medium-20" type="submit">
-                            Lanjut Bayar
-                        </Button>
+                        {isSaved && (
+                            <Button className="btn btn-lanjut-bayar w-100 py-2 mb-3 font-heading-medium-20" type="submit" variant="">
+                                Lanjut Bayar
+                            </Button>
+                        )}
                     </Col>
                 </Row>
             </Container>

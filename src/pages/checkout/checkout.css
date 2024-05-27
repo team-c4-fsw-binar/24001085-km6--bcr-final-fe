@@ -189,7 +189,8 @@
     gap: 5px;
 }
 
-.seat {
+.seat,
+.seat:hover {
     width: 40px;
     height: 40px;
     font-size: 16px;
@@ -221,6 +222,7 @@
     background-color: #7126B5;
     border: none;
     border-radius: 12px;
+    color: #FFFFFF;
 }
 
 .btn-simpan-selected,
@@ -236,6 +238,7 @@
     background-color: #FF0000;
     border: none;
     border-radius: 12px;
+    color: #FFFFFF;
 }
 
 /* alert */
