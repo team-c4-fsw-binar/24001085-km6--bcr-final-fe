@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap";
 import "./checkout.css";
 import * as icons from "../../assets/checkout";
 
 const CheckoutPage = () => {
     const [hasFamilyName, setHasFamilyName] = useState(true);
+    const [user, setuser] = useState(true);
+    // const token = localStorage.getItem("token");
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const [time, setTime] = useState("");
+    const [expired, setExpired] = useState(new Date('2024-05-27T19:20:00'));
+    const [isExpired, setIsExpired] = useState(false);
+    const [isSaved, setIsSaved] = useState(true);
+
     const [seats, setSeats] = useState(
         Array.from({ length: 12 }, (_, rowIndex) =>
             Array.from({ length: 6 }, (_, colIndex) => ({
@@ -15,6 +24,19 @@ const CheckoutPage = () => {
             }))
         )
     );
+    
+    useEffect(()=>{
+        const interval = setInterval(()=>{
+            setTime(Date.now());
+            console.log(time);
+        },1000)
+        if(expired<time){
+            setIsExpired(true);
+            setError("Maaf, Waktu pemesanan habis. Silahkan ulangi lagi!")
+        }
+        console.log(expired<time);
+        return () => clearInterval(interval);
+    },[time])
 
     const handleToggle = () => {
         setHasFamilyName(!hasFamilyName);
@@ -53,24 +75,32 @@ const CheckoutPage = () => {
                             Selesai
                         </h4>
                     </div>
+                    {!user&&(
                     <div className="alert alert-custom-red mx-3 mt-4 d-flex justify-content-between align-items-center font-title-medium-16" role="alert">
                         <span className="flex-grow-1 text-center">Anda harus login terlebih dahulu!</span>
                         <a variant="link" href="/">
                             <Image src={icons.closeIcon} alt="close" className="me-1" />
                         </a>
                     </div>
+                    )}
+                    {!success&&!error&&user&&(
                     <div className="alert alert-custom-red mx-3 mt-4 text-center font-title-medium-16" role="alert">
                         Selesaikan dalam 00:15:00
                     </div>
+                    )}
+                    {success&&(
                     <div className="alert alert-custom-green mx-3 mt-4 text-center font-title-medium-16" role="alert">
-                        Data Anda berhasil tersimpan!
+                        {success}
                     </div>
+                    )}
+                    {error&&(
                     <div className="alert alert-custom-red mx-3 mt-4 d-flex justify-content-between align-items-center font-title-medium-16" role="alert">
-                        <span className="flex-grow-1 text-center">Maaf, Waktu pemesanan habis. Silahkan ulangi lagi!</span>
+                        <span className="flex-grow-1 text-center">{error}</span>
                         <a variant="link" href="/">
                             <Image src={icons.closeIcon} alt="close" className="me-1" />
                         </a>
                     </div>
+                    )}
                 </Container>
             </div>
             <Container>
@@ -215,12 +245,7 @@ const CheckoutPage = () => {
                             </div>
                         </Card>
                         <div className="text-center w-100">
-                            <Button className="btn btn-simpan w-75 py-2 mb-3 shadow font-heading-medium-20" type="submit">
-                                Simpan
-                            </Button>
-                        </div>
-                        <div className="text-center w-100">
-                            <Button className="btn btn-simpan-selected w-75 py-2 mb-3 font-heading-medium-20" type="submit">
+                            <Button className={`btn ${isSaved?"btn-simpan-selected":"btn-simpan"} w-75 py-2 mb-3 shadow font-heading-medium-20`} type="submit">
                                 Simpan
                             </Button>
                         </div>
