@@ -1,0 +1,14 @@
+#riwayat-card {
+  background-color: #fff; /* Adjust background color as needed */
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2); /* Default shadow */
+  transition: all 0.2s ease-in-out; /* Smooth transition for hover effect */
+  cursor: pointer;
+}
+
+#riwayat-card:hover {
+  /* Styles applied on hover */
+  box-shadow: 0px 20px 50px rgba(#a06ece); /* Change shadow color */
+  transform: translateY(-3px); /* Simulate a slight "pop" effect */
+  border-width: 5px;
+  border-color: #a06ece;
+}
