@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Form, Button, Card, Modal, CloseButton } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Card, Modal, ListGroup, CloseButton } from 'react-bootstrap';
 import "./beranda.css";
 
 import banner from "../../assets/assetsBeranda/banner.png";
@@ -10,18 +10,37 @@ import seatIcon from "../../assets/assetsBeranda/seat.svg";
 import cariIcon from "../../assets/assetsBeranda/cari.svg";
 import iconArrowRight from "../../assets/assetsBeranda/arrow-right.svg";
 import bangkokDestinasi from "../../assets/assetsBeranda/bangkok.jpg";
+import checkIcon from "../../assets/assetsBeranda/check.svg";
 
 const HomePage = () => {
   const [fromModalOpen, setFromModalOpen] = useState(false);
   const [toModalOpen, setToModalOpen] = useState(false);
+  const [seatClassModalOpen, setSeatClassModalOpen] = useState(false);
+  const [counterModalOpen, setCounterModalOpen] = useState(false);
+
   const [fromLocation, setFromLocation] = useState("");
   const [toLocation, setToLocation] = useState("");
+  const [seatClass, setSeatClass] = useState("");
+  const [tempSeatClass, setTempSeatClass] = useState("");
+
+  const [adults, setAdults] = useState(0);
+  const [children, setChildren] = useState(0);
+  const [infants, setInfants] = useState(0);
+
+  const totalPassengers = adults + children + infants;
 
   const handleFromModalClose = () => setFromModalOpen(false);
   const handleToModalClose = () => setToModalOpen(false);
+  const handleSeatClassModalClose = () => setSeatClassModalOpen(false);
+  const handleCounterModalClose = () => setCounterModalOpen(false);
 
   const handleFromInputClick = () => setFromModalOpen(true);
   const handleToInputClick = () => setToModalOpen(true);
+  const handleSeatClassInputClick = () => {
+    setTempSeatClass(seatClass); // Set temp seat class to current seat class
+    setSeatClassModalOpen(true);
+  };
+  const handleCounterInputClick = () => setCounterModalOpen(true);
 
   const handleLocationSelect = (type, location) => {
     if (type === "from") {
@@ -31,6 +50,15 @@ const HomePage = () => {
       setToLocation(location);
       setToModalOpen(false);
     }
+  };
+
+  const handleSeatClassSelect = (seatClass) => {
+    setTempSeatClass(seatClass);
+  };
+
+  const handleSeatClassSave = () => {
+    setSeatClass(tempSeatClass);
+    setSeatClassModalOpen(false);
   };
 
   return (
@@ -93,11 +121,25 @@ const HomePage = () => {
                   <p className='font-body-regular-14 mb-0 align-self-center'>To</p>
                   <div>
                     <p className='font-title-regular-16'>Passengers</p>
-                    <input className="form-control" type="text" id="passengers" />
+                    <input
+                      className="form-control inputDestination"
+                      type="text"
+                      id="passengers"
+                      value={`${totalPassengers} penumpang`}
+                      readOnly
+                      onClick={handleCounterInputClick}
+                    />
                   </div>
                   <div>
                     <p className='font-title-regular-16'>Seat Class</p>
-                    <input className="form-control" type="text" id="seatClass" />
+                    <input
+                      className="form-control inputDestination"
+                      type="text"
+                      id="seatClass"
+                      value={seatClass}
+                      readOnly
+                      onClick={handleSeatClassInputClick}
+                    />
                   </div>
                 </div>
               </Form.Group>
@@ -139,82 +181,13 @@ const HomePage = () => {
                     <p className='font-body-medium-12 mb-0'>Jakarta <img src={iconArrowRight} width={20} alt="date" className="" /> Bangkok</p>
                     <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
                     <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR price</span> </p>
+                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
                   </Card.Text>
                 </Card.Body>
               </Card>
             </div>
           </Col>
-          <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestinasi} />
-                <Card.Body>
-                  <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={iconArrowRight} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR price</span> </p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
-          <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestinasi} />
-                <Card.Body>
-                  <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={iconArrowRight} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR price</span> </p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
-          <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestinasi} />
-                <Card.Body>
-                  <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={iconArrowRight} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR price</span> </p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
-          <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestinasi} />
-                <Card.Body>
-                  <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={iconArrowRight} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR price</span> </p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
-          <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestinasi} />
-                <Card.Body>
-                  <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={iconArrowRight} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR price</span> </p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
+          {/* Add more destination cards here */}
         </Row>
       </Container>
 
@@ -253,7 +226,7 @@ const HomePage = () => {
       </Modal >
 
       {/* Modal for selecting To location */}
-      < Modal show={toModalOpen} onHide={handleToModalClose} centered >
+      <Modal show={toModalOpen} onHide={handleToModalClose} centered >
         <Modal.Body >
           <div className='row w-100 justify-content-between align-items-center'>
             <Form.Group controlId="toSearch" className='col-11'>
@@ -278,9 +251,6 @@ const HomePage = () => {
             <Form.Label className='font-body-medium-14 text-danger'>Hapus</Form.Label>
           </div>
           <Modal.Header closeButton>
-            <Modal.Title className='font-body-regular-14'>Jakarta</Modal.Title>
-          </Modal.Header>
-          <Modal.Header closeButton>
             <Modal.Title className='font-body-regular-14'>Bandung</Modal.Title>
           </Modal.Header>
           <Modal.Header closeButton>
@@ -288,6 +258,71 @@ const HomePage = () => {
           </Modal.Header>
         </Modal.Body>
       </Modal >
+
+      {/* Modal Seat Class */}
+      <Modal show={seatClassModalOpen} onHide={handleSeatClassModalClose} centered>
+        <Modal.Header closeButton>
+        </Modal.Header>
+        <Modal.Body>
+          <ListGroup>
+            <ListGroup.Item action active={tempSeatClass === "Economy"} onClick={() => handleSeatClassSelect("Economy")}>
+              <div className='d-flex justify-content-between'> Economy {tempSeatClass === "Economy" && <img src={checkIcon} alt="Check" />}</div>
+              harga
+            </ListGroup.Item>
+            <ListGroup.Item action active={tempSeatClass === "Business"} onClick={() => handleSeatClassSelect("Business")}>
+              <div className='d-flex justify-content-between'>Business {tempSeatClass === "Business" && <img src={checkIcon} alt="Check" />}</div>
+              harga
+            </ListGroup.Item>
+            <ListGroup.Item action active={tempSeatClass === "First Class"} onClick={() => handleSeatClassSelect("First Class")}>
+              <div className='d-flex justify-content-between'>First Class {tempSeatClass === "First Class" && <img src={checkIcon} alt="Check" />}</div>
+              harga
+            </ListGroup.Item>
+          </ListGroup>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='' className='btn-simpan-modal text-white font-title-medium-16 px-3 py-2' onClick={handleSeatClassSave}>
+            Simpan
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal Counter for Passengers */}
+      <Modal show={counterModalOpen} onHide={handleCounterModalClose} centered>
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          <div className="counter-section">
+            <div className="d-flex justify-content-between align-items-center">
+              <p className="font-body-regular-14 mb-0">Adults</p>
+              <div className="d-flex align-items-center">
+                <Button variant="secondary" onClick={() => setAdults(Math.max(adults - 1, 0))}>-</Button>
+                <p className="font-body-regular-14 mx-3 mb-0">{adults}</p>
+                <Button variant="secondary" onClick={() => setAdults(adults + 1)}>+</Button>
+              </div>
+            </div>
+            <div className="d-flex justify-content-between align-items-center">
+              <p className="font-body-regular-14 mb-0">Children</p>
+              <div className="d-flex align-items-center">
+                <Button variant="secondary" onClick={() => setChildren(Math.max(children - 1, 0))}>-</Button>
+                <p className="font-body-regular-14 mx-3 mb-0">{children}</p>
+                <Button variant="secondary" onClick={() => setChildren(children + 1)}>+</Button>
+              </div>
+            </div>
+            <div className="d-flex justify-content-between align-items-center">
+              <p className="font-body-regular-14 mb-0">Infants</p>
+              <div className="d-flex align-items-center">
+                <Button variant="secondary" onClick={() => setInfants(Math.max(infants - 1, 0))}>-</Button>
+                <p className="font-body-regular-14 mx-3 mb-0">{infants}</p>
+                <Button variant="secondary" onClick={() => setInfants(infants + 1)}>+</Button>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='' className='btn-simpan-modal text-white font-title-medium-16 px-3 py-2' onClick={handleCounterModalClose}>
+            Simpan
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
