@@ -1,11 +1,15 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import { Provider } from "react-redux";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
 import {
   HomePage,
   LoginPage,
   NotFoundPage,
-  OTPPage,
-  RegisterPage,
 } from "./pages";
+
+import store from "./redux/store";
 
 const router = createBrowserRouter([
   {
@@ -30,8 +34,16 @@ const router = createBrowserRouter([
   },
 ]);
 
-const App = () => {
-  return <RouterProvider router={router} />;
-};
+function App() {
+  return (
+    <Provider store={store}>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <RouterProvider router={router} />
+
+        <ToastContainer theme="colored" />
+      </GoogleOAuthProvider>
+    </Provider>
+  );
+}
 
 export default App;

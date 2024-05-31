@@ -1,0 +1,50 @@
+body {
+  font-family: "Inter", sans-serif;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Full height of the viewport */
+}
+
+.centered-container {
+  max-width: 500px;
+  width: 100%;
+}
+
+.input {
+  border-radius: 16px;
+  height: 50px;
+}
+
+.forgot {
+  color: #7126b5;
+}
+
+.field-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.button {
+  background-color: #7126b5;
+  border-radius: 16px;
+  height: 50px;
+  width: 100%; /* Full width button */
+}
+
+.button:hover {
+  background-color: #a06ece;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
