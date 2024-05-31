@@ -1,9 +1,11 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button, Image } from "react-bootstrap";
 import "./notification.css";
 import * as icons from "../../assets/notification";
 
 const NotificationPage = () => {
+    const [isRead, setIsRead] = useState(false);
+
     return (
         <>
             <div className="shadow">
@@ -52,7 +54,7 @@ const NotificationPage = () => {
                             </Col>
                         </Row>
                     </Card.Body>
-                    <Card.Body>
+                    <Card.Body className={`${!isRead ? "bg-noread" : ""}`}>
                         <Row>
                             <Col md={10}>
                                 <div className="d-flex align-items-start">

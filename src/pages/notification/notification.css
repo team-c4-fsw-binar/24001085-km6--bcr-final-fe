@@ -120,3 +120,8 @@
     text-decoration: none;
     color: #FFFFFF;
 }
+
+/* background read */
+.bg-noread {
+    background-color: #a06ece2f;
+}
