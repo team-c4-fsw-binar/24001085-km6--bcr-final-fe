@@ -190,7 +190,8 @@
 }
 
 .seat,
-.seat:hover {
+.seat:hover,
+.seat::after {
     width: 40px;
     height: 40px;
     font-size: 16px;

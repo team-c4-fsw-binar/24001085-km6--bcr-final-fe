@@ -4,7 +4,8 @@ import "./checkout.css";
 import * as icons from "../../assets/checkout";
 
 const CheckoutPage = () => {
-    const [hasFamilyName, setHasFamilyName] = useState(true);
+    const [hasFamilyNamePemesan, setHasFamilyNamePemesan] = useState(true);
+    const [hasFamilyNamePenumpang, setHasFamilyNamePenumpang] = useState(true);
     const [user, setuser] = useState(true);
     // const token = localStorage.getItem("token");
     const [error, setError] = useState("");
@@ -38,8 +39,12 @@ const CheckoutPage = () => {
         return () => clearInterval(interval);
     }, [time])
 
-    const handleToggle = () => {
-        setHasFamilyName(!hasFamilyName);
+    const handleTogglePemesan = () => {
+        setHasFamilyNamePemesan(!hasFamilyNamePemesan);
+    };
+
+    const handleTogglePenumpang = () => {
+        setHasFamilyNamePenumpang(!hasFamilyNamePenumpang);
     };
 
     const simpan = () => {
@@ -125,34 +130,35 @@ const CheckoutPage = () => {
                             <Form>
                                 <Form.Group controlId="formNamaLengkap" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">Nama Lengkap</Form.Label>
-                                    <Form.Control type="text" placeholder="Harry" />
+                                    <Form.Control type="text" placeholder="Harry" readOnly={isSaved} />
                                 </Form.Group>
 
-                                <Form.Group controlId="formToggleFamilyName" className="mb-3 d-flex align-items-center">
+                                <Form.Group controlId="formToggleFamilyNamePemesan" className="mb-3 d-flex align-items-center">
                                     <Form.Label className="mb-0 form-label font-body-bold-14">Punya Nama Keluarga?</Form.Label>
                                     <Form.Check
                                         type="switch"
-                                        checked={hasFamilyName}
-                                        onChange={handleToggle}
+                                        checked={hasFamilyNamePemesan}
+                                        onChange={handleTogglePemesan}
                                         className="custom-switch"
+                                        disabled={isSaved}
                                     />
                                 </Form.Group>
 
-                                {hasFamilyName && (
-                                    <Form.Group controlId="formNamaKeluarga" className="mb-3">
+                                {hasFamilyNamePemesan && (
+                                    <Form.Group controlId="formNamaKeluargaPemesan" className="mb-3">
                                         <Form.Label className="form-label font-body-bold-14">Nama Keluarga</Form.Label>
-                                        <Form.Control type="text" placeholder="Potter" />
+                                        <Form.Control type="text" placeholder="Potter" readOnly={isSaved} />
                                     </Form.Group>
                                 )}
 
                                 <Form.Group controlId="formNomorTelepon" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">Nomor Telepon</Form.Label>
-                                    <Form.Control type="text" placeholder="123456789" />
+                                    <Form.Control type="text" placeholder="123456789" readOnly={isSaved} />
                                 </Form.Group>
 
                                 <Form.Group controlId="formEmail" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">Email</Form.Label>
-                                    <Form.Control type="email" placeholder="Contoh: johndoe@gmail.com" />
+                                    <Form.Control type="email" placeholder="Contoh: johndoe@gmail.com" readOnly={isSaved} />
                                 </Form.Group>
                             </Form>
                         </Card>
@@ -169,56 +175,57 @@ const CheckoutPage = () => {
                                 )}
                             </p>
                             <Form>
-                                <Form.Group controlId="formTitle" className="mb-3">
+                            <Form.Group controlId="formTitle" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">Title</Form.Label>
-                                    <Form.Control type="text" placeholder="Mr." />
+                                    <Form.Control type="text" placeholder="Mr." readOnly={isSaved} />
                                 </Form.Group>
 
-                                <Form.Group controlId="formNamaLengkap" className="mb-3">
+                                <Form.Group controlId="formNamaLengkapPenumpang" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">Nama Lengkap</Form.Label>
-                                    <Form.Control type="text" placeholder="Harry" />
+                                    <Form.Control type="text" placeholder="Harry" readOnly={isSaved} />
                                 </Form.Group>
 
-                                <Form.Group controlId="formToggleFamilyName" className="mb-3 d-flex align-items-center">
+                                <Form.Group controlId="formToggleFamilyNamePenumpang" className="mb-3 d-flex align-items-center">
                                     <Form.Label className="mb-0 form-label font-body-bold-14">Punya Nama Keluarga?</Form.Label>
                                     <Form.Check
                                         type="switch"
-                                        checked={hasFamilyName}
-                                        onChange={handleToggle}
+                                        checked={hasFamilyNamePenumpang}
+                                        onChange={handleTogglePenumpang}
                                         className="custom-switch"
+                                        disabled={isSaved}
                                     />
                                 </Form.Group>
 
-                                {hasFamilyName && (
-                                    <Form.Group controlId="formNamaKeluarga" className="mb-3">
+                                {hasFamilyNamePenumpang && (
+                                    <Form.Group controlId="formNamaKeluargaPenumpang" className="mb-3">
                                         <Form.Label className="form-label font-body-bold-14">Nama Keluarga</Form.Label>
-                                        <Form.Control type="text" placeholder="Potter" />
+                                        <Form.Control type="text" placeholder="Potter" readOnly={isSaved} />
                                     </Form.Group>
                                 )}
 
                                 <Form.Group controlId="formTanggalLahir" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">Tanggal Lahir</Form.Label>
-                                    <Form.Control type="date" />
+                                    <Form.Control type="date" readOnly={isSaved} />
                                 </Form.Group>
 
                                 <Form.Group controlId="formKewarganegaraan" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">Kewarganegaraan</Form.Label>
-                                    <Form.Control type="text" placeholder="Indonesia" />
+                                    <Form.Control type="text" placeholder="Indonesia" readOnly={isSaved} />
                                 </Form.Group>
 
                                 <Form.Group controlId="formKtpPaspor" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">KTP/Paspor</Form.Label>
-                                    <Form.Control type="text" placeholder="301000000000" />
+                                    <Form.Control type="text" placeholder="301000000000" readOnly={isSaved} />
                                 </Form.Group>
 
                                 <Form.Group controlId="formNegaraPenerbit" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">Negara Penerbit</Form.Label>
-                                    <Form.Control type="text" placeholder="Indonesia" />
+                                    <Form.Control type="text" placeholder="Indonesia" readOnly={isSaved} />
                                 </Form.Group>
 
                                 <Form.Group controlId="formBerlakuSampai" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">Berlaku Sampai</Form.Label>
-                                    <Form.Control type="date" />
+                                    <Form.Control type="date" readOnly={isSaved}/>
                                 </Form.Group>
                             </Form>
                         </Card>
@@ -247,8 +254,8 @@ const CheckoutPage = () => {
                                                 key={colIndex}
                                                 className={`seat ${seat.reserved ? 'reserved' : seat.selected ? 'selected' : ''}`}
                                                 onClick={() => handleSeatClick(rowIndex, colIndex)}
-                                                disabled={seat.reserved}
-                                                variant=""
+                                                disabled={seat.reserved || isSaved}
+                                                variant="success"
                                             >
                                                 {seat.row}{seat.col}
                                             </Button>
@@ -264,7 +271,7 @@ const CheckoutPage = () => {
                         </div>
                     </Col>
                     <Col sm={6} className="my-3">
-                        <Card className="p-4 mb-4">
+                        <Card className="p-4 mb-4" style={{ border: 'none' }}>
                             <div className="border-bottom pb-2">
                                 <p className="font-title-bold-18">Detail Penerbangan</p>
                                 <div className="d-flex align-items-center">
