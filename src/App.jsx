@@ -6,6 +6,7 @@ import {
   OTPPage,
   RegisterPage,
   AccountPage,
+  UbahProfilPage,
 } from "./pages";
 
 const router = createBrowserRouter([
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "/account",
     element: <AccountPage />,
+  },
+  {
+    path: "/ubah-profil",
+    element: <UbahProfilPage />,
   },
 ]);
 

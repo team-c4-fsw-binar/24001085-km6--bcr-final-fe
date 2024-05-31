@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button, Image, Form } from "react-bootstrap";
-import "./account.css";
-import * as icons from "../../assets/account";
+import { useNavigate } from 'react-router-dom';
+import "./ubah-profil.css";
+import * as icons from "../../assets/ubah-profil";
 
-const AccountPage = () => {
-    const [availableImage, setAvailableImage] = useState(true);
+const UbahProfilPage = () => {
+    const [isSaved, setIsSaved] = useState(false);
+    const navigateTo = useNavigate();
 
     return (
         <>
@@ -53,38 +55,44 @@ const AccountPage = () => {
                     <Col md={6}>
                         <Card className="px-4 pt-4 mx-3">
                             <p className="mb-3 font-heading-bold-20">
-                                Data Profil
+                                Ubah Data Profil
                             </p>
-                            <p className="card-header font-title-medium-16 d-flex justify-align-content-between align-items-center">
+                            <p className="card-header mb-3 font-title-medium-16 d-flex justify-align-content-between align-items-center">
                                 <span className="flex-grow-1 text-start position-relative">
                                     Data Diri
                                 </span>
                             </p>
                             <Card.Body>
                                 <Form>
-                                    {availableImage &&  (
-                                        <div className="d-flex justify-content-center">
-                                            <Image
-                                                src={icons.avatarIcon}
-                                                className="img-fluid  w-50"
-                                                roundedCircle
-                                            />
-                                        </div>
-                                    )}
+                                    <Form.Group controlId="formFotoProfil" className="mb-3">
+                                        <Form.Label className="form-label font-body-bold-14">Foto Profil</Form.Label>
+                                        <Form.Control type="file" accept="image/*" disabled={isSaved} />
+                                    </Form.Group>
+
                                     <Form.Group controlId="formNamaLengkap" className="mb-3">
                                         <Form.Label className="form-label font-body-bold-14">Nama Lengkap</Form.Label>
-                                        <Form.Control type="text" placeholder="Harry" />
+                                        <Form.Control type="text" placeholder="Harry" readOnly={isSaved} />
                                     </Form.Group>
 
                                     <Form.Group controlId="formNomorTelepon" className="mb-3">
                                         <Form.Label className="form-label font-body-bold-14">Nama Telepon</Form.Label>
-                                        <Form.Control type="text" placeholder="+62 897823232" />
+                                        <Form.Control type="text" placeholder="+62 897823232" readOnly={isSaved} />
                                     </Form.Group>
 
                                     <Form.Group controlId="formEmail" className="mb-3">
                                         <Form.Label className="form-label font-body-bold-14">Email</Form.Label>
-                                        <Form.Control type="email" placeholder="Johndoe@gmail.com" />
+                                        <Form.Control type="email" placeholder="Johndoe@gmail.com" readOnly={isSaved} />
                                     </Form.Group>
+
+                                    <div className="text-center">
+                                        <Button
+                                            className="btn btn-simpan my-2 py-2 px-5 font-title-medium-16"
+                                            type="button"
+                                            onClick={() => navigateTo('/account')}
+                                        >
+                                            Simpan
+                                        </Button>
+                                    </div>
                                 </Form>
                             </Card.Body>
                         </Card>
@@ -95,4 +103,4 @@ const AccountPage = () => {
     );
 };
 
-export default AccountPage;
+export default UbahProfilPage;
