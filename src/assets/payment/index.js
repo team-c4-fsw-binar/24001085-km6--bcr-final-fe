@@ -8,6 +8,7 @@ import mastercard from './mastercard.svg';
 import visa from './visa.svg';
 import amex from './amex.svg';
 import paypal from './paypal.svg';
+import finished from './finished.svg';
 
 export {
     informationIcon,
@@ -19,4 +20,5 @@ export {
     visa,
     amex,
     paypal,
+    finished,
 };
