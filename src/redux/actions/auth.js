@@ -3,7 +3,8 @@ import { toast } from "react-toastify";
 import { setToken, setUser } from "../reducers/auth";
 
 export const login =
-  (navigate, email, password, setIsLoading) => async (dispatch) => {
+  (navigate, email, password, setIsLoading, showErrorToast) =>
+  async (dispatch) => {
     // make loading
     setIsLoading(true);
 
@@ -35,8 +36,14 @@ export const login =
       // redirect to home
       navigate("/");
     } catch (error) {
-      toast.error(error?.response?.data?.message);
-
+      if (error.response) {
+        const { data } = error.response;
+        showErrorToast(data.message || "Terjadi kesalahan saat masuk.");
+      } else if (error.request) {
+        showErrorToast("Tidak dapat terhubung ke server.");
+      } else {
+        showErrorToast("Terjadi kesalahan dalam permintaan.");
+      }
       dispatch(logout());
     }
 

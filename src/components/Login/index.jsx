@@ -5,8 +5,8 @@ import { Form, Row, Col, Container, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import GoogleLogin from "../GoogleLogin";
 import { login } from "../../redux/actions/auth";
-import { ToastContainer } from "react-toastify"; 
 import "./login.css";
+import { toast } from "react-toastify"; // tambahkan import toast
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,15 +19,16 @@ const Login = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await dispatch(login(navigate, email, password, setIsLoading));
-    } catch (error) {
-      toast.error(error.response.data.message); // Use toastify to display error message
-    }
+
+    dispatch(login(navigate, email, password, setIsLoading, showErrorToast));
   };
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
+  };
+
+  const showErrorToast = (errorMessage) => {
+    toast(errorMessage, { position: "bottom-center" });
   };
 
   return (
@@ -87,23 +88,11 @@ const Login = () => {
           <GoogleLogin text={"Masuk dengan Google"} />
         </Form>
         <p className="pt-3 text-center fw-semibold">
-          Belum punya akun? <Link to="/register">Daftar di sini</Link>
+          Belum punya akun?{" "}
+          <Link to="/register" className="daftar-disini">
+            Daftar di sini
+          </Link>
         </p>
-        <div className="toast-container">
-          <ToastContainer
-            position="bottom-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="colored"
-            transition:Bounce
-          />
-        </div>
       </Container>
     </div>
   );

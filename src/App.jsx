@@ -7,6 +7,8 @@ import {
   HomePage,
   LoginPage,
   NotFoundPage,
+  OTPPage,
+  RegisterPage,
 } from "./pages";
 
 import store from "./redux/store";
