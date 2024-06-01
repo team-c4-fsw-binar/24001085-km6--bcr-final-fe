@@ -49,6 +49,7 @@ const CheckoutPage = () => {
 
     const simpan = () => {
         setIsSaved(true);
+        setSuccess("Data Anda berhasil tersimpan!");
     };
 
     const handleSeatClick = (rowIndex, colIndex) => {
@@ -74,7 +75,7 @@ const CheckoutPage = () => {
                                 &gt;
                             </span>
                         </h4>
-                        <h4 className="font-heading-bold-20 title-navigation">
+                        <h4 className={isSaved ? 'font-heading-bold-20' : 'font-heading-bold-20 title-navigation'}>
                             Bayar
                             <span className="mx-sm-2 title-navigation">
                                 &gt;
@@ -102,7 +103,7 @@ const CheckoutPage = () => {
                             {success}
                         </div>
                     )}
-                    {error && (
+                    {error && !isSaved && (
                         <div className="alert alert-custom-red mx-3 mt-4 d-flex justify-content-between align-items-center font-title-medium-16" role="alert">
                             <span className="flex-grow-1 text-center">{error}</span>
                             <a variant="link" href="/">
@@ -175,7 +176,7 @@ const CheckoutPage = () => {
                                 )}
                             </p>
                             <Form>
-                            <Form.Group controlId="formTitle" className="mb-3">
+                                <Form.Group controlId="formTitle" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">Title</Form.Label>
                                     <Form.Control type="text" placeholder="Mr." readOnly={isSaved} />
                                 </Form.Group>
@@ -225,7 +226,7 @@ const CheckoutPage = () => {
 
                                 <Form.Group controlId="formBerlakuSampai" className="mb-3">
                                     <Form.Label className="form-label font-body-bold-14">Berlaku Sampai</Form.Label>
-                                    <Form.Control type="date" readOnly={isSaved}/>
+                                    <Form.Control type="date" readOnly={isSaved} />
                                 </Form.Group>
                             </Form>
                         </Card>
@@ -325,11 +326,9 @@ const CheckoutPage = () => {
                                 <h4 className="font-title-bold-18 text-total">IDR 9.850.000</h4>
                             </div>
                         </Card>
-                        {isSaved && (
-                            <Button className="btn btn-lanjut-bayar w-100 py-2 mb-3 font-heading-medium-20" type="submit" variant="">
-                                Lanjut Bayar
-                            </Button>
-                        )}
+                        <Button className="btn btn-lanjut-bayar w-100 py-2 mb-3 font-heading-medium-20" type="submit" variant="">
+                            Lanjut Bayar
+                        </Button>
                     </Col>
                 </Row>
             </Container>
