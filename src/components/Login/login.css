@@ -1,4 +1,4 @@
-body {
+* {
   font-family: "Inter", sans-serif;
   overflow-x: hidden;
   overflow-y: visible;
@@ -49,13 +49,18 @@ body {
   align-items: center;
 }
 
-.daftar-disini{
-  color: #7126B5;
+.daftar-disini {
+  color: #7126b5;
   text-decoration: none;
 }
-
-.toast-error{
-  margin-left: 25%;
-  border-radius: 20px !important;
-  background-color: red !important;
+.alert-message {
+  background-color: red;
+  color: white;
+  width: 50%;
+  margin: 0 auto; /* Menengahkan alert secara horizontal */
+  text-align: center; /* Menengahkan teks secara horizontal */
+  padding: 10px;
+  border-radius: 15px;
+  font-size: small;
+  margin-top: 15%;
 }
