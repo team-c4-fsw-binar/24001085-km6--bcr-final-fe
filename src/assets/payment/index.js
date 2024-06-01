@@ -4,6 +4,10 @@ import checklistIcon from './checklist.svg';
 import closeIcon from './close.svg'
 import dropdownDown from './dropdown-down.svg';
 import dropdownUp from './dropdown-up.svg';
+import mastercard from './mastercard.svg';
+import visa from './visa.svg';
+import amex from './amex.svg';
+import paypal from './paypal.svg';
 
 export {
     informationIcon,
@@ -11,4 +15,8 @@ export {
     closeIcon,
     dropdownDown,
     dropdownUp,
+    mastercard,
+    visa,
+    amex,
+    paypal,
 };

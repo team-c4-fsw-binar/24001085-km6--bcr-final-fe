@@ -120,8 +120,13 @@
     background-color: #3C3C3C;
     color: #FFFFFF;
     padding: 10px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header img {
+    margin-left: auto;
 }
 
 /* Form Label */
@@ -179,13 +184,3 @@
     border-radius: 0;
 }
 
-/* for image dropdown */
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.card-header img {
-    margin-left: auto;
-}

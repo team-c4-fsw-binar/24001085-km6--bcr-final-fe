@@ -85,10 +85,13 @@ const PaymentPage = () => {
             <Container>
                 <Row>
                     <Col sm={6} className="my-3">
+                        <p className="mb-3 font-heading-bold-20">
+                            Isi Data Pembayaran
+                        </p>
                         <Card className="mb-2" style={{ border: 'none' }}>
                             <Card.Header
                                 onClick={() => handleSelectMethod('Gopay')}
-                                style={{ cursor: 'pointer', backgroundColor: selectedMethod === 'Gopay' ? '#6f42c1' : '#343a40', color: 'white' }}>
+                                style={{ cursor: 'pointer', backgroundColor: selectedMethod === 'Gopay' ? '#6f42c1' : '#343a40', color: 'white', borderRadius: '4px' }}>
                                 <span>Gopay</span>
                                 <Image src={selectedMethod === 'Gopay' ? icons.dropdownUp : icons.dropdownDown} alt="dropdown" />
                             </Card.Header>
@@ -97,7 +100,7 @@ const PaymentPage = () => {
                                     <div className="w-50">
                                         <Form>
                                             <Form.Group controlId="formGopay">
-                                                <Form.Label className="font-body-medium-14">No. Telepon</Form.Label>
+                                                <Form.Label className="font-body-medium-14 text-black">No. Telepon</Form.Label>
                                                 <Form.Control className="font-body-medium-14" type="text" placeholder="Masukkan No .Telepon" />
                                             </Form.Group>
                                         </Form>
@@ -108,7 +111,7 @@ const PaymentPage = () => {
                         <Card className="mb-2" style={{ border: 'none' }}>
                             <Card.Header
                                 onClick={() => handleSelectMethod('VirtualAccount')}
-                                style={{ cursor: 'pointer', backgroundColor: selectedMethod === 'VirtualAccount' ? '#6f42c1' : '#343a40', color: 'white' }}>
+                                style={{ cursor: 'pointer', backgroundColor: selectedMethod === 'VirtualAccount' ? '#6f42c1' : '#343a40', color: 'white', borderRadius: '4px' }}>
                                 <span>Virtual Account</span>
                                 <Image src={selectedMethod === 'VirtualAccount' ? icons.dropdownUp : icons.dropdownDown} alt="dropdown" />
                             </Card.Header>
@@ -117,7 +120,7 @@ const PaymentPage = () => {
                                     <div className="w-50">
                                         <Form>
                                             <Form.Group controlId="formVirtualAccount">
-                                                <Form.Label className="font-body-medium-14">Account Number</Form.Label>
+                                                <Form.Label className="font-body-medium-14 text-black">Account Number</Form.Label>
                                                 <Form.Control className="font-body-medium-14" type="text" placeholder="123456789" />
                                             </Form.Group>
                                         </Form>
@@ -128,7 +131,7 @@ const PaymentPage = () => {
                         <Card className="mb-2" style={{ border: 'none' }}>
                             <Card.Header
                                 onClick={() => handleSelectMethod('CreditCard')}
-                                style={{ cursor: 'pointer', backgroundColor: selectedMethod === 'CreditCard' ? '#6f42c1' : '#343a40', color: 'white' }}>
+                                style={{ cursor: 'pointer', backgroundColor: selectedMethod === 'CreditCard' ? '#6f42c1' : '#343a40', color: 'white', borderRadius: '4px' }}>
                                 <span>Credit Card</span>
                                 <Image src={selectedMethod === 'CreditCard' ? icons.dropdownUp : icons.dropdownDown} alt="dropdown" />
                             </Card.Header>
@@ -136,26 +139,32 @@ const PaymentPage = () => {
                                 <Card.Body className="d-flex justify-content-center">
                                     <div className="w-50">
                                         <Form>
+                                            <div className="d-flex gap-3 justify-content-center my-3">
+                                                <Image src={icons.mastercard} alt="mastercard" />
+                                                <Image src={icons.visa} alt="visa" />
+                                                <Image src={icons.amex} alt="amex" />
+                                                <Image src={icons.paypal} alt="paypal" />
+                                            </div>
                                             <Form.Group controlId="formCardNumber">
-                                                <Form.Label className="font-body-medium-14">Card number</Form.Label>
+                                                <Form.Label className="font-body-medium-14 text-black">Card number</Form.Label>
                                                 <Form.Control className="font-body-medium-14" type="text" placeholder="4480 0000 0000 0000" />
                                             </Form.Group>
 
                                             <Form.Group controlId="formCardHolderName" className="mt-2">
-                                                <Form.Label className="font-body-medium-14">Card holder name</Form.Label>
+                                                <Form.Label className="font-body-medium-14 text-black">Card holder name</Form.Label>
                                                 <Form.Control className="font-body-medium-14" type="text" placeholder="John Doe" />
                                             </Form.Group>
 
                                             <Row>
                                                 <Col>
                                                     <Form.Group controlId="formCVV" className="mt-2">
-                                                        <Form.Label className="font-body-medium-14">CVV</Form.Label>
+                                                        <Form.Label className="font-body-medium-14 text-black">CVV</Form.Label>
                                                         <Form.Control className="font-body-medium-14" type="text" placeholder="000" />
                                                     </Form.Group>
                                                 </Col>
                                                 <Col>
                                                     <Form.Group controlId="formExpiryDate" className="mt-2">
-                                                        <Form.Label className="font-body-medium-14">Expiry date</Form.Label>
+                                                        <Form.Label className="font-body-medium-14 text-black">Expiry date</Form.Label>
                                                         <Form.Control className="font-body-medium-14" type="text" placeholder="07/24" />
                                                     </Form.Group>
                                                 </Col>
@@ -165,7 +174,7 @@ const PaymentPage = () => {
                                 </Card.Body>
                             )}
                         </Card>
-                        <Button className="btn btn-lanjut-bayar w-100 py-2 mt-3 font-heading-medium-20" type="submit" variant="">
+                        <Button className="btn btn-lanjut-bayar w-100 py-3 mt-3 font-heading-medium-20" type="submit" variant="">
                             Bayar
                         </Button>
                     </Col>
