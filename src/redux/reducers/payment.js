@@ -1,21 +1,21 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import axios from "axios"
 
 export const fetchPayments = createAsyncThunk(
   "payments/fetchPayments",
   async () => {
     const response = await axios.get(
-      "https://terbangaja-staging-dot-kampus-merdeka-6.df.r.appspot.com/api/payments",
+      `${import.meta.env.VITE_BACKEND_API}/api/payments`,
       {
         headers: {
           Authorization:
             "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzE3MzM5MjU2LCJleHAiOjE3MTczNDY0NTZ9.3G_q0h9ikLAV9fCIu0yEqcfiupmni_x1XBL9NmPg6FQ",
         },
       }
-    );
-    return response.data;
+    )
+    return response.data
   }
-);
+)
 
 const paymentsSlice = createSlice({
   name: "payments",
@@ -28,17 +28,17 @@ const paymentsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchPayments.pending, (state) => {
-        state.status = "loading";
+        state.status = "loading"
       })
       .addCase(fetchPayments.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.data = action.payload;
+        state.status = "succeeded"
+        state.data = action.payload
       })
       .addCase(fetchPayments.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      });
+        state.status = "failed"
+        state.error = action.error.message
+      })
   },
-});
+})
 
-export default paymentsSlice.reducer;
+export default paymentsSlice.reducer

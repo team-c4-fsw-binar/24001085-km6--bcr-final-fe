@@ -7,7 +7,7 @@ export const fetchBookings = createAsyncThunk(
   async () => {
     localStorage.getItem("token")
     const response = await axios.get(
-      "https://terbangaja-staging-dot-kampus-merdeka-6.df.r.appspot.com/api/bookings",
+      `${import.meta.env.VITE_BACKEND_API}/api/bookings`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
