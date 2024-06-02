@@ -7,7 +7,6 @@ import {
   RegisterPage,
   RiwayatPage,
 } from "./pages";
-import RiwayatKosongPage from "./components/riwayatkosong";
 
 const router = createBrowserRouter([
   {
@@ -29,10 +28,6 @@ const router = createBrowserRouter([
   {
     path: "/riwayat",
     element: <RiwayatPage />,
-  },
-  {
-    path: "/riwayatkosong",
-    element: <RiwayatKosongPage />,
   },
   {
     path: "/*",

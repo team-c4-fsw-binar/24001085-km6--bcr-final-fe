@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 import { BsArrowLeft, BsFunnel, BsSearch } from "react-icons/bs";
 
-import riwayatkosong from "../assets/img/riwayatkosong.svg";
+import riwayatkosong from "../../assets/img/riwayatkosong.svg";
 
 const DetailPemesanan = ({ show, onClick }) => {
   return (

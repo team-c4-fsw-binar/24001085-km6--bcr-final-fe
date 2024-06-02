@@ -1,9 +1,11 @@
-import { Row, Col, Container, Button, Modal } from "react-bootstrap";
+import { Row, Col, Container, Button, Modal, Image } from "react-bootstrap";
 import { useState, React } from "react";
-import { BsArrowLeft, BsFunnel, BsSearch } from "react-icons/bs";
-import DetailPemesanan from "../../components/riwayat";
-import PopupCard from "../../components/riwayatcari";
-import Datepicker from "../../components/datepicker";
+import { Link } from "react-router-dom";
+import { BsArrowLeft, BsFunnel } from "react-icons/bs";
+import DetailPemesanan from "../../components/Riwayat/riwayat";
+import PopupCard from "../../components/Riwayat/riwayatcari";
+import Datepicker from "../../components/Riwayat/datepicker";
+import findIcon from "../../assets/img/findIcon.svg";
 const RiwayatPage = () => {
   const [modalShowCari, setModalShowCari] = useState(false);
   const [modalShowDate, setModalShowDate] = useState(false);
@@ -49,18 +51,9 @@ const RiwayatPage = () => {
               className="rounded-3"
               onClick={() => setModalShowCari(true)}
             >
-              <BsSearch className="align-middle" />
+              <Image src={findIcon} />
             </Button>
           </Col>
-        </Row>
-
-        <Row>
-          {/* <Col md={6} className="mt-4 ">
-          Card Riwayat
-        </Col>
-        <Col md={6} className="mt-4 d-flex justify-content-center">
-          <DetailPemesanan />
-        </Col> */}
         </Row>
 
         <PopupCard
