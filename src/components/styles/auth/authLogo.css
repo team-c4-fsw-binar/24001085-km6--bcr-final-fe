@@ -1,11 +1,12 @@
 .gradient-background {
   background: linear-gradient(
-        to bottom, /* Direction of the gradient */
-        rgba(222, 202, 249, 1) 0%,    /* #DECAF9 with 100% opacity */
-        rgba(255, 233, 202, 0) 100%  /* #FFE9CA with 0% opacity */
+      to bottom, /* Direction of the gradient */
+      rgba(222, 202, 249, 1) 0%,    /* #DECAF9 with 100% opacity */
+      rgba(255, 233, 202, 0) 100%  /* #FFE9CA with 0% opacity */
     );
   height: 100vh;
 }
+
 .flower-image {
   position: absolute;
   bottom: 0;
@@ -14,6 +15,7 @@
   max-width: 100%;
   z-index: 0;
 }
+
 .logo{
   max-width: 50%;
   z-index: 1;

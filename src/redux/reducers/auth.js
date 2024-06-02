@@ -6,14 +6,6 @@ const initialState = {
   user: null,
 };
 
-// [token, setToken] = useState(localStorage.getItem("token") || null)
-// [user, setUser] = useState(null)
-
-/* 
-    -- action.payload -> setToken("euyasd1309e190ds")
-                      -> setUser({id:1,"email": "a@example.com"})
-*/
-
 // Define the slice
 const authSlice = createSlice({
   name: "auth",

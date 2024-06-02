@@ -35,7 +35,9 @@ export const login =
 
       // redirect to home
       navigate("/");
+
     } catch (error) {
+
       if (error.response) {
         const { data } = error.response;
         if (data && data.message && data.message.includes("User with email")) {
@@ -82,7 +84,7 @@ export const loginWithGoogle = (navigate, accessToken) => async (dispatch) => {
     dispatch(setUser(user));
 
     // redirect to home
-    navigate("/"); // it will be not consistent, so alternative we use window until we used the state management
+    navigate("/");
   } catch (error) {
     dispatch(logout());
   }

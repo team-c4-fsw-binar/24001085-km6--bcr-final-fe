@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Form, Row, Col, Container, Button, Alert } from "react-bootstrap"; // Mengimpor Alert dari react-bootstrap
-import { Link } from "react-router-dom";
-import GoogleLogin from "../GoogleLogin";
+import ButtonGoogleLogin from "./GoogleLogin"
 import { login } from "../../redux/actions/auth";
-import "./login.css";
+
+import { Form, Row, Col, Container, Button, Alert } from "react-bootstrap";
+import "../styles/auth/login.css"
 
 const Login = () => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const Login = () => {
     <div className="login-page">
       <Container className="centered-container">
         <h5 className="fw-bold">Masuk</h5>
-        <Form onSubmit={onSubmit} className="mt-2">
+        <Form onSubmit={onSubmit} className="mt-4">
           <Form.Group className="mb-3" controlId="Email">
             <Form.Label>Email address</Form.Label>
             <Form.Control
@@ -74,9 +74,9 @@ const Login = () => {
                 className="fa fa-fw field-icon toggle-password"
               >
                 {passwordVisible ? (
-                  <i className="fa fa-eye-slash" />
-                ) : (
                   <i className="fa fa-eye" />
+                ) : (
+                  <i className="fa fa-eye-slash" />
                 )}
               </span>
             </div>
@@ -89,7 +89,7 @@ const Login = () => {
             {isLoading ? "Loading" : "Masuk"}
           </Button>
           <p className="pt-3 text-center">Atau</p>
-          <GoogleLogin text={"Masuk dengan Google"} />
+          <ButtonGoogleLogin text={"Masuk dengan Google"} />
         </Form>
         <p className="pt-3 text-center fw-semibold">
           Belum punya akun?{" "}
