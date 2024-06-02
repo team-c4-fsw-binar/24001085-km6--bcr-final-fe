@@ -35,11 +35,13 @@ export const login =
 
       // redirect to home
       navigate("/");
+
     } catch (error) {
+
       if (error.response) {
         const { data } = error.response;
-        showErrorToast(data.message || "Terjadi kesalahan saat masuk.");
-      } else if (error.request) {
+        showErrorToast(data?.message || "Terjadi kesalahan saat masuk.");
+      } else if (error?.request) {
         showErrorToast("Tidak dapat terhubung ke server.");
       } else {
         showErrorToast("Terjadi kesalahan dalam permintaan.");
@@ -76,7 +78,7 @@ export const loginWithGoogle = (navigate, accessToken) => async (dispatch) => {
     dispatch(setUser(user));
 
     // redirect to home
-    navigate("/"); // it will be not consistent, so alternative we use window until we used the state management
+    navigate("/");
   } catch (error) {
     toast.error(error?.response?.data?.message);
 

@@ -1,4 +1,3 @@
-import React from "react";
 import flower from "../../assets/img/flower.svg";
 import logo from "../../assets/icons/logo.svg";
 import "./authlogo.css";

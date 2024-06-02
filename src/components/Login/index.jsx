@@ -1,21 +1,20 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Form, Row, Col, Container, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import GoogleLogin from "../GoogleLogin";
 import { login } from "../../redux/actions/auth";
 import "./login.css";
-import { toast } from "react-toastify"; // tambahkan import toast
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [ passwordVisible, setPasswordVisible ] = useState(false);
+  const [ email, setEmail ] = useState("");
+  const [ password, setPassword ] = useState("");
+  const [ isLoading, setIsLoading ] = useState(false);
 
   const onSubmit = async (e) => {
     e.preventDefault();
