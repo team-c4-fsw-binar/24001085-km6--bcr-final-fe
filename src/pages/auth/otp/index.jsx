@@ -1,5 +1,12 @@
+import OTPComponent from "../../../components/OTP";
+import { Container } from "react-bootstrap";
+
 const OTPPage = () => {
-  return <div>OTPPage</div>;
+  return (
+    <div>
+        <OTPComponent />
+    </div>
+  );
 };
 
 export default OTPPage;

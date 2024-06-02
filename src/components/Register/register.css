@@ -4,11 +4,11 @@
   overflow-y: visible;
 }
 
-.login-page {
+.register-page {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100vh; /* Full height of the viewport */
 }
 
 .centered-container {
@@ -31,6 +31,17 @@
   cursor: pointer;
   z-index: 2;
 }
+.password-icon {
+  right: 0.5rem;
+}
+
+.password-icon.with-check {
+  right: 2.5rem;
+}
+
+.password-icon.wrong-visible {
+  right: 2.5rem;
+}
 
 .button {
   background-color: #7126b5;
@@ -41,6 +52,7 @@
 
 .button:hover {
   background-color: #a06ece;
+  border-color: #a06ece;
 }
 
 .input-wrapper {
@@ -49,10 +61,18 @@
   align-items: center;
 }
 
-.daftar-disini {
-  color: #7126b5;
-  text-decoration: none;
+.check-icon,
+.wrong-icon {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
+
+.error {
+  border-color: red !important;
+}
+
 .alert-message {
   background-color: red;
   color: white;
@@ -63,4 +83,10 @@
   border-radius: 15px;
   font-size: small;
   margin-top: 15%;
+}
+
+.input:focus {
+  box-shadow: none;
+  border: 1px solid #7126b5;
+  background-color: none;
 }

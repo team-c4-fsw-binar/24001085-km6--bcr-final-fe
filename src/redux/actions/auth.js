@@ -40,7 +40,7 @@ export const login =
         const { data } = error.response;
         if (data && data.message && data.message.includes("User with email")) {
           showErrorToast("Alamat email tidak terdaftar!");
-        }else if (data && data.message && data.message.includes("Password")) {
+        } else if (data && data.message && data.message.includes("Password")) {
           showErrorToast("Maaf, kata sandi salah");
         } else {
           showErrorToast(data.message || "Terjadi kesalahan saat masuk.");
@@ -84,22 +84,21 @@ export const loginWithGoogle = (navigate, accessToken) => async (dispatch) => {
     // redirect to home
     navigate("/"); // it will be not consistent, so alternative we use window until we used the state management
   } catch (error) {
-    toast.error(error?.response?.data?.message);
-
     dispatch(logout());
   }
 };
 
 export const register =
-  (navigate, email, password, name, image, setIsLoading) =>
-  async (dispatch) => {
+  (navigate, name, email, password, phone, setIsLoading) => async (dispatch) => {
     // make loading
     setIsLoading(true);
 
     let data = new FormData();
+    
+    data.append("name", name);
     data.append("email", email);
     data.append("password", password);
-    data.append("name", name);
+    data.append("phone", phone);
 
     let config = {
       method: "post",
@@ -115,11 +114,9 @@ export const register =
       const { token } = data;
       localStorage.setItem("token", token);
 
-      // redirect to home
-      navigate("/");
+      // redirect to OTP
+      navigate("/OTP");
     } catch (error) {
-      toast.error(error?.response?.data?.message);
-
       dispatch(logout());
     }
 
