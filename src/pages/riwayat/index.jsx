@@ -1,15 +1,21 @@
-import { Row, Col, Container, Button, Modal, Image } from "react-bootstrap";
-import { useState, React } from "react";
-import { Link } from "react-router-dom";
-import { BsArrowLeft, BsFunnel } from "react-icons/bs";
-import DetailPemesanan from "../../components/Riwayat/riwayat";
-import PopupCard from "../../components/Riwayat/riwayatcari";
-import Datepicker from "../../components/Riwayat/datepicker";
-import findIcon from "../../assets/img/findIcon.svg";
-const RiwayatPage = () => {
-  const [modalShowCari, setModalShowCari] = useState(false);
-  const [modalShowDate, setModalShowDate] = useState(false);
+import { Row, Col, Container, Button, Modal, Image } from "react-bootstrap"
+import { useState, React } from "react"
+import { useNavigate } from "react-router-dom"
 
+import { BsArrowLeft, BsFunnel } from "react-icons/bs"
+import DetailPemesanan from "../../components/Riwayat/riwayat"
+import PopupCard from "../../components/Riwayat/riwayatcari"
+import Datepicker from "../../components/Riwayat/datepicker"
+import findIcon from "../../assets/img/findIcon.svg"
+const RiwayatPage = () => {
+  const navigate = useNavigate()
+
+  const [modalShowCari, setModalShowCari] = useState(false)
+  const [modalShowDate, setModalShowDate] = useState(false)
+  const BerandaClick = () => {
+    // Mengarahkan ke halaman beranda
+    navigate("/")
+  }
   return (
     <>
       <Container>
@@ -28,6 +34,7 @@ const RiwayatPage = () => {
                 fontSize: "23px",
                 fontWeight: "600",
               }}
+              onClick={BerandaClick}
             >
               <BsArrowLeft className="mx-2 my-1 align-bottom " />
               Beranda
@@ -75,7 +82,7 @@ const RiwayatPage = () => {
       </div> */}
       <DetailPemesanan />
     </>
-  );
-};
+  )
+}
 
-export default RiwayatPage;
+export default RiwayatPage

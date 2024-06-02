@@ -7,12 +7,12 @@ import {
   Image,
   Container,
   Modal,
-} from "react-bootstrap";
-import { BsArrowLeft, BsFunnel, BsSearch } from "react-icons/bs";
+} from "react-bootstrap"
+import { BsArrowLeft, BsFunnel, BsSearch } from "react-icons/bs"
 
-import riwayatkosong from "../../assets/img/riwayatkosong.svg";
+import riwayatkosong from "../../assets/img/riwayatkosong.svg"
 
-const DetailPemesanan = ({ show, onClick }) => {
+const Riwayatkosong = ({ show, onClick }) => {
   return (
     <Container>
       <div className="text-center m-5 p-3">
@@ -57,7 +57,7 @@ const DetailPemesanan = ({ show, onClick }) => {
         </Modal.Footer>
       </Modal>
     </Container>
-  );
-};
+  )
+}
 
-export default DetailPemesanan;
+export default Riwayatkosong
