@@ -4,6 +4,7 @@ import { fetchBookings } from "../../redux/reducers/booking"
 import { fetchPayments } from "../../redux/reducers/payment"
 import { fetchFlights } from "../../redux/reducers/flight"
 import { fetchAirports } from "../../redux/reducers/airport"
+import auth from "../../redux/reducers/auth"
 import {
   Card,
   Row,
@@ -35,6 +36,7 @@ const DetailPemesanan = () => {
   const [isCardClicked, setIsCardClicked] = React.useState(false)
   const [selectedCardIndex, setSelectedCardIndex] = React.useState(null)
   const bookingsData = bookingData.data
+
   useEffect(() => {
     if (bookingStatus === "idle") dispatch(fetchBookings())
     if (paymentStatus === "idle") dispatch(fetchPayments())
@@ -112,14 +114,14 @@ const DetailPemesanan = () => {
     return <Spinner animation="border" />
   }
 
-  if (
-    bookingStatus === "failed" ||
-    paymentStatus === "failed" ||
-    flightStatus === "failed" ||
-    airportStatus === "failed"
-  ) {
-    return <p>Error loading data</p>
-  }
+  // if (
+  //   bookingStatus === "failed" ||
+  //   paymentStatus === "failed" ||
+  //   flightStatus === "failed" ||
+  //   airportStatus === "failed"
+  // ) {
+  //   return <p>Error loading data</p>
+  // }
 
   return (
     <div>

@@ -1,15 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import { useSelector } from "react-redux"
 import axios from "axios"
 
 export const fetchBookings = createAsyncThunk(
   "bookings/fetchBookings",
   async () => {
+    localStorage.getItem("token")
     const response = await axios.get(
       "https://terbangaja-staging-dot-kampus-merdeka-6.df.r.appspot.com/api/bookings",
       {
         headers: {
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzE3MzQ5MTg5LCJleHAiOjE3MTczNTYzODl9.jyBl62SA47e_KxkvsaHbx2CR3Nn1yQbQSrlO3-gXNr4",
+          Authorization: `Bearer ${token}`,
         },
       }
     )

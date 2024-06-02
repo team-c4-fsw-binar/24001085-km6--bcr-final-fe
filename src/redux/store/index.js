@@ -1,8 +1,8 @@
-import { configureStore } from "@reduxjs/toolkit";
-import bookingsReducer from "../reducers/booking";
-import paymentsReducer from "../reducers/payment";
-import flightsReducer from "../reducers/flight";
-import airportsReducer from "../reducers/airport";
+import { configureStore } from "@reduxjs/toolkit"
+import bookingsReducer from "../reducers/booking"
+import paymentsReducer from "../reducers/payment"
+import flightsReducer from "../reducers/flight"
+import airportsReducer from "../reducers/airport"
 
 export const store = configureStore({
   reducer: {
@@ -11,4 +11,4 @@ export const store = configureStore({
     flights: flightsReducer,
     airports: airportsReducer,
   },
-});
+})
