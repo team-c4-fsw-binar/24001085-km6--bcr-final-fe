@@ -40,8 +40,14 @@ export const login =
 
       if (error.response) {
         const { data } = error.response;
-        showErrorToast(data?.message || "Terjadi kesalahan saat masuk.");
-      } else if (error?.request) {
+        if (data && data.message && data.message.includes("User with email")) {
+          showErrorToast("Alamat email tidak terdaftar!");
+        }else if (data && data.message && data.message.includes("Password")) {
+          showErrorToast("Maaf, kata sandi salah");
+        } else {
+          showErrorToast(data.message || "Terjadi kesalahan saat masuk.");
+        }
+      } else if (error.request) {
         showErrorToast("Tidak dapat terhubung ke server.");
       } else {
         showErrorToast("Terjadi kesalahan dalam permintaan.");

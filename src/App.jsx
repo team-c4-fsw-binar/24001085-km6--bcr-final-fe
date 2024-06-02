@@ -1,42 +1,15 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+import { RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-
-import {
-  HomePage,
-  LoginPage,
-  NotFoundPage,
-  OTPPage,
-  RegisterPage,
-} from "./pages";
+import { ToastContainer } from "react-toastify";
 
 import store from "./redux/store";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <HomePage />,
-  },
-  {
-    path: "/register",
-    element: <RegisterPage />,
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/OTP",
-    element: <OTPPage />,
-  },
-  {
-    path: "/*",
-    element: <NotFoundPage />,
-  },
-]);
+import "react-toastify/dist/ReactToastify.css"
 
-function App() {
+import router from "./routes"
+
+export default function App() {
   return (
     <Provider store={store}>
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
@@ -47,5 +20,3 @@ function App() {
     </Provider>
   );
 }
-
-export default App;

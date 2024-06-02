@@ -1,13 +1,13 @@
+import googleIcon from "../../assets/icons/google-login.svg";
+
 import { useGoogleLogin } from "@react-oauth/google";
-import { Button } from "react-bootstrap";
 import PropTypes from "prop-types";
-import googleIcon from "../../assets/icons/google-icon.png";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
 import { loginWithGoogle } from "../../redux/actions/auth";
 
-import "./googleLogin.css";
+import { Button } from "react-bootstrap";
+import "../styles/auth/googleLogin.css";
 
 const GoogleLogin = ({ text }) => {
   const dispatch = useDispatch();

@@ -1,46 +1,51 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Form, Row, Col, Container, Button } from "react-bootstrap";
-import GoogleLogin from "../GoogleLogin";
+import ButtonGoogleLogin from "./GoogleLogin"
 import { login } from "../../redux/actions/auth";
-import "./login.css";
-import { toast } from "react-toastify";
+
+import { Form, Row, Col, Container, Button, Alert } from "react-bootstrap";
+import "../styles/auth/login.css"
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [ passwordVisible, setPasswordVisible ] = useState(false);
-  const [ email, setEmail ] = useState("");
-  const [ password, setPassword ] = useState("");
-  const [ isLoading, setIsLoading ] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // Menambah state untuk pesan kesalahan
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    dispatch(login(navigate, email, password, setIsLoading, showErrorToast));
+    dispatch(login(navigate, email, password, setIsLoading, showErrorAlert)); // Panggil showErrorAlert
   };
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const showErrorToast = (errorMessage) => {
-    toast(errorMessage, { position: "bottom-center" });
+  const showErrorAlert = (errorMessage) => {
+    setErrorMessage(errorMessage); // Set pesan kesalahan
+    setEmailError(true);
+    setPasswordError(true);
   };
 
   return (
     <div className="login-page">
       <Container className="centered-container">
         <h5 className="fw-bold">Masuk</h5>
-        <Form onSubmit={onSubmit}>
+        <Form onSubmit={onSubmit} className="mt-4">
           <Form.Group className="mb-3" controlId="Email">
             <Form.Label>Email address</Form.Label>
             <Form.Control
               type="email"
               placeholder="name@example.com"
-              className="input"
+              className={`input ${emailError ? "error" : ""}`}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -59,7 +64,7 @@ const Login = () => {
               <Form.Control
                 type={passwordVisible ? "text" : "password"}
                 placeholder="Masukkan Password"
-                className="input"
+                className={`input ${passwordError ? "error" : ""}`}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -69,9 +74,9 @@ const Login = () => {
                 className="fa fa-fw field-icon toggle-password"
               >
                 {passwordVisible ? (
-                  <i className="fa fa-eye-slash" />
-                ) : (
                   <i className="fa fa-eye" />
+                ) : (
+                  <i className="fa fa-eye-slash" />
                 )}
               </span>
             </div>
@@ -84,7 +89,7 @@ const Login = () => {
             {isLoading ? "Loading" : "Masuk"}
           </Button>
           <p className="pt-3 text-center">Atau</p>
-          <GoogleLogin text={"Masuk dengan Google"} />
+          <ButtonGoogleLogin text={"Masuk dengan Google"} />
         </Form>
         <p className="pt-3 text-center fw-semibold">
           Belum punya akun?{" "}
@@ -92,6 +97,9 @@ const Login = () => {
             Daftar di sini
           </Link>
         </p>
+        {errorMessage && (
+          <Alert className="alert-message text-center">{errorMessage}</Alert> // Menampilkan alert jika terdapat pesan kesalahan
+        )}
       </Container>
     </div>
   );

@@ -1,6 +1,10 @@
-import flower from "../../assets/img/flower.svg";
-import logo from "../../assets/icons/logo.svg";
-import "./authlogo.css";
+
+// assets
+import flower from "../../assets/img/flower.svg"
+import logo from "../../assets/icons/logo.svg"
+
+// styles
+import "../styles/auth/authLogo.css"
 
 const AuthLogo = () => {
   return (
