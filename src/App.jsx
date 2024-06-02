@@ -1,4 +1,7 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import {
   HomePage,
   LoginPage,
@@ -6,6 +9,8 @@ import {
   OTPPage,
   RegisterPage,
 } from "./pages";
+import HasilPencarian from "./pages/hasil_pencarian/";
+import store from "./redux/store";
 
 const router = createBrowserRouter([
   {
@@ -28,10 +33,23 @@ const router = createBrowserRouter([
     path: "/*",
     element: <NotFoundPage />,
   },
+  {
+    path: "/hasil",
+    element: <HasilPencarian />,
+  },
 ]);
 
-const App = () => {
-  return <RouterProvider router={router} />;
-};
+function App() {
+  return (
+    <Provider store={store}>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <RouterProvider router={router} />
+
+        <ToastContainer theme="colored" />
+      </GoogleOAuthProvider>
+    </Provider>
+  );
+}
+
 
 export default App;

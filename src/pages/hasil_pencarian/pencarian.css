@@ -1,0 +1,143 @@
+p, h1, h2, h3, h4, h5, h6, body, button {
+  font-family:'Inter', sans-serif;
+}
+
+.custom-button {
+    background-color: #7126B5;
+    border-color: #7126B5;
+    color: white;
+}
+
+.outline-button:hover {
+    background-color: #7126B5;
+    border-color: #7126B5;
+    color: white;
+}
+.outline-button {
+    background-color: white;
+    border-color: #7126B5;
+    color: #7126B5;
+}
+
+.custom-button:hover {
+    background-color: #5a1e93;
+    border-color: #5a1e93;
+}
+
+.custom-button:focus {
+  background-color: #5a1e93;
+    border-color: #5a1e93;
+}
+
+.accordion-button {
+  /* background-color: #7126B5; */
+  /* color: white; */
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: white;
+  border: black;
+  /* color: white; */
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+  border: #7126b5;
+
+}
+
+.accordion-button::after {
+  filter: invert(1);
+  border: #7126B5;
+}
+
+.accordion-button::content {
+  color: #7126B5;
+}
+
+.button-ubah {
+  background-color: #73CA5C;
+  border-color: #73CA5C;
+  outline: #73CA5C;
+}
+
+.button-ubah:hover {
+  background-color: #458a32;
+  border-color: #458a32;
+}
+
+h6, h5 {
+  font-weight: bold;  
+}
+
+.ungu {
+  color:#7126B5
+}
+
+.card-accor{
+  border: transparent;
+  text-align: left;
+}
+
+.arrow-pic {
+  top: 100cqb;
+}
+
+.ungu-muda {
+  color:#A06ECE
+}
+
+.card-tanggal{
+  background-color: white;
+  border: transparent;
+}
+
+.card-tanggal:hover {
+  background-color:#A06ECE;
+  color: #fff;
+}
+
+.card-tanggal:active {
+  background-color:#7126B5;
+  color: #fff;
+}
+
+p {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.modal-item {
+  background-color: white;
+  border: transparent;
+}
+
+.modal-item:hover {
+  background-color: #7126B5;
+  border: transparent;
+  color: white;
+}
+
+.scrollable {
+  overflow-y: auto;
+}
+
+.button-pilih {
+  border-radius: 1rem;
+  width: 80%;
+}
+
+p.text-abu {
+  color: #8a8a8a;
+}
+
+.button-kembali {
+  text-align: left;
+}
+
+
+.divider {
+  width: 1px;
+  background-color: #ccc; /* Color of the divider */
+  margin: 0 1px; /* Adjust margin as needed */
+}
