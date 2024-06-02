@@ -1,4 +1,4 @@
-import HomePage from "./home";
+import HomePage from "./Home/HomePage";
 import LoginPage from "./Auth/LoginPage";
 import RegisterPage from "./Auth/RegisterPage";
 import VerifiedOtpPage from "./Auth/VerifiedOtpPage";

@@ -1,6 +1,6 @@
 
 // assets
-import flower from "../../assets/img/flower.svg"
+import flower from "../../assets/images/flower.svg"
 import logo from "../../assets/icons/logo.svg"
 
 // styles
