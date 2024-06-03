@@ -159,11 +159,70 @@ export const verifyOTP =
       // redirect to home
       navigate("/")
     } catch (error) {
+      if (error.response) {
+        const { data } = error.response
+        if (data && data.message && data.message.includes("Invalid OTP!")) {
+          showErrorToast("Maaf, Kode OTP Anda Salah!")
+        } else if (data && data.message && data.message.includes("User")) {
+          showErrorToast("Email belum tereigstrasi!")
+        } else {
+          showErrorToast(data.message || "Terjadi kesalahan saat masuk.")
+        }
+      } else if (error.request) {
+        showErrorToast("Tidak dapat terhubung ke server.")
+      } else {
+        showErrorToast("Terjadi kesalahan dalam permintaan.")
+      }
+
       dispatch(logout())
     }
     setIsLoading(false)
   }
 
+export const resendOTP =
+  (navigate) => async (dispatch, getState) => {
+    const { token } = getState().auth
+
+    if (!token) {
+      dispatch(logout())
+      return
+    }
+
+    let config = {
+      method: "get",
+      url: `${import.meta.env.VITE_BACKEND_API}/auth/profile`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+
+    try {
+      const response = await axios.request(config)
+      const { data } = response.data
+
+      // set user by response
+      dispatch(setUser(data))
+
+      // if there are any success redirection we will redirect it
+      if (navigate) {
+        if (successRedirect) {
+          navigate(successRedirect)
+        }
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message)
+
+      // because token is not valid, we will delete it from local storage
+      dispatch(logout())
+
+      //  if there are any error redirection we will redirect it
+      if (navigate) {
+        if (errorRedirect) {
+          navigate(errorRedirect)
+        }
+      }
+    }
+  }
 export const logout = () => (dispatch) => {
   dispatch(setToken(null))
   dispatch(setUser(null))

@@ -24,7 +24,7 @@ function Register() {
   const [isPasswordValid, setIsPasswordValid] = useState(null)
   const [isPhoneValid, setIsPhoneValid] = useState(null)
   const [errorMessage, setErrorMessage] = useState("")
-  const [successMessage, setSuccessMessage] = useState(false) // State for success message
+  const [successMessage, setSuccessMessage] = useState(false)
 
   useEffect(() => {
     let timer
@@ -202,12 +202,12 @@ function Register() {
             </Link>
           </p>
           {errorMessage && (
-            <Alert variant="danger" className="mt-3 alert-message">
+            <Alert className="mt-3 alert-message">
               {errorMessage}
             </Alert>
           )}
           {successMessage && (
-            <Alert variant="success" className="mt-3 alert-success">
+            <Alert className="mt-3 alert-success">
               Tautan Verifikasi telah dikirim!
             </Alert>
           )}

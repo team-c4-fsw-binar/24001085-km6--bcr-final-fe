@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { Container, Form, Button } from "react-bootstrap"
+import { Container, Form, Button, Alert } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import OtpInput from "react-otp-input"
 
 import logo from "../../assets/icons/logo.svg"
 import back from "../../assets/icons/back.svg"
 
 import "../styles/auth/otp.css"
-import { verifyOTP } from "../../redux/actions/auth"
+import { verifyOTP, resendOTP } from "../../redux/actions/auth"
 
 function OTPComponent() {
   const navigate = useNavigate()
@@ -19,8 +19,19 @@ function OTPComponent() {
   const [isLoading, setIsLoading] = useState(false)
   const [resendTimer, setResendTimer] = useState(60)
   const [error, setError] = useState("")
+  const [showSuccessMessage, setShowSuccessMessage] = useState(true)
 
-  const registeredEmail = localStorage.getItem("email")
+  const email = localStorage.getItem("email")
+
+  useEffect(() => {
+    // Show success message for the first 10 seconds
+    const timer = setTimeout(() => {
+      setShowSuccessMessage(false)
+    }, 1000)
+
+    // Clear the timer when the component unmounts
+    return () => clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     // Start the timer countdown
@@ -34,17 +45,31 @@ function OTPComponent() {
     return () => clearInterval(timer)
   }, [resendTimer])
 
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (token) {
+      dispatch(resendOTP(null))
+    }
+  }, [dispatch])
+
+  const handleResendOTP = () => {
+    if (resendTimer === 0) {
+      dispatch(resendOTP())
+      setResendTimer(60)
+    }
+  }
+
+  const showErrorAlert = (error) => {
+    setError(error)
+  }
+
   const onSubmit = async (e) => {
     e.preventDefault()
 
     // OTP is correct, proceed to verify it with the server
-    if (registeredEmail && otp) {
-      dispatch(verifyOTP(navigate, registeredEmail, otp, setIsLoading))
-      console.log(otp)
-    } else {
-      // Show error message for incorrect OTP
-      setError("Maaf, kode OTP Anda salah!")
-    }
+    if (email && otp) {
+      dispatch(verifyOTP(navigate, email, otp, setIsLoading, showErrorAlert))
+    } 
   }
 
   return (
@@ -54,7 +79,7 @@ function OTPComponent() {
           <img
             className="navbar-brand mb-0 h1"
             src={logo}
-            style={{ width: "7%" }}
+            style={{ width: "6%" }}
           />
         </Container>
       </nav>
@@ -69,12 +94,11 @@ function OTPComponent() {
             <h4 className="fw-bold mt-2">Masukkan OTP</h4>
           </div>
           <p className="text-center mt-4">
-            Ketik 6 digit kode yang dikirimkan ke {registeredEmail}
+            Ketik 6 digit kode yang dikirimkan ke <p className="fw-bold">{email}</p>
           </p>
           <div className="otp-container">
             <Form onSubmit={onSubmit}>
               <OtpInput
-                className="otp-field"
                 value={otp}
                 onChange={setOtp}
                 numInputs={6}
@@ -90,6 +114,7 @@ function OTPComponent() {
                   textAlign: "center",
                   color: "black",
                   backgroundColor: "white",
+                  marginTop: "5%",
                 }}
                 focusStyle={{
                   borderColor: "#007bff",
@@ -97,9 +122,11 @@ function OTPComponent() {
               />
               <p className="text-center mb-4 mt-3">
                 <span
+                  onClick={handleResendOTP}
                   style={{
                     color: resendTimer > 0 ? "black" : "red",
                     fontWeight: resendTimer > 0 ? "normal" : "bold",
+                    cursor: resendTimer === 0 ? "pointer" : "default",
                   }}
                 >
                   {resendTimer > 0
@@ -117,8 +144,21 @@ function OTPComponent() {
             </Form>
           </div>
           {error && (
-            <Alert variant="danger" className="mt-3 alert-message">
+            <Alert
+              variant="danger"
+              className="alert-error"
+              style={{ marginTop: "25%" }}
+            >
               {error}
+            </Alert>
+          )}
+          {showSuccessMessage && (
+            <Alert
+              variant="success"
+              className="alert-success"
+              style={{ marginTop: "25%" }}
+            >
+              Registrasi Berhasil
             </Alert>
           )}
         </Container>

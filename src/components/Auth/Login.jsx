@@ -35,7 +35,7 @@ const Login = () => {
     setPasswordError(true);
   };
 
-  return (
+  return ( 
     <div className="login-page">
       <Container className="centered-container">
         <h5 className="fw-bold">Masuk</h5>
