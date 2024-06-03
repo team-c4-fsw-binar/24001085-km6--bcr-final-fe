@@ -1,6 +1,6 @@
 import { Row, Col } from "react-bootstrap";
-import Register from "../../../components/Register";
-import AuthLogo from "../../../components/AuthLogo/index";
+import Register from "../../components/Auth/Register";
+import AuthLogo from "../../components/Auth/AuthLogo";
 
 const RegisterPage = () => {
   return (

@@ -1,58 +1,74 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { Form, Container, Button, Alert } from "react-bootstrap";
+import React, { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { useDispatch } from "react-redux"
+import { Link } from "react-router-dom"
+import { Form, Container, Button, Alert } from "react-bootstrap"
 import check from "../../assets/icons/check-circle.svg"
-import wrong from "../../assets/icons/false.svg";
-import GoogleLogin from "../GoogleLogin";
-import { register } from "../../redux/actions/auth";
-import "./register.css";
+import wrong from "../../assets/icons/false.svg"
+import GoogleLogin from "./GoogleLogin"
+import { register } from "../../redux/actions/auth"
+import "../styles/auth/register.css"
 
 function Register() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [phone, setPhone] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
-  const [isEmailValid, setIsEmailValid] = useState(null);
-  const [isPasswordValid, setIsPasswordValid] = useState(null);
-  const [isPhoneValid, setIsPhoneValid] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(null)
+  const [isPasswordValid, setIsPasswordValid] = useState(null)
+  const [isPhoneValid, setIsPhoneValid] = useState(null)
+  const [errorMessage, setErrorMessage] = useState("")
+  const [successMessage, setSuccessMessage] = useState(false) // State for success message
+
+  useEffect(() => {
+    let timer
+    if (successMessage) {
+      timer = setTimeout(() => {
+        setSuccessMessage(false)
+      }, 10000)
+    }
+    return () => clearTimeout(timer)
+  }, [successMessage])
+
+  const handleSuccessMessage = () => {
+    setSuccessMessage(true)
+  }
 
   const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
-  };
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return re.test(String(email).toLowerCase())
+  }
 
   const validatePassword = (password) => {
-    return password.length >= 8;
-  };
+    return password.length >= 8
+  }
 
   const validatePhone = (phone) => {
-    return phone.length >= 11;
-  };
+    return phone.length >= 11
+  }
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+    setPasswordVisible(!passwordVisible)
+  }
 
   const showErrorAlert = (errorMessage) => {
-    setErrorMessage(errorMessage);
-  };
+    setErrorMessage(errorMessage)
+  }
 
   const onSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (isEmailValid && isPasswordValid && isPhoneValid) {
-      dispatch(register(navigate, name, email, password, phone, setIsLoading)); // Pass setIsLoading to register action
+      dispatch(register(navigate, name, email, password, phone, setIsLoading))
+      handleSuccessMessage()
     }
-  };
+  }
 
   return (
     <>
@@ -80,13 +96,13 @@ function Register() {
                   className={`input ${isEmailValid === false ? "error" : ""}`}
                   value={email}
                   onChange={(e) => {
-                    setEmail(e.target.value);
-                    const isValid = validateEmail(e.target.value);
-                    setIsEmailValid(isValid);
+                    setEmail(e.target.value)
+                    const isValid = validateEmail(e.target.value)
+                    setIsEmailValid(isValid)
                     if (!isValid) {
-                      setErrorMessage("Email tidak valid!");
+                      setErrorMessage("Email tidak valid!")
                     } else {
-                      setErrorMessage("");
+                      setErrorMessage("")
                     }
                   }}
                   required
@@ -108,13 +124,13 @@ function Register() {
                   className={`input ${isPhoneValid === false ? "error" : ""}`}
                   value={phone}
                   onChange={(e) => {
-                    setPhone(e.target.value);
-                    const isValid = validatePhone(e.target.value);
-                    setIsPhoneValid(isValid);
+                    setPhone(e.target.value)
+                    const isValid = validatePhone(e.target.value)
+                    setIsPhoneValid(isValid)
                     if (!isValid) {
-                      setErrorMessage("Phone berisi 11 - 13 karakter");
+                      setErrorMessage("Phone berisi 11 - 13 karakter")
                     } else {
-                      setErrorMessage("");
+                      setErrorMessage("")
                     }
                   }}
                   required
@@ -138,13 +154,13 @@ function Register() {
                   }`}
                   value={password}
                   onChange={(e) => {
-                    setPassword(e.target.value);
-                    const isValid = validatePassword(e.target.value);
-                    setIsPasswordValid(isValid);
+                    setPassword(e.target.value)
+                    const isValid = validatePassword(e.target.value)
+                    setIsPasswordValid(isValid)
                     if (!isValid) {
-                      setErrorMessage("Password min 8 karakter!");
+                      setErrorMessage("Password min 8 karakter!")
                     } else {
-                      setErrorMessage("");
+                      setErrorMessage("")
                     }
                   }}
                   required
@@ -180,17 +196,25 @@ function Register() {
             <GoogleLogin text={"Daftar dengan Google"} />
           </Form>
           <p className="pt-3 text-center fw-semibold">
-            Sudah punya akun? <Link to="/login">Masuk di sini</Link>
+            Sudah punya akun?{" "}
+            <Link to="/login" className="daftar-disini">
+              Masuk di sini
+            </Link>
           </p>
           {errorMessage && (
             <Alert variant="danger" className="mt-3 alert-message">
               {errorMessage}
             </Alert>
           )}
+          {successMessage && (
+            <Alert variant="success" className="mt-3 alert-success">
+              Tautan Verifikasi telah dikirim!
+            </Alert>
+          )}
         </Container>
       </div>
     </>
-  );
+  )
 }
 
-export default Register;
+export default Register

@@ -1,12 +1,11 @@
-import OTPComponent from "../../../components/OTP";
-import { Container } from "react-bootstrap";
+import OTPComponent from "../../components/Auth/OTP"
 
 const OTPPage = () => {
   return (
     <div>
-        <OTPComponent />
+      <OTPComponent />
     </div>
-  );
-};
+  )
+}
 
-export default OTPPage;
+export default OTPPage

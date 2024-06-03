@@ -61,6 +61,10 @@
   align-items: center;
 }
 
+.valid-email{
+  background-color: white !important;
+}
+
 .check-icon,
 .wrong-icon {
   position: absolute;
@@ -75,6 +79,18 @@
 
 .alert-message {
   background-color: red;
+  color: white;
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 10px;
+  border-radius: 15px;
+  font-size: small;
+  margin-top: 15%;
+}
+
+.alert-success {
+  background-color: #73CA5C;
   color: white;
   width: 50%;
   margin: 0 auto;
