@@ -17,7 +17,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(""); // Menambah state untuk pesan kesalahan
+  const [errorMessage, setErrorMessage] = useState(""); 
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +35,7 @@ const Login = () => {
     setPasswordError(true);
   };
 
-  return (
+  return ( 
     <div className="login-page">
       <Container className="centered-container">
         <h5 className="fw-bold">Masuk</h5>

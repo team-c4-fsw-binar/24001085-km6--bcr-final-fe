@@ -1,7 +1,7 @@
 import HomePage from "./Home/HomePage";
 import LoginPage from "./Auth/LoginPage";
 import RegisterPage from "./Auth/RegisterPage";
-import VerifiedOtpPage from "./Auth/VerifiedOtpPage";
+import VerifyOtpPage from "./Auth/VerifyOtpPage";
 import NotFoundPage from "./not-found";
 
-export { HomePage, LoginPage, RegisterPage, VerifiedOtpPage, NotFoundPage };
+export { HomePage, LoginPage, RegisterPage, VerifyOtpPage, NotFoundPage };

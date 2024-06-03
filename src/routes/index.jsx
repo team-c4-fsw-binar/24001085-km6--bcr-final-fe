@@ -5,7 +5,7 @@ import {
   HomePage,
   LoginPage,
   NotFoundPage,
-  VerifiedOtpPage,
+  VerifyOtpPage,
   RegisterPage
 } from "../pages"
 
@@ -23,8 +23,8 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: "/OTP",
-    element: <VerifiedOtpPage />,
+    path: "/verify-otp",
+    element: <VerifyOtpPage />,
   },
   {
     path: "/*",

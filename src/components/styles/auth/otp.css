@@ -1,0 +1,56 @@
+.back {
+  margin-left: 25%;
+}
+
+p {
+  font-size: 14px;
+}
+
+.button-otp {
+  background-color: #7126b5;
+  border-radius: 16px;
+  height: 40px;
+  width: 100%;
+}
+
+.button-otp:hover {
+  background-color: #a06ece;
+  border-color: #a06ece;
+}
+
+.otp-container {
+  display: flex;
+  justify-content: center;
+}
+
+.alert-error {
+  background-color: red;
+  color: white;
+  width: fit-content;
+  margin: 0 auto;
+  text-align: center;
+  padding: 10px;
+  border-radius: 15px;
+  font-size: small;
+}
+
+.alert-registrasi {
+  background-color: #73CA5C;
+  color: white;
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 10px;
+  border-radius: 15px;
+  font-size: small;
+}
+
+@media (max-width: 768px) { 
+  .back{
+    margin-left: 0;
+    margin-bottom: 20px;
+  }
+  h4{
+    margin-left: 10px;
+  }
+ }
