@@ -6,7 +6,9 @@ import {
   LoginPage,
   NotFoundPage,
   VerifyOtpPage,
-  RegisterPage
+  RegisterPage,
+  SearchingPage,
+  
 } from "../pages"
 
 const router = createBrowserRouter([
@@ -30,6 +32,10 @@ const router = createBrowserRouter([
     path: "/*",
     element: <NotFoundPage />,
   },
+  {
+    path: "/search",
+    element: <SearchingPage />,
+  }
 ]);
 
 export default router

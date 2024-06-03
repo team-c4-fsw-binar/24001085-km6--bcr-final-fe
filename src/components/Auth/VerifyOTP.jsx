@@ -5,10 +5,10 @@ import { useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import OtpInput from "react-otp-input"
 
+import { verifyOTP, resendOTP } from "../../redux/actions/auth"
 import { logoTerbangAja, backIcon } from "../../assets"
 
 import "../styles/auth/otp.css"
-import { verifyOTP, resendOTP } from "../../redux/actions/auth"
 
 function OTPComponent() {
   const navigate = useNavigate()

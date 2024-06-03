@@ -7,12 +7,12 @@ export const login =
   async (dispatch) => {
     // make loading
     setIsLoading(true)
-
+    
     let data = JSON.stringify({
       email,
       password,
     })
-
+    
     let config = {
       method: "post",
       url: `${import.meta.env.VITE_BACKEND_API}/api/auth/login`,
@@ -118,7 +118,7 @@ export const register =
       localStorage.setItem("email", email)
 
       // redirect to OTP
-      navigate("/OTP")
+      navigate("/verify-otp")
     } catch (error) {
       dispatch(logout())
     }
