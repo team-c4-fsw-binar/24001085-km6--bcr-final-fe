@@ -1,5 +1,4 @@
 import axios from "axios"
-import { toast } from "react-toastify"
 import { setToken, setUser } from "../reducers/auth"
 
 export const login =
@@ -114,11 +113,12 @@ export const register =
       const { data } = response.data
       const { token } = data
       const { email } = data.user
+
       localStorage.setItem("token", token)
       localStorage.setItem("email", email)
 
       // redirect to OTP
-      navigate("/OTP")
+      navigate("/verify-otp")
     } catch (error) {
       dispatch(logout())
     }
@@ -164,7 +164,7 @@ export const verifyOTP =
         if (data && data.message && data.message.includes("Invalid OTP!")) {
           showErrorToast("Maaf, Kode OTP Anda Salah!")
         } else if (data && data.message && data.message.includes("User")) {
-          showErrorToast("Email belum tereigstrasi!")
+          showErrorToast("Email belum teregistrasi!")
         } else {
           showErrorToast(data.message || "Terjadi kesalahan saat masuk.")
         }
@@ -179,50 +179,32 @@ export const verifyOTP =
     setIsLoading(false)
   }
 
-export const resendOTP =
-  (navigate) => async (dispatch, getState) => {
-    const { token } = getState().auth
+export const resendOTP = () => async (dispatch, getState) => {
+  const { token } = getState().auth // Mendapatkan token dari state
 
-    if (!token) {
-      dispatch(logout())
-      return
-    }
-
-    let config = {
-      method: "get",
-      url: `${import.meta.env.VITE_BACKEND_API}/auth/profile`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-
-    try {
-      const response = await axios.request(config)
-      const { data } = response.data
-
-      // set user by response
-      dispatch(setUser(data))
-
-      // if there are any success redirection we will redirect it
-      if (navigate) {
-        if (successRedirect) {
-          navigate(successRedirect)
-        }
-      }
-    } catch (error) {
-      toast.error(error?.response?.data?.message)
-
-      // because token is not valid, we will delete it from local storage
-      dispatch(logout())
-
-      //  if there are any error redirection we will redirect it
-      if (navigate) {
-        if (errorRedirect) {
-          navigate(errorRedirect)
-        }
-      }
-    }
+  if (!token) {
+    dispatch(logout())
+    return
   }
+
+  let config = {
+    method: "get",
+    url: `${import.meta.env.VITE_BACKEND_API}/auth/resend-otp`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
+  try {
+    const response = await axios.request(config)
+    const { data } = response.data
+    const { token } = data
+
+    localStorage.setItem("token", token) 
+  } catch (error) {
+    dispatch(logout())
+  }
+}
 
 export const logout = () => (dispatch) => {
   dispatch(setToken(null))

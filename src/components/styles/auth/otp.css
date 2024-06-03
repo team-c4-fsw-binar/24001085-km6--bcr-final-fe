@@ -11,6 +11,7 @@ p {
   border-radius: 16px;
   height: 40px;
   width: 100%;
+  border-color: #7126b5;
 }
 
 .button-otp:hover {
@@ -35,7 +36,7 @@ p {
 }
 
 .alert-registrasi {
-  background-color: #73CA5C;
+  background-color: #73ca5c;
   color: white;
   width: 50%;
   margin: 0 auto;
@@ -45,12 +46,24 @@ p {
   font-size: small;
 }
 
-@media (max-width: 768px) { 
-  .back{
-    margin-left: 0;
+@media (max-width: 768px) {
+  .back {
+    margin-left: 30px;
     margin-bottom: 20px;
   }
-  h4{
-    margin-left: 10px;
+  .masuk{
+    margin-left: 30px;
   }
- }
+}
+
+@media (min-width: 768px) {
+  @media (max-width: 1110px) {
+    .back {
+      margin-left: 20%;
+      margin-bottom: 20px;
+    }
+    .masuk{
+      margin-left: 16%;
+    }
+  }
+}

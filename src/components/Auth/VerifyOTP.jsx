@@ -90,7 +90,7 @@ function OTPComponent() {
       <div className="OTP-Form">
         <Container className="centered-container">
           <div className="justify-content-center">
-            <h4 className="fw-bold mt-2">Masukkan OTP</h4>
+            <h4 className="fw-bold mt-2 masuk">Masukkan OTP</h4>
           </div>
           <p className="text-center mt-4">
             Ketik 6 digit kode yang dikirimkan ke <p className="fw-bold">{email}</p>
