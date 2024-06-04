@@ -1,0 +1,14 @@
+.google-button {
+  background-color: white;
+  border-radius: 16px;
+  height: 50px;
+  color:black;
+  border-color: #7126B5;
+}
+.google-button:hover {
+  background-color: rgb(0, 76, 255);
+  color: white;
+}
+.google-icon{
+  width: 30px;
+}
