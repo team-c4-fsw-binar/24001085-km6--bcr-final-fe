@@ -8,7 +8,6 @@ import GoogleLogin from "./GoogleLogin"
 
 import * as icons from "../../assets/icons"
 
-
 import "../styles/auth/register.css"
 
 function Register() {
