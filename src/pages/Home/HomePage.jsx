@@ -19,6 +19,7 @@ import {
   nextIcon,
   checkIcon
 } from "../../assets"
+import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   const [fromModalOpen, setFromModalOpen] = useState(false);
@@ -221,9 +222,11 @@ const HomePage = () => {
               </Form.Group>
             </Col>
           </Row>
-          <Button className='font-title-bold-16 w-100 custom-button' variant="primary" type="submit">
-            Cari Penerbangan
-          </Button>
+          <Link to='/search'>
+            <Button className='font-title-bold-16 w-100 custom-button' variant="primary" type="submit">
+                Cari Penerbangan
+            </Button>
+          </Link>
         </Form>
       </Container>
 

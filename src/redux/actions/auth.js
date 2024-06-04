@@ -6,12 +6,12 @@ export const login =
   async (dispatch) => {
     // make loading
     setIsLoading(true)
-
+    
     let data = JSON.stringify({
       email,
       password,
     })
-
+    
     let config = {
       method: "post",
       url: `${import.meta.env.VITE_BACKEND_API}/api/auth/login`,
