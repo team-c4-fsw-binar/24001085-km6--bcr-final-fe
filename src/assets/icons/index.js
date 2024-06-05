@@ -5,6 +5,7 @@ import seatIcon from "./seat-icon.svg"
 import findIcon from "./find-icon.svg"
 import nextIcon from "./next-icon.svg"
 import editIcon from "./edit.svg"
+import areaIcon from "./area.svg"
 import blackLeftIcon from "./back-icon.svg"
 import whiteLeftIcon from "./arrow-left.svg"
 import checkIcon from "./check-icon.svg"
@@ -30,19 +31,20 @@ export {
   findIcon,
   nextIcon,
   editIcon,
+  areaIcon,
   blackLeftIcon,
   whiteLeftIcon,
   checkIcon,
   falseIcon,
+  notifIcon,
+  closeIcon,
   longArrow,
   baggageDelay,
   logoutIcon,
+  searchIcon,
   settingIcon,
   filterButton,
-  searchIcon,
-  notifIcon,
-  closeIcon,
-  informationIcon,
   dropdown_Down,
-  dropdown_Up
+  dropdown_Up,
+  informationIcon,
 }

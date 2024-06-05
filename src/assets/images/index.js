@@ -11,7 +11,7 @@ import mastercardPayment from "./mastercard.svg"
 import paypalPayment from "./paypal.svg"
 import visaPayment from "./visa.svg"
 import amexPayment from "./amex.svg"
-import finishedPage from "./amex.svg"
+import finishedPage from "./finished.svg"
 
 export {
   bannerImg,

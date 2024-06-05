@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom"
 
 // pages
 import {
@@ -12,8 +12,8 @@ import {
   UpdateProfilePage,
   NotificationPage,
   CheckoutPage,
-  PaymentPage
-  
+  PaymentPage,
+  HistoryPage
 } from "../pages"
 
 const router = createBrowserRouter([
@@ -32,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: "/verify-otp",
     element: <VerifyOtpPage />,
+  },
+  {
+    path: "/history",
+    element: <HistoryPage />,
   },
   {
     path: "/*",

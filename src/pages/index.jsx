@@ -8,7 +8,8 @@ import AccountPage from "./Profile/ProfilePage";
 import UpdateProfilePage from "./Profile/UpdateProfile"
 import NotificationPage from "./Notification/NotificationPage"
 import CheckoutPage from "./Payment/CheckoutPage"
-import PaymentPage from "./Payment"
+import PaymentPage from "./Payment/PaymentPage"
+import HistoryPage from "./History/HistoryPage"
 
 
 export { 
@@ -22,5 +23,6 @@ export {
   UpdateProfilePage,
   NotificationPage,
   CheckoutPage,
-  PaymentPage
+  PaymentPage,
+  HistoryPage
 };

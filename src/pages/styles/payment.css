@@ -167,13 +167,6 @@
     color: #FFFFFF;
 }
 
-/* form control */
-.form-control {
-    border: none;
-    border-bottom: solid 1px;
-    border-radius: 0;
-}
-
 /* button penerbangan lain */
 .btn-penerbangan-lain{
     background-color: #D0B7E6;
