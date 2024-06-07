@@ -5,7 +5,6 @@ import RegisterPage from "./Auth/RegisterPage";
 import VerifyOtpPage from "./Auth/VerifyOtpPage";
 import NotFoundPage from "./not-found";
 import AccountPage from "./Profile/ProfilePage";
-import UpdateProfilePage from "./Profile/UpdateProfile"
 import NotificationPage from "./Notification/NotificationPage"
 import CheckoutPage from "./Payment/CheckoutPage"
 import PaymentPage from "./Payment/PaymentPage"
@@ -19,7 +18,6 @@ export {
   VerifyOtpPage, 
   NotFoundPage,
   AccountPage,
-  UpdateProfilePage,
   NotificationPage,
   CheckoutPage,
   PaymentPage

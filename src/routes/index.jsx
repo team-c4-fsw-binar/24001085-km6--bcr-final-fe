@@ -9,7 +9,6 @@ import {
   RegisterPage,
   SearchingPage,
   AccountPage,
-  UpdateProfilePage,
   NotificationPage,
   CheckoutPage,
   PaymentPage
@@ -44,10 +43,6 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: <AccountPage />,
-  },
-  {
-    path: "/update-profile",
-    element: <UpdateProfilePage />,
   },
   {
     path: "/notification",
