@@ -3,13 +3,10 @@ import { useNavigate, Link } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { Form, Container, Button, Alert } from "react-bootstrap"
 import { register } from "../../redux/actions/auth"
-
+import "../styles/auth/auth.css"
 import GoogleLogin from "./GoogleLogin"
 
 import { checkIcon, falseIcon } from "../../assets"
-
-
-import "../styles/auth/register.css"
 
 function Register() {
   const navigate = useNavigate()
@@ -52,7 +49,8 @@ function Register() {
   }
 
   const validatePhone = (phone) => {
-    return phone.length >= 11
+    const re = /^08\d{9,11}$/
+    return re.test(phone)
   }
 
   const togglePasswordVisibility = () => {
@@ -72,150 +70,228 @@ function Register() {
     }
   }
 
+  const styles = {
+    registerPage: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+    },
+    centeredContainer: {
+      maxWidth: "500px",
+      width: "100%",
+    },
+    input: {
+      borderRadius: "16px",
+      height: "50px",
+    },
+    fieldIcon: {
+      position: "absolute",
+      right: "10px",
+      cursor: "pointer",
+      zIndex: "2",
+    },
+    button: {
+      backgroundColor: "#7126b5",
+      borderRadius: "16px",
+      height: "50px",
+      width: "100%",
+      borderColor: "#7126b5",
+    },
+    buttonHover: {
+      backgroundColor: "#a06ece",
+      borderColor: "#a06ece",
+    },
+    inputWrapper: {
+      position: "relative",
+      display: "flex",
+      alignItems: "center",
+    },
+    checkIcon: {
+      position: "absolute",
+      right: "0.5rem",
+      top: "50%",
+      transform: "translateY(-50%)",
+    },
+    wrongIcon: {
+      position: "absolute",
+      right: "0.5rem",
+      top: "50%",
+      transform: "translateY(-50%)",
+    },
+    daftarDisini: {
+      textDecoration: "none",
+      color: "#7126b5",
+    },
+    alertMessage: {
+      position: "absolute",
+      backgroundColor: "red",
+      color: "white",
+      bottom: "0",
+      marginBottom: "10px",
+      width: "fit-content",
+      padding: "10px",
+      borderRadius: "15px",
+      fontSize: "small",
+      borderColor: "red",
+    },
+    alertSuccessRegis: {
+      position: "absolute",
+      backgroundColor: "#73ca5c",
+      color: "white",
+      bottom: "0",
+      marginBottom: "5px",
+      width: "fit-content",
+      padding: "10px",
+      borderRadius: "15px",
+      fontSize: "small",
+      borderColor: "#73ca5c",
+    },
+    inputFocus: {
+      boxShadow: "none",
+      border: "1px solid #7126b5",
+      backgroundColor: "none",
+    },
+  }
+
   return (
-    <>
-      <div className="register-page">
-        <Container className="centered-container">
-          <h4 className="fw-bold pb-3">Daftar</h4>
-          <Form onSubmit={onSubmit}>
-            <Form.Group className="mb-2" controlId="Name">
-              <Form.Label>Nama</Form.Label>
+    <div style={styles.registerPage}>
+      <Container style={styles.centeredContainer}>
+        <h4 className="fw-bold pb-3">Daftar</h4>
+        <Form onSubmit={onSubmit}>
+          <Form.Group className="mb-2" controlId="Name">
+            <Form.Label className="fw-medium">Nama</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Nama Lengkap"
+              style={styles.input}
+              value={name}
+              className="input"
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-2" controlId="Email">
+            <Form.Label className="fw-medium">Email address</Form.Label>
+            <div className="input-wrapper">
               <Form.Control
-                type="text"
-                placeholder="Nama Lengkap"
-                className="input"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                type="email"
+                placeholder="name@example.com"
+                style={styles.input}
+                className={`input ${isEmailValid === false ? "error" : ""}`}
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  const isValid = validateEmail(e.target.value)
+                  setIsEmailValid(isValid)
+                  if (!isValid) {
+                    setErrorMessage("Email tidak valid!")
+                  } else {
+                    setErrorMessage("")
+                  }
+                }}
                 required
               />
-            </Form.Group>
-            <Form.Group className="mb-2" controlId="Email">
-              <Form.Label>Email address</Form.Label>
-              <div className="input-wrapper">
-                <Form.Control
-                  type="email"
-                  placeholder="name@example.com"
-                  className={`input ${isEmailValid === false ? "error" : ""}`}
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value)
-                    const isValid = validateEmail(e.target.value)
-                    setIsEmailValid(isValid)
-                    if (!isValid) {
-                      setErrorMessage("Email tidak valid!")
-                    } else {
-                      setErrorMessage("")
-                    }
-                  }}
-                  required
-                />
-                {isEmailValid === true && (
-                  <img src={checkIcon} alt="valid" className="check-icon" />
-                )}
-                {isEmailValid === false && (
-                  <img src={falseIcon} alt="invalid" className="wrong-icon" />
-                )}
-              </div>
-            </Form.Group>
-            <Form.Group className="mb-2" controlId="Phone">
-              <Form.Label>Nomor Telepon</Form.Label>
-              <div className="input-wrapper">
-                <Form.Control
-                  type="text"
-                  placeholder="08**********"
-                  className={`input ${isPhoneValid === false ? "error" : ""}`}
-                  value={phone}
-                  onChange={(e) => {
-                    setPhone(e.target.value)
-                    const isValid = validatePhone(e.target.value)
-                    setIsPhoneValid(isValid)
-                    if (!isValid) {
-                      setErrorMessage("Phone berisi 11 - 13 karakter")
-                    } else {
-                      setErrorMessage("")
-                    }
-                  }}
-                  required
-                />
-                {isPhoneValid === true && (
-                  <img src={checkIcon} alt="valid" className="check-icon" />
-                )}
-                {isPhoneValid === false && (
-                  <img src={falseIcon} alt="invalid" className="wrong-icon" />
-                )}
-              </div>
-            </Form.Group>
-            <Form.Group className="mb-2" controlId="Password">
-              <Form.Label>Password</Form.Label>
-              <div className="input-wrapper">
-                <Form.Control
-                  type={passwordVisible ? "text" : "password"}
-                  placeholder="Masukkan Password"
-                  className={`input ${
-                    isPasswordValid === false ? "error" : ""
-                  }`}
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value)
-                    const isValid = validatePassword(e.target.value)
-                    setIsPasswordValid(isValid)
-                    if (!isValid) {
-                      setErrorMessage("Password min 8 karakter!")
-                    } else {
-                      setErrorMessage("")
-                    }
-                  }}
-                  required
-                />
-                <span
-                  onClick={togglePasswordVisibility}
-                  className={`fa fa-fw field-icon toggle-password password-icon ${
-                    isPasswordValid === true ? "with-check" : ""
-                  } ${isPasswordValid === false ? "wrong-visible" : ""}`}
-                >
-                  {passwordVisible ? (
-                    <i className="fa fa-eye" />
-                  ) : (
-                    <i className="fa fa-eye-slash" />
-                  )}
-                </span>
-                {isPasswordValid === true && (
-                  <img src={checkIcon} alt="valid" className="check-icon" />
-                )}
-                {isPasswordValid === false && (
-                  <img src={falseIcon} alt="invalid" className="wrong-icon" />
-                )}
-              </div>
-            </Form.Group>
-            <Button
-              type="submit"
-              className="btn button fw-semibold mt-2"
-              disabled={isLoading}
-            >
-              {isLoading ? "Loading" : "Daftar"}
-            </Button>
-            <p className="pt-2 text-center">Atau</p>
-            <GoogleLogin text={"Daftar dengan Google"} />
-          </Form>
-          <p className="pt-3 text-center fw-semibold">
-            Sudah punya akun?{" "}
-            <Link to="/login" className="daftar-disini">
-              Masuk di sini
-            </Link>
-          </p>
-          {errorMessage && (
-            <Alert className="mt-3 alert-message">
-              {errorMessage}
-            </Alert>
-          )}
-          {successMessage && (
-            <Alert className="mt-3 alert-success">
-              Tautan Verifikasi telah dikirim!
-            </Alert>
-          )}
-        </Container>
-      </div>
-    </>
+              {isEmailValid === true && (
+                <img src={checkIcon} alt="valid" style={styles.checkIcon} />
+              )}
+              {isEmailValid === false && (
+                <img src={falseIcon} alt="invalid" style={styles.wrongIcon} />
+              )}
+            </div>
+          </Form.Group>
+          <Form.Group className="mb-2" controlId="Phone">
+            <Form.Label className="fw-medium">Nomor Telepon</Form.Label>
+            <div className="input-wrapper" style={styles.inputWrapper}>
+              <Form.Control
+                type="text"
+                placeholder="08**********"
+                style={styles.input}
+                className={`input ${isPhoneValid === false ? "error" : ""}`}
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value)
+                  const isValid = validatePhone(e.target.value)
+                  setIsPhoneValid(isValid)
+                  if (!isValid) {
+                    setErrorMessage("Phone berisi 11 - 13 karakter")
+                  } else {
+                    setErrorMessage("")
+                  }
+                }}
+                required
+              />
+              {isPhoneValid === true && (
+                <img src={checkIcon} alt="valid" style={styles.checkIcon} />
+              )}
+              {isPhoneValid === false && (
+                <img src={falseIcon} alt="invalid" style={styles.wrongIcon} />
+              )}
+            </div>
+          </Form.Group>
+          <Form.Group className="mb-2" controlId="Password">
+            <Form.Label className="fw-medium">Buat Password</Form.Label>
+            <div className="input-wrapper">
+              <Form.Control
+                type="password"
+                placeholder="Buat Password"
+                style={styles.input}
+                className={`input ${isPasswordValid === false ? "error" : ""}`}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  const isValid = validatePassword(e.target.value)
+                  setIsPasswordValid(isValid)
+                  if (!isValid) {
+                    setErrorMessage("Password min 8 karakter!")
+                  } else {
+                    setErrorMessage("")
+                  }
+                }}
+                required
+              />
+              {isPasswordValid === true && (
+                <img src={checkIcon} alt="valid" style={styles.checkIcon} />
+              )}
+              {isPasswordValid === false && (
+                <img src={falseIcon} alt="invalid" style={styles.wrongIcon} />
+              )}
+            </div>
+          </Form.Group>
+          <Button
+            type="submit"
+            className="button-regis fw-semibold mt-2"
+            disabled={isLoading}
+            style={styles.button}
+          >
+            {isLoading ? "Loading" : "Daftar"}
+          </Button>
+          <p className="mt-2 text-center mb-2">Atau</p>
+          <GoogleLogin text={"Daftar dengan Google"} />
+        </Form>
+        <p className="mt-3 text-center fw-semibold">
+          Sudah punya akun?{" "}
+          <Link
+            to="/login"
+            className="daftar-disini"
+            style={styles.daftarDisini}
+          >
+            Masuk di sini
+          </Link>
+        </p>
+      </Container>
+      {errorMessage && (
+        <Alert style={styles.alertMessage} className="mt-3 text-center">
+          {errorMessage}
+        </Alert>
+      )}
+      {successMessage && (
+        <Alert style={styles.alertSuccessRegis} className="mt-3 text-center">
+          Tautan Verifikasi telah dikirim!
+        </Alert>
+      )}
+    </div>
   )
 }
 

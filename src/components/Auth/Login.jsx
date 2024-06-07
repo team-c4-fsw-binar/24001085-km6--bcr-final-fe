@@ -1,51 +1,101 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useState } from "react"
+import { useNavigate, Link } from "react-router-dom"
+import { useDispatch } from "react-redux"
 import ButtonGoogleLogin from "./GoogleLogin"
-import { login } from "../../redux/actions/auth";
+import { login, resetPassword } from "../../redux/actions/auth"
 
-import { Form, Row, Col, Container, Button, Alert } from "react-bootstrap";
-import "../styles/auth/login.css"
+import { Form, Row, Col, Container, Button, Alert } from "react-bootstrap"
 
 const Login = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(""); 
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [emailError, setEmailError] = useState(false)
+  const [passwordError, setPasswordError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
 
   const onSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    dispatch(login(navigate, email, password, setIsLoading, showErrorAlert)); // Panggil showErrorAlert
-  };
+    dispatch(login(navigate, email, password, setIsLoading, showErrorAlert))
+  }
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+    setPasswordVisible(!passwordVisible)
+  }
 
   const showErrorAlert = (errorMessage) => {
-    setErrorMessage(errorMessage); // Set pesan kesalahan
-    setEmailError(true);
-    setPasswordError(true);
-  };
+    setErrorMessage(errorMessage)
+    setEmailError(true)
+    setPasswordError(true)
+  }
 
-  return ( 
-    <div className="login-page">
-      <Container className="centered-container">
+  const styles = {
+    container: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+    },
+    form: {
+      maxWidth: "500px",
+      width: "100%",
+    },
+    input: {
+      borderRadius: "16px",
+      height: "50px",
+    },
+    forgot: {
+      color: "#7126b5",
+      cursor: "pointer",
+    },
+    button: {
+      backgroundColor: "#7126b5",
+      borderRadius: "16px",
+      height: "50px",
+      width: "100%",
+      borderColor: "#7126b5",
+    },
+    inputWrapper: {
+      position: "relative",
+      display: "flex",
+      alignItems: "center",
+    },
+    link: {
+      color: "#7126b5",
+      textDecoration: "none",
+    },
+    alert: {
+      position: "absolute",
+      backgroundColor: "red",
+      color: "white",
+      bottom: "30px",
+      width: "fit-content",
+      padding: "10px",
+      borderRadius: "15px",
+      fontSize: "small",
+      borderColor: "red",
+    },
+  }
+
+  return (
+    <div style={styles.container}>
+      <Container style={styles.form}>
         <h5 className="fw-bold">Masuk</h5>
         <Form onSubmit={onSubmit} className="mt-4">
           <Form.Group className="mb-3" controlId="Email">
-            <Form.Label>Email address</Form.Label>
+            <Form.Label className="fw-medium">Email address</Form.Label>
             <Form.Control
               type="email"
               placeholder="name@example.com"
-              className={`input ${emailError ? "error" : ""}`}
+              style={{
+                ...styles.input,
+                ...(emailError ? { border: "1px solid red" } : {}),
+              }}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -54,17 +104,22 @@ const Login = () => {
           <Form.Group className="mb-3" controlId="Password">
             <Row>
               <Col className="col-md-6">
-                <Form.Label>Password</Form.Label>
+                <Form.Label className="fw-medium">Password</Form.Label>
               </Col>
               <Col className="col-md-6 text-end">
-                <Form.Label className="forgot">Lupa Kata Sandi</Form.Label>
+                <Link to="/forgot-password">
+                  <Form.Label style={styles.forgot}>Lupa Kata Sandi</Form.Label>
+                </Link>
               </Col>
             </Row>
-            <div className="input-wrapper">
+            <div style={styles.inputWrapper}>
               <Form.Control
                 type={passwordVisible ? "text" : "password"}
-                placeholder="Masukkan Password"
-                className={`input ${passwordError ? "error" : ""}`}
+                placeholder="***************"
+                style={{
+                  ...styles.input,
+                  ...(passwordError ? { border: "1px solid red" } : {}),
+                }}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -83,26 +138,27 @@ const Login = () => {
           </Form.Group>
           <Button
             type="submit"
-            className="button fw-semibold mt-2"
+            style={{
+              ...styles.button,
+              ...(isLoading ? { backgroundColor: "#a06ece" } : {}),
+            }}
             disabled={isLoading}
           >
             {isLoading ? "Loading" : "Masuk"}
           </Button>
-          <p className="pt-3 text-center">Atau</p>
+          <p className="pt-3 text-center mb-3">Atau</p>
           <ButtonGoogleLogin text={"Masuk dengan Google"} />
         </Form>
         <p className="pt-3 text-center fw-semibold">
           Belum punya akun?{" "}
-          <Link to="/register" className="daftar-disini">
+          <Link to="/register" style={styles.link}>
             Daftar di sini
           </Link>
         </p>
-        {errorMessage && (
-          <Alert className="alert-message text-center">{errorMessage}</Alert> // Menampilkan alert jika terdapat pesan kesalahan
-        )}
       </Container>
+      {errorMessage && <Alert style={styles.alert}>{errorMessage}</Alert>}
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

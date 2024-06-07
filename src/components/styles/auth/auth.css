@@ -1,0 +1,71 @@
+* {
+  font-family: "Inter", sans-serif;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+/* style for AuthLogo */
+.gradient-background {
+  background: linear-gradient(
+      to bottom, 
+      rgba(222, 202, 249, 1) 0%,  
+      rgba(255, 233, 202, 0) 100%  
+    );
+  height: 100vh;
+}
+
+.flower-image {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-width: 100%;
+  z-index: 0;
+}
+
+.logo{
+  max-width: 50%;
+  z-index: 1;
+}
+
+/* style for register */
+.valid-email {
+  background-color: white !important;
+}
+
+.error {
+  border-color: red !important;
+}
+
+.input:focus {
+  box-shadow: none;
+  border: 1px solid #7126b5;
+  background-color: none;
+}
+
+/* style for verify otp */
+.back {
+  margin-left: 20%;
+}
+
+@media (max-width: 768px) {
+  .back {
+    margin-left: 10px;
+    margin-bottom: 25px;
+  }
+  .masuk {
+    margin-left: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  @media (max-width: 1110px) {
+    .back {
+      margin-left: 20%;
+      margin-bottom: 20px;
+    }
+    .masuk {
+      margin-left: 16%;
+    }
+  }
+}

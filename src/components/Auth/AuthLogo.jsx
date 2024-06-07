@@ -3,7 +3,7 @@
 import { flower, logoTerbangAja } from "../../assets"
 
 // styles
-import "../styles/auth/authLogo.css"
+import "../styles/auth/auth.css"
 
 const AuthLogo = () => {
   return (

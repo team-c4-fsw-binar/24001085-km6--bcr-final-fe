@@ -6,12 +6,12 @@ export const login =
   async (dispatch) => {
     // make loading
     setIsLoading(true)
-    
+
     let data = JSON.stringify({
       email,
       password,
     })
-    
+
     let config = {
       method: "post",
       url: `${import.meta.env.VITE_BACKEND_API}/api/auth/login`,
@@ -37,7 +37,7 @@ export const login =
     } catch (error) {
       if (error.response) {
         const { data } = error.response
-        if (data && data.message && data.message.includes("User with email")) {
+        if (data && data.message && data.message.includes("user_id")) {
           showErrorToast("Alamat email tidak terdaftar!")
         } else if (data && data.message && data.message.includes("Password")) {
           showErrorToast("Maaf, kata sandi salah")
@@ -120,6 +120,8 @@ export const register =
       // redirect to OTP
       navigate("/verify-otp")
     } catch (error) {
+
+      console.log(error)
       dispatch(logout())
     }
 
@@ -180,7 +182,7 @@ export const verifyOTP =
   }
 
 export const resendOTP = () => async (dispatch, getState) => {
-  const { token } = getState().auth // Mendapatkan token dari state
+  const { token } = getState().auth
 
   if (!token) {
     dispatch(logout())
@@ -200,10 +202,79 @@ export const resendOTP = () => async (dispatch, getState) => {
     const { data } = response.data
     const { token } = data
 
-    localStorage.setItem("token", token) 
+    localStorage.setItem("token", token)
   } catch (error) {
     dispatch(logout())
   }
+}
+
+export const ForgotPassword = (email) => async (dispatch, getState) => {
+  // make loading
+  setIsLoading(true)
+
+  let data = JSON.stringify({
+    email,
+  })
+
+  let config = {
+    method: "post",
+    url: `${import.meta.env.VITE_BACKEND_API}/api/auth/forgot-password`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: data,
+  }
+
+  try {
+    const response = await axios.request(config)
+
+    // get and save the token to local storage
+    const { data } = response.data
+    const { user } = data
+
+    dispatch(setUser(user))
+
+    navigate("/reset-password")
+  } catch (error) {
+    dispatch(logout())
+  }
+
+  setIsLoading(false)
+}
+
+export const resetPassword = () => async (dispatch, getState) => {
+  // make loading
+  setIsLoading(true)
+
+  let data = JSON.stringify({
+    email,
+  })
+
+  let config = {
+    method: "post",
+    url: `${import.meta.env.VITE_BACKEND_API}/api/auth/reset-password`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: data,
+  }
+
+  try {
+    const response = await axios.request(config)
+
+    // get and save the token to local storage
+    const { data } = response.data
+    const { user } = data
+
+    dispatch(setUser(user))
+
+    // redirect to home
+    navigate("/login")
+  } catch (error) {
+    dispatch(logout())
+  }
+
+  setIsLoading(false)
 }
 
 export const logout = () => (dispatch) => {

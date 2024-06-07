@@ -1,6 +1,6 @@
-import { Row, Col } from "react-bootstrap";
-import Register from "../../components/Auth/Register";
-import AuthLogo from "../../components/Auth/AuthLogo";
+import { Row, Col } from "react-bootstrap"
+import Register from "../../components/Auth/Register"
+import AuthLogo from "../../components/Auth/AuthLogo"
 
 const RegisterPage = () => {
   return (
@@ -14,7 +14,7 @@ const RegisterPage = () => {
         </Col>
       </Row>
     </div>
-  );
-};
+  )
+}
 
-export default RegisterPage;
+export default RegisterPage

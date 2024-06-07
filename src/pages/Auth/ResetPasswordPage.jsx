@@ -1,8 +1,8 @@
 import { Col, Row } from "react-bootstrap"
-import LoginComponent from "../../components/Auth/Login"
 import AuthLogo from "../../components/Auth/AuthLogo"
+import ResetPasswordComponent from "../../components/Auth/ResetPassword"
 
-const LoginPage = () => {
+const ResetPasswordPage = () => {
   return (
     <div>
       <Row>
@@ -10,11 +10,11 @@ const LoginPage = () => {
           <AuthLogo />
         </Col>
         <Col sm>
-          <LoginComponent />
+          <ResetPasswordComponent />
         </Col>
       </Row>
     </div>
   )
 }
 
-export default LoginPage
+export default ResetPasswordPage
