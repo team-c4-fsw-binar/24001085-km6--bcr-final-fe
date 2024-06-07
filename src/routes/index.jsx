@@ -16,10 +16,17 @@ import {
   HistoryPage
 } from "../pages"
 
+// components
+import UserProtected from "../components/Protected/Protected";
+import NonProtected from "../components/Protected/Protected";
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
+    element: 
+    <>
+      <HomePage />,
+    </>
   },
   {
     path: "/register",

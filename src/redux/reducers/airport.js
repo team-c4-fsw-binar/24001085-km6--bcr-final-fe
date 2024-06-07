@@ -9,7 +9,7 @@ export const fetchAirports = createAsyncThunk(
       {
         headers: {
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzE3MzMxNDQxLCJleHAiOjE3MTczMzg2NDF9.zowQ-u1HgkeVEynSA5Dvb-1iNqi8r7a9FKBaFaiPeXs",
+            `Bearer ${token}`,
         },
       }
     )

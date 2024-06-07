@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../../components/Navigation/Navbar";
 import {
   Accordion,
@@ -18,7 +19,6 @@ import * as icons from "../../assets/icons"
 import { BiSortAlt2 } from "react-icons/bi";
 import { FaArrowLeft } from "react-icons/fa";
 import { FiBox, FiDollarSign, FiHeart } from "react-icons/fi";
-
 
 import "../styles/searchingPage.css";
 
@@ -87,10 +87,12 @@ const SearchingPage = () => {
         <h3 className="my-4 fw-bold">Pilih Penerbangan</h3>
         <Row className="mb-3 d-flex justify-content-between">
           <Col md={9} className="text-left">
-            <Button className="custom-button w-100 button-kembali">
-              <FaArrowLeft style={{ marginRight: "10px" }} />
-              JKT &gt; MLB - 2 Penumpang - Economy
-            </Button>
+            <Link to="/" >
+              <Button className="custom-button w-100 button-kembali">
+                <FaArrowLeft style={{ marginRight: "10px" }} />
+                JKT &gt; MLB - 2 Penumpang - Economy
+              </Button>
+            </Link>
           </Col>
           <Col className="text-right" md={3}>
             <Button className="button-ubah w-100">Ubah Pencarian</Button>
