@@ -1,11 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, Image, Form, Button } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { getProfile, putProfile} from "../../redux/actions/profile";
 
 import * as icons from "../../assets/icons";
 import * as images from "../../assets/images";
 
 const ProfilePage = () => {
+    const dispatch = useDispatch();
+
+    const { user } = useSelector((state) => state.auth);
+
+    useEffect(() => {
+        // get profile
+        dispatch(getProfile(null, null, null));
+    }, [dispatch]);
+
+    const [dataName, setDataName] = useState("");
+    const [dataPhone, setDataPhone] = useState("");
+    const [dataEmail, setDataEmail] = useState("");
+    const [dataPhoto, setDataPhoto] = useState();
+
     const [availableImage, setAvailableImage] = useState(true);
     const [updateProfile, setUpdateProfile] = useState(false);
 
@@ -16,6 +32,7 @@ const ProfilePage = () => {
     };
 
     const handleSaveClick = () => {
+        console.log(dataName);
         setUpdateProfile(false);
         navigateTo('/profile');
     };
@@ -164,6 +181,7 @@ const ProfilePage = () => {
                                             <Form.Control
                                                 type="file"
                                                 accept="image/*"
+                                                onChange={(e)=>setDataPhoto(e.target.files[0])}
                                                 style={styles.formControl}
                                             />
                                         </Form.Group>
@@ -172,7 +190,7 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Lengkap</Form.Label>
                                             <Form.Control
                                                 type="text"
-                                                placeholder="Harry"
+                                                onChange={(e)=>setDataName(e.target.value)}
                                                 style={styles.formControl}
                                             />
                                         </Form.Group>
@@ -181,7 +199,7 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Telepon</Form.Label>
                                             <Form.Control
                                                 type="text"
-                                                placeholder="0897823232"
+                                                onChange={(e)=>setDataPhone(e.target.value)}
                                                 style={styles.formControl}
                                             />
                                         </Form.Group>
@@ -190,7 +208,7 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Email</Form.Label>
                                             <Form.Control
                                                 type="email"
-                                                placeholder="Johndoe@gmail.com"
+                                                onChange={(e)=>setDataEmail(e.target.value)}
                                                 style={styles.formControl}
                                             />
                                         </Form.Group>
@@ -223,7 +241,7 @@ const ProfilePage = () => {
                                         {availableImage && (
                                             <div className="d-flex justify-content-center">
                                                 <Image
-                                                    src={images.avatar}
+                                                    src={user?.photo}
                                                     className="img-fluid w-50"
                                                     roundedCircle
                                                 />
@@ -235,7 +253,7 @@ const ProfilePage = () => {
                                             </Form.Label>
                                             <Form.Control
                                                 type="text"
-                                                placeholder="Harry"
+                                                value={user?.name}
                                                 disabled
                                                 style={styles.formControl}
                                             />
@@ -247,7 +265,7 @@ const ProfilePage = () => {
                                             </Form.Label>
                                             <Form.Control
                                                 type="text"
-                                                placeholder="0897823232"
+                                                value={user?.phone}
                                                 disabled
                                                 style={styles.formControl}
                                             />
@@ -259,7 +277,7 @@ const ProfilePage = () => {
                                             </Form.Label>
                                             <Form.Control
                                                 type="email"
-                                                placeholder="Johndoe@gmail.com"
+                                                value={user?.email}
                                                 disabled
                                                 style={styles.formControl}
                                             />
