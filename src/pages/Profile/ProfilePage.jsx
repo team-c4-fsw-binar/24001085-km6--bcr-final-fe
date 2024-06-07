@@ -1,12 +1,24 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Container, Row, Col, Card, Image, Form } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { Container, Row, Col, Card, Image, Form, Button } from "react-bootstrap";
 
 import * as icons from "../../assets/icons";
 import * as images from "../../assets/images";
 
 const ProfilePage = () => {
     const [availableImage, setAvailableImage] = useState(true);
+    const [updateProfile, setUpdateProfile] = useState(false);
+
+    const navigateTo = useNavigate();
+
+    const handleEditClick = () => {
+        setUpdateProfile(true);
+    };
+
+    const handleSaveClick = () => {
+        setUpdateProfile(false);
+        navigateTo('/profile');
+    };
 
     const styles = {
         fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
@@ -45,11 +57,13 @@ const ProfilePage = () => {
             width: '100%',
         },
         sidebarBody: {
+            backgroundColor: 'transparent',
+            border: 'none',
             textDecoration: 'none',
             color: '#000000',
             display: 'flex',
             alignItems: 'center',
-            margin: '16px 0'
+            margin: '10px 0 10px 0'
         },
         cardHeader: {
             backgroundColor: '#A06ECE',
@@ -66,11 +80,21 @@ const ProfilePage = () => {
         },
         formControl: {
             borderRadius: '4px',
+            borderColor: '#CED4DA',
+            boxShadow: 'none',
         },
         textVersion: {
             color: '#8A8A8A',
             marginTop: '24px',
             fontSize: '12px',
+        },
+
+        //btnSimpan
+        btnSimpan: {
+            backgroundColor: '#7126B5',
+            border: 'none',
+            borderradius: '12px',
+            color: '#FFFFFF',
         }
     };
 
@@ -99,85 +123,151 @@ const ProfilePage = () => {
                     <Col md={4}>
                         <div className="d-flex flex-column align-items-center p-3">
                             <div style={styles.sidebar}>
-                                <a href="/update-profile" style={styles.sidebarBody}>
+                                <Button as={Link}
+                                    to="" onClick={handleEditClick} style={styles.sidebarBody}>
                                     <Image src={icons.editIcon} alt="edit" className="me-3" />
-                                    <p className="mb-0">Ubah Profil</p>
-                                </a>
+                                    <p>Ubah Profil</p>
+                                </Button>
                             </div>
                             <div style={styles.sidebar}>
-                                <a href="/settings" style={styles.sidebarBody}>
+                                <Button as={Link}
+                                    to="/settings" style={styles.sidebarBody}>
                                     <Image src={icons.settingIcon} alt="settings" className="me-3" />
-                                    <p className="mb-0">Pengaturan Akun</p>
-                                </a>
+                                    <p>Pengaturan Akun</p>
+                                </Button>
                             </div>
                             <div style={styles.sidebar}>
-                                <a href="/logout" style={styles.sidebarBody}>
+                                <Button as={Link}
+                                    to="/logout" style={styles.sidebarBody}>
                                     <Image src={icons.logoutIcon} alt="logout" className="me-3" />
-                                    <p className="mb-0">Keluar</p>
-                                </a>
+                                    <p>Keluar</p>
+                                </Button>
                             </div>
                             <div style={styles.textVersion}>Version 1.1.0</div>
                         </div>
                     </Col>
                     <Col md={6}>
-                        <Card className="px-4 pt-4 mx-3">
-                            <p style={styles.fontHeadingBold20} className="mb-3">
-                                Data Profil
-                            </p>
-                            <div style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }}>
-                                <span className="flex-grow-1 text-start position-relative">
-                                    Data Diri
-                                </span>
-                            </div>
-                            <Card.Body>
-                                <Form>
-                                    {availableImage && (
-                                        <div className="d-flex justify-content-center">
-                                            <Image
-                                                src={images.avatar}
-                                                className="img-fluid w-50"
-                                                roundedCircle
+                        {updateProfile ? (
+                            <Card className="px-4 pt-4 mx-3">
+                                <p style={styles.fontHeadingBold20} className="mb-3">
+                                    Ubah Data Profil
+                                </p>
+                                <div style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }}>
+                                    <span className="flex-grow-1 text-start position-relative">
+                                        Data Diri
+                                    </span>
+                                </div>
+                                <Card.Body>
+                                    <Form>
+                                        <Form.Group controlId="formFotoProfil" className="mb-3">
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Foto Profil</Form.Label>
+                                            <Form.Control
+                                                type="file"
+                                                accept="image/*"
+                                                style={styles.formControl}
                                             />
+                                        </Form.Group>
+
+                                        <Form.Group controlId="formNamaLengkap" className="mb-3">
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Lengkap</Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="Harry"
+                                                style={styles.formControl}
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group controlId="formNomorTelepon" className="mb-3">
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Telepon</Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="0897823232"
+                                                style={styles.formControl}
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group controlId="formEmail" className="mb-3">
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Email</Form.Label>
+                                            <Form.Control
+                                                type="email"
+                                                placeholder="Johndoe@gmail.com"
+                                                style={styles.formControl}
+                                            />
+                                        </Form.Group>
+
+                                        <div className="text-center">
+                                            <Button
+                                                className="my-2 py-2 px-5"
+                                                type="button"
+                                                style={styles.btnSimpan}
+                                                onClick={handleSaveClick}
+                                            >
+                                                Simpan
+                                            </Button>
                                         </div>
-                                    )}
-                                    <Form.Group controlId="formNamaLengkap" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
-                                            Nama Lengkap
-                                        </Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Harry"
-                                            disabled
-                                            style={styles.formControl}
-                                        />
-                                    </Form.Group>
+                                    </Form>
+                                </Card.Body>
+                            </Card>
+                        ) : (
+                            <Card className="px-4 pt-4 mx-3">
+                                <p style={styles.fontHeadingBold20} className="mb-3">
+                                    Data Profil
+                                </p>
+                                <div style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }}>
+                                    <span className="flex-grow-1 text-start position-relative">
+                                        Data Diri
+                                    </span>
+                                </div>
+                                <Card.Body>
+                                    <Form>
+                                        {availableImage && (
+                                            <div className="d-flex justify-content-center">
+                                                <Image
+                                                    src={images.avatar}
+                                                    className="img-fluid w-50"
+                                                    roundedCircle
+                                                />
+                                            </div>
+                                        )}
+                                        <Form.Group controlId="formNamaLengkap" className="mb-3">
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
+                                                Nama Lengkap
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="Harry"
+                                                disabled
+                                                style={styles.formControl}
+                                            />
+                                        </Form.Group>
 
-                                    <Form.Group controlId="formNomorTelepon" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
-                                            Nama Telepon
-                                        </Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="0897823232"
-                                            disabled
-                                            style={styles.formControl}
-                                        />
-                                    </Form.Group>
+                                        <Form.Group controlId="formNomorTelepon" className="mb-3">
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
+                                                Nama Telepon
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="0897823232"
+                                                disabled
+                                                style={styles.formControl}
+                                            />
+                                        </Form.Group>
 
-                                    <Form.Group controlId="formEmail" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
-                                            Email
-                                        </Form.Label>
-                                        <Form.Control
-                                            type="email"
-                                            placeholder="Johndoe@gmail.com"
-                                            disabled
-                                            style={styles.formControl}
-                                        />
-                                    </Form.Group>
-                                </Form>
-                            </Card.Body>
-                        </Card>
+                                        <Form.Group controlId="formEmail" className="mb-3">
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
+                                                Email
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="email"
+                                                placeholder="Johndoe@gmail.com"
+                                                disabled
+                                                style={styles.formControl}
+                                            />
+                                        </Form.Group>
+                                    </Form>
+                                </Card.Body>
+                            </Card>
+                        )}
                     </Col>
                 </Row>
             </Container>
