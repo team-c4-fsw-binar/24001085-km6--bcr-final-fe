@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom"
+import { createBrowserRouter } from "react-router-dom"
 
 // pages
 import {
@@ -16,7 +17,10 @@ import ForgotPasswordPage from "../pages/Auth/ForgotPasswordPage"
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
+    element: 
+    <>
+      <HomePage />,
+    </>
   },
   {
     path: "/register",
@@ -49,3 +53,4 @@ const router = createBrowserRouter([
 ])
 
 export default router
+

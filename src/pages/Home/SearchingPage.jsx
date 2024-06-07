@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../../components/Navigation/Navbar";
 import {
   Accordion,
@@ -11,19 +12,13 @@ import {
   Modal,
   Row
 } from "react-bootstrap";
-import { 
-  garudaIndonesia, 
-  emptyTicket, 
-  loadingPage, 
-  emptyPage, 
-  baggageDelay, 
-  longArrow 
-} from "../../assets";
+
+import * as images from "../../assets/images"
+import * as icons from "../../assets/icons"
 
 import { BiSortAlt2 } from "react-icons/bi";
 import { FaArrowLeft } from "react-icons/fa";
 import { FiBox, FiDollarSign, FiHeart } from "react-icons/fi";
-
 
 import "../styles/searchingPage.css";
 
@@ -39,7 +34,7 @@ const SearchingPage = () => {
       departure_date: "2024-03-01T07:00",
       source: { code: "JKT" },
       economy_class_price: "1,000,000",
-      logo: garudaIndonesia,
+      logo: images.garudaIndonesia,
       kode: "GA-822",
     },
     {
@@ -50,7 +45,7 @@ const SearchingPage = () => {
       departure_date: "2024-03-01T12:00",
       source: { code: "JKT" },
       economy_class_price: "1,200,000",
-      logo: garudaIndonesia,
+      logo: images.garudaIndonesia,
       kode: "GA-822",
     },
     {
@@ -61,7 +56,7 @@ const SearchingPage = () => {
       departure_date: "2024-03-01T14:00",
       source: { code: "JKT" },
       economy_class_price: "1,300,000",
-      logo: garudaIndonesia,
+      logo: images.garudaIndonesia,
       kode: "GA-822",
     },
     {
@@ -72,7 +67,7 @@ const SearchingPage = () => {
       departure_date: "2024-03-01T16:00",
       source: { code: "JKT" },
       economy_class_price: "1,400,000",
-      logo: garudaIndonesia,
+      logo: images.garudaIndonesia,
       kode: "GA-822",
     },
   ];
@@ -92,10 +87,12 @@ const SearchingPage = () => {
         <h3 className="my-4 fw-bold">Pilih Penerbangan</h3>
         <Row className="mb-3 d-flex justify-content-between">
           <Col md={9} className="text-left">
-            <Button className="custom-button w-100 button-kembali">
-              <FaArrowLeft style={{ marginRight: "10px" }} />
-              JKT &gt; MLB - 2 Penumpang - Economy
-            </Button>
+            <Link to="/" >
+              <Button className="custom-button w-100 button-kembali">
+                <FaArrowLeft style={{ marginRight: "10px" }} />
+                JKT &gt; MLB - 2 Penumpang - Economy
+              </Button>
+            </Link>
           </Col>
           <Col className="text-right" md={3}>
             <Button className="button-ubah w-100">Ubah Pencarian</Button>
@@ -195,7 +192,7 @@ const SearchingPage = () => {
         <Row className="scrollable">
           {isTiketHabis ? (
             <Col className="text-center mt-5">
-              <Image src={emptyTicket} className=""></Image>
+              <Image src={images.emptyTicket} className=""></Image>
               <p>Maaf, Tiket terjual habis!</p>
               <p className="ungu">Coba cari perjalanan lainnya!</p>
             </Col>
@@ -228,13 +225,13 @@ const SearchingPage = () => {
                     <p className="my-3 text-abu">
                       Mencari penerbangan terbaik...
                     </p>
-                    <Image src={loadingPage}></Image>
+                    <Image src={images.loadingPage}></Image>
                   </>
                 ) : (
                   <>
                     {isEmpty ? (
                       <>
-                        <Image src={emptyPage}></Image>
+                        <Image src={images.emptyPage}></Image>
                         <p>Maaf, pencarian Anda tidak ditemukan</p>
                         <p className="ungu">Coba cari perjalanan lainnya!</p>
                       </>
@@ -272,7 +269,7 @@ const SearchingPage = () => {
                                       >
                                         <p>4h 0m</p>
                                         <div className="arrow-pic">
-                                          <Image src={longArrow} />
+                                          <Image src={icons.longArrow} />
                                         </div>
                                         <p>direct</p>
                                       </Col>
@@ -284,7 +281,7 @@ const SearchingPage = () => {
                                         <p>{flight.destination.code}</p>
                                       </Col>
                                       <Col md="1">
-                                        <Image src={baggageDelay} />
+                                        <Image src={icons.baggageDelay} />
                                       </Col>
                                       <Col className="text-right ungu">
                                         <h6>
@@ -320,7 +317,7 @@ const SearchingPage = () => {
                                     <hr />
                                     <Row>
                                       <Col md="1" className="mx-0 m-auto">
-                                        <Image src={garudaIndonesia} fluid></Image>
+                                        <Image src={images.garudaIndonesia} fluid></Image>
                                       </Col>
                                       <Col>
                                         <p className="fw-bold">

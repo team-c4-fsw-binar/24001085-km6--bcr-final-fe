@@ -1,0 +1,248 @@
+/* Font */
+.font-body-regular-10 {
+    font-weight: 400;
+    font-size: 10px;
+}
+.font-body-regular-12 {
+    font-weight: 400;
+    font-size: 12px;
+}
+.font-body-regular-14 {
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.font-body-medium-10 {
+    font-weight: 500;
+    font-size: 10px;
+}
+.font-body-medium-12 {
+    font-weight: 500;
+    font-size: 12px;
+}
+.font-body-medium-14 {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.font-body-bold-10 {
+    font-weight: 700;
+    font-size: 10px;
+}
+.font-body-bold-12 {
+    font-weight: 700;
+    font-size: 12px;
+}
+.font-body-bold-14 {
+    font-weight: 700;
+    font-size: 14px;
+}
+/* ----------------------- */
+
+.font-title-regular-16 {
+    font-weight: 400;
+    font-size: 16px;
+}
+.font-title-regular-18 {
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.font-title-medium-16 {
+    font-weight: 500;
+    font-size: 16px;
+}
+.font-title-medium-18 {
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.font-title-bold-16 {
+    font-weight: 700;
+    font-size: 16px;
+}
+.font-title-bold-18 {
+    font-weight: 700;
+    font-size: 18px;
+}
+/* ----------------------- */
+
+.font-heading-regular-20 {
+    font-weight: 400;
+    font-size: 20px;
+}
+.font-heading-regular-24 {
+    font-weight: 400;
+    font-size: 24px;
+}
+
+.font-heading-medium-20 {
+    font-weight: 500;
+    font-size: 20px;
+}
+.font-heading-medium-24 {
+    font-weight: 500;
+    font-size: 24px;
+}
+
+.font-heading-bold-20 {
+    font-weight: 700;
+    font-size: 20px;
+}
+.font-heading-bold-24 {
+    font-weight: 700;
+    font-size: 24px;
+}
+
+/* purple text */
+.text-keberangkatan,
+.text-kedatangan {
+    color: #A06ECE;
+}
+
+.text-total{
+    color: #7126B5;
+}
+
+/* Shadow */
+.shadow {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Title Navigation */
+.title-navigation {
+    color: #8A8A8A;
+}
+
+/* Card Header */
+.card-header {
+    background-color: #3C3C3C;
+    color: #FFFFFF;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* Card Seat */
+.card-seat {
+    background-color: #73CA5C;
+    color: #FFFFFF;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.card-seat-chosen {
+    background-color: #3C3C3C;
+    color: #FFFFFF;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+/* Form Label */
+.form-label {
+    color: #4B1979;
+}
+
+/* Form Control */
+.form-control {
+    border-radius: 4px;
+    border-color: #CED4DA;
+}
+
+/* Form Switch */
+.custom-switch {
+    margin-left: auto;
+}
+
+/* toggle switch */
+.custom-switch .form-check-input{
+    width: 3rem;
+    height: 1.5rem;
+}
+
+.custom-switch .form-check-input:checked {
+    background-color: #4B1979;
+    border-color: #4B1979;
+}
+
+.custom-switch .form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.25);
+}
+
+
+/* seats */
+.seat-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.seat-row {
+    display: flex;
+    gap: 5px;
+}
+
+.seat,
+.seat:hover,
+.seat::after {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: #73CA5C;
+    color: #fff;
+}
+
+.seat.reserved {
+    background-color: grey;
+    color: #fff;
+    border: none;
+}
+
+.seat.selected {
+    background-color: #7126B5;
+    color: #fff;
+    border: none;
+}
+
+
+/* button simpan */
+.btn-simpan,
+.btn-simpan:hover {
+    background-color: #7126B5;
+    border: none;
+    border-radius: 12px;
+    color: #FFFFFF;
+}
+
+.btn-simpan-selected,
+.btn-simpan-selected:hover {
+    background-color: #D0D0D0;
+    border: none;
+    border-radius: 12px;
+}
+
+/* button lanjut-bayar */
+.btn-lanjut-bayar,
+.btn-lanjut-bayar:hover {
+    background-color: #FF0000;
+    border: none;
+    border-radius: 12px;
+    color: #FFFFFF;
+}
+
+/* alert */
+.alert-custom-red{
+    background-color: #FF0000;
+    color: #FFFFFF;
+}
+
+.alert-custom-green{
+    background-color: #73CA5C;
+    color: #FFFFFF;
+}

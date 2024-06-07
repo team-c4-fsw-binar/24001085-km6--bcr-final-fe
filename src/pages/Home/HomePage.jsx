@@ -3,23 +3,14 @@ import {
   Container, Row, Col, Form, Button, Card, Modal, ListGroup, CloseButton 
 } from 'react-bootstrap';
 
+import { Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-import "../styles/homePage.css"
+import * as images from "../../assets/images"
+import * as icons from "../../assets/icons"
 
-import {
-  bannerImg, 
-  bangkokDestination,
-  departureIcon, 
-  dateIcon, 
-  swapIcon, 
-  seatIcon, 
-  findIcon,
-  nextIcon,
-  checkIcon
-} from "../../assets"
-import { Link } from 'react-router-dom';
+import "../styles/homePage.css"
 
 const HomePage = () => {
   const [fromModalOpen, setFromModalOpen] = useState(false);
@@ -123,7 +114,7 @@ const HomePage = () => {
   return (
     <>
       <div className="homepage-container text-center">
-        <img src={bannerImg} alt="Banner" className="img-fluid imageBanner" />
+        <img src={images.bannerImg} alt="Banner" className="img-fluid imageBanner" />
       </div>
       <Container className="sectionSort shadow rounded">
         <Form>
@@ -132,19 +123,19 @@ const HomePage = () => {
             <Col md={5}>
               <Form.Group className="mb-3" controlId="">
                 <div className='d-flex gap-2' onClick={handleFromInputClick}>
-                  <img src={departureIcon} alt="" className="" />
+                  <img src={icons.departureIcon} alt="" className="" />
                   <p className='font-body-regular-14 mb-0 align-self-center'>From</p>
                   <input className="form-control inputDestination" type="text" id="from" value={fromLocation} readOnly />
                 </div>
               </Form.Group>
             </Col>
             <Col md={2}>
-              <img src={swapIcon} alt="" className="" />
+              <img src={icons.swapIcon} alt="" className="" />
             </Col>
             <Col md={5}>
               <Form.Group className="mb-3" controlId="">
                 <div className='d-flex gap-2' onClick={handleToInputClick}>
-                  <img src={departureIcon} alt="" className="" />
+                  <img src={icons.departureIcon} alt="" className="" />
                   <p className='font-body-regular-14 mb-0 align-self-center'>To</p>
                   <input className="form-control inputDestination" type="text" id="to" value={toLocation} readOnly />
                 </div>
@@ -154,7 +145,7 @@ const HomePage = () => {
           <Row className='mb-2'>
             <Col md={5}>
               <div className='d-flex gap-2'>
-                <img src={dateIcon} alt="date" className="" />
+                <img src={icons.dateIcon} alt="date" className="" />
                 <p className='font-body-regular-14 mb-0 align-self-center'>date</p>
                 <div>
                   <p className='font-title-regular-16'>Departure</p>
@@ -194,7 +185,7 @@ const HomePage = () => {
             <Col md={5}>
               <Form.Group className="mb-3" controlId="">
                 <div className='d-flex gap-2'>
-                  <img src={seatIcon} alt="" className="" />
+                  <img src={icons.seatIcon} alt="" className="" />
                   <p className='font-body-regular-14 mb-0 align-self-center'>To</p>
                   <div>
                     <p className='font-title-regular-16'>Passengers</p>
@@ -236,28 +227,28 @@ const HomePage = () => {
           <p className=' font-title-bold-16'>Destinasi Favorit</p>
           <div className='d-flex flex-wrap  '>
             <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 active font-body-regular-14 ' variant="primary">
-              <img src={findIcon} alt="" className="me-2" />Semua
+              <img src={icons.findIcon} alt="" className="me-2" />Semua
             </Button>
             <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 font-body-regular-14' variant="primary">
-              <img src={findIcon} alt="" className="me-2" />Asia</Button>
+              <img src={icons.findIcon} alt="" className="me-2" />Asia</Button>
             <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 font-body-regular-14' variant="primary">
-              <img src={findIcon} alt="" className="me-2" />Amerika</Button>
+              <img src={icons.findIcon} alt="" className="me-2" />Amerika</Button>
             <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 font-body-regular-14' variant="primary">
-              <img src={findIcon} alt="" className="me-2" />Australia</Button>
+              <img src={icons.findIcon} alt="" className="me-2" />Australia</Button>
             <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 font-body-regular-14' variant="primary">
-              <img src={findIcon} alt="" className="me-2" />Eropa</Button>
+              <img src={icons.findIcon} alt="" className="me-2" />Eropa</Button>
             <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 font-body-regular-14' variant="primary">
-              <img src={findIcon} alt="" className="me-2" />Afrika</Button>
+              <img src={icons.findIcon} alt="" className="me-2" />Afrika</Button>
           </div>
         </div>
 
         <Row xs={1} sm={2} md={3} lg={4} xl={5} className="mx-3 g-4">
           <Col>
             <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestination} />
+              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
                     <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
                     <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
                     <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
@@ -268,10 +259,10 @@ const HomePage = () => {
           </Col>
           <Col>
             <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestination} />
+              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
                     <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
                     <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
                     <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
@@ -282,10 +273,10 @@ const HomePage = () => {
           </Col>
           <Col>
             <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestination} />
+              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
                     <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
                     <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
                     <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
@@ -296,10 +287,10 @@ const HomePage = () => {
           </Col>
           <Col>
             <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestination} />
+              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
                     <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
                     <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
                     <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
@@ -310,10 +301,10 @@ const HomePage = () => {
           </Col>
           <Col>
             <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestination} />
+              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
                     <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
                     <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
                     <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
@@ -324,10 +315,10 @@ const HomePage = () => {
           </Col>
           <Col>
             <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestination} />
+              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
                     <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
                     <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
                     <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
@@ -338,10 +329,10 @@ const HomePage = () => {
           </Col>
           <Col>
             <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={bangkokDestination} />
+              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
                     <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
                     <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
                     <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
@@ -424,19 +415,19 @@ const HomePage = () => {
         <Modal.Body>
           <ListGroup>
             <ListGroup.Item action active={tempSeatClass === "Economy"} onClick={() => handleSeatClassSelect("Economy")}>
-              <div className='d-flex justify-content-between'> Economy {tempSeatClass === "Economy" && <img src={checkIcon} alt="Check" />}</div>
+              <div className='d-flex justify-content-between'> Economy {tempSeatClass === "Economy" && <img src={icons.checkIcon} alt="Check" />}</div>
               harga
             </ListGroup.Item>
             <ListGroup.Item action active={tempSeatClass === "Premium Economy"} onClick={() => handleSeatClassSelect("Premium Economy")}>
-              <div className='d-flex justify-content-between'> Premium Economy {tempSeatClass === "Premium Economy" && <img src={checkIcon} alt="Check" />}</div>
+              <div className='d-flex justify-content-between'> Premium Economy {tempSeatClass === "Premium Economy" && <img src={icons.checkIcon} alt="Check" />}</div>
               harga
             </ListGroup.Item>
             <ListGroup.Item action active={tempSeatClass === "Business"} onClick={() => handleSeatClassSelect("Business")}>
-              <div className='d-flex justify-content-between'>Business {tempSeatClass === "Business" && <img src={checkIcon} alt="Check" />}</div>
+              <div className='d-flex justify-content-between'>Business {tempSeatClass === "Business" && <img src={icons.checkIcon} alt="Check" />}</div>
               harga
             </ListGroup.Item>
             <ListGroup.Item action active={tempSeatClass === "First Class"} onClick={() => handleSeatClassSelect("First Class")}>
-              <div className='d-flex justify-content-between'>First Class {tempSeatClass === "First Class" && <img src={checkIcon} alt="Check" />}</div>
+              <div className='d-flex justify-content-between'>First Class {tempSeatClass === "First Class" && <img src={icons.checkIcon} alt="Check" />}</div>
               harga
             </ListGroup.Item>
           </ListGroup>

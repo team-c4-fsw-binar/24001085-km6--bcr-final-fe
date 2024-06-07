@@ -6,7 +6,8 @@ import { useDispatch } from "react-redux"
 import OtpInput from "react-otp-input"
 
 import { verifyOTP, resendOTP } from "../../redux/actions/auth"
-import { logoTerbangAja, backIcon } from "../../assets"
+import * as images from "../../assets/images"
+import * as icons from "../../assets/icons"
 
 import "../styles/auth/auth.css"
 
@@ -175,7 +176,7 @@ function OTPComponent() {
       </Nav>
       <div className="container back mt-5">
         <Link to="/register">
-          <img src={backIcon} />
+          <img src={icons.blackLeftIcon} />
         </Link>
       </div>
       <div className="OTP-Form">

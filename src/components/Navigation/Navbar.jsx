@@ -15,7 +15,7 @@ import { RiLoginBoxLine } from "react-icons/ri";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { logoTerbangAja } from "../../assets";
+import * as images from "../../assets/images"
 
 import "../styles/nav/navbar.css";
 
@@ -29,7 +29,7 @@ const NavbarComponent = () => {
     <Navbar bg="white" expand="lg" className="navbar sticky-top">
       <Container>
         <Navbar.Brand href="#">
-          <Image src={logoTerbangAja} height="40" />
+          <Image src={images.logoTerbangAja} height="40" />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
