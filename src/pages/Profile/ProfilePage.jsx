@@ -9,32 +9,53 @@ import * as images from "../../assets/images";
 
 const ProfilePage = () => {
     const dispatch = useDispatch();
-
     const { user } = useSelector((state) => state.auth);
-
-    useEffect(() => {
-        // get profile
-        dispatch(getProfile(null, null, null));
-    }, [dispatch]);
 
     const [dataName, setDataName] = useState("");
     const [dataPhone, setDataPhone] = useState("");
     const [dataEmail, setDataEmail] = useState("");
     const [dataPhoto, setDataPhoto] = useState();
+    const [dataPassword, setDataPassword] = useState("");
 
     const [availableImage, setAvailableImage] = useState(true);
     const [updateProfile, setUpdateProfile] = useState(false);
 
     const navigateTo = useNavigate();
 
+    useEffect(() => {
+        // get profile
+        dispatch(getProfile(null, null, null));
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (user) {
+            setDataName(user.name || "");
+            setDataPhone(user.phone || "");
+            setDataEmail(user.email || "");
+            setDataPhoto(user.photo || null);
+        }
+    }, [user]);
+
     const handleEditClick = () => {
         setUpdateProfile(true);
     };
 
     const handleSaveClick = () => {
-        console.log(dataName);
+        const formData = new FormData();
+        formData.append('name', dataName);
+        formData.append('phone', dataPhone);
+        formData.append('email', dataEmail);
+        if (dataPhoto) {
+            formData.append('photo', dataPhoto);
+        }
+    
+        // Optionally append password if it exists
+        if (dataPassword) {
+            formData.append('password', dataPassword);
+        }
+    
+        dispatch(putProfile(navigateTo, '/profile', null, formData));
         setUpdateProfile(false);
-        navigateTo('/profile');
     };
 
     const styles = {
@@ -175,7 +196,7 @@ const ProfilePage = () => {
                                     </span>
                                 </div>
                                 <Card.Body>
-                                    <Form>
+                                    <Form enctype="multipart/form-data">
                                         <Form.Group controlId="formFotoProfil" className="mb-3">
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Foto Profil</Form.Label>
                                             <Form.Control
@@ -209,6 +230,15 @@ const ProfilePage = () => {
                                             <Form.Control
                                                 type="email"
                                                 onChange={(e)=>setDataEmail(e.target.value)}
+                                                style={styles.formControl}
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group controlId="formPassword" className="mb-3">
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Password</Form.Label>
+                                            <Form.Control
+                                                type="password"
+                                                onChange={(e)=>setDataPassword(e.target.value)}
                                                 style={styles.formControl}
                                             />
                                         </Form.Group>

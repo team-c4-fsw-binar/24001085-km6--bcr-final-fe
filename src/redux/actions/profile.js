@@ -56,49 +56,46 @@ export const getProfile =
             }
         };
 
-export const putProfile =
-    (navigate, successRedirect, errorRedirect, data) =>
+        export const putProfile = (navigate, successRedirect, errorRedirect, formData) => 
         async (dispatch, getState) => {
             const { token } = getState().auth;
-
+    
             if (!token) {
                 dispatch(logout());
-
                 if (navigate && errorRedirect) {
                     navigate(errorRedirect);
                 }
                 return;
             }
-
+    
             let config = {
-                method: "put",
+                method: 'put',
                 url: `${import.meta.env.VITE_BACKEND_API}/api/auth`,
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
                 },
-                data,
+                data: formData,
             };
-
+    
             try {
                 const response = await axios.request(config);
                 const { data } = response.data;
-
-                // set user by response
+    
                 dispatch(setUser(data));
-
-                toast.success("Update Success");
-
+                toast.success('Update Success');
+    
                 if (navigate && successRedirect) {
                     navigate(successRedirect);
                 }
             } catch (error) {
-                toast.error(error?.response?.data?.message || "Profile update failed");
-
+                toast.error(error?.response?.data?.message || 'Profile update failed');
                 if (navigate && errorRedirect) {
                     navigate(errorRedirect);
                 }
             }
         };
+    
 
 export const logout = () => (dispatch) => {
     dispatch(setToken(null));
