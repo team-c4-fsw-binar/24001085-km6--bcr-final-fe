@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, Image, Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { getProfile, putProfile} from "../../redux/actions/profile";
+import { getProfile, putProfile } from "../../redux/actions/profile";
 
 import * as icons from "../../assets/icons";
 import * as images from "../../assets/images";
@@ -19,6 +19,7 @@ const ProfilePage = () => {
 
     const [availableImage, setAvailableImage] = useState(true);
     const [updateProfile, setUpdateProfile] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const navigateTo = useNavigate();
 
@@ -48,14 +49,18 @@ const ProfilePage = () => {
         if (dataPhoto) {
             formData.append('photo', dataPhoto);
         }
-    
+
         // Optionally append password if it exists
         if (dataPassword) {
             formData.append('password', dataPassword);
         }
-    
+
         dispatch(putProfile(navigateTo, '/profile', null, formData));
         setUpdateProfile(false);
+    };
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
     };
 
     const styles = {
@@ -202,7 +207,7 @@ const ProfilePage = () => {
                                             <Form.Control
                                                 type="file"
                                                 accept="image/*"
-                                                onChange={(e)=>setDataPhoto(e.target.files[0])}
+                                                onChange={(e) => setDataPhoto(e.target.files[0])}
                                                 style={styles.formControl}
                                             />
                                         </Form.Group>
@@ -211,7 +216,7 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Lengkap</Form.Label>
                                             <Form.Control
                                                 type="text"
-                                                onChange={(e)=>setDataName(e.target.value)}
+                                                onChange={(e) => setDataName(e.target.value)}
                                                 style={styles.formControl}
                                             />
                                         </Form.Group>
@@ -220,7 +225,7 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Telepon</Form.Label>
                                             <Form.Control
                                                 type="text"
-                                                onChange={(e)=>setDataPhone(e.target.value)}
+                                                onChange={(e) => setDataPhone(e.target.value)}
                                                 style={styles.formControl}
                                             />
                                         </Form.Group>
@@ -229,96 +234,115 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Email</Form.Label>
                                             <Form.Control
                                                 type="email"
-                                                onChange={(e)=>setDataEmail(e.target.value)}
+                                                onChange={(e) => setDataEmail(e.target.value)}
                                                 style={styles.formControl}
                                             />
                                         </Form.Group>
 
                                         <Form.Group controlId="formPassword" className="mb-3">
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Password</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                onChange={(e)=>setDataPassword(e.target.value)}
-                                                style={styles.formControl}
-                                            />
-                                        </Form.Group>
-
-                                        <div className="text-center">
-                                            <Button
-                                                className="my-2 py-2 px-5"
-                                                type="button"
-                                                style={styles.btnSimpan}
-                                                onClick={handleSaveClick}
-                                            >
-                                                Simpan
-                                            </Button>
-                                        </div>
-                                    </Form>
-                                </Card.Body>
-                            </Card>
-                        ) : (
-                            <Card className="px-4 pt-4 mx-3">
-                                <p style={styles.fontHeadingBold20} className="mb-3">
-                                    Data Profil
-                                </p>
-                                <div style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }}>
-                                    <span className="flex-grow-1 text-start position-relative">
-                                        Data Diri
-                                    </span>
-                                </div>
-                                <Card.Body>
-                                    <Form>
-                                        {availableImage && (
-                                            <div className="d-flex justify-content-center">
-                                                <Image
-                                                    src={user?.photo}
-                                                    className="img-fluid w-50"
-                                                    roundedCircle
+                                            <div style={{ position: 'relative' }}>
+                                                <Form.Control
+                                                    type={showPassword ? "text" : "password"}
+                                                    onChange={(e) => setDataPassword(e.target.value)}
+                                                    style={styles.formControl}
                                                 />
+                                                <span
+                                                    onClick={toggleShowPassword}
+                                                    className="fa fa-fw field-icon toggle-password"
+                                                    style={{
+                                                        position: 'absolute',
+                                                        right: '10px',
+                                                        top: '50%',
+                                                        transform: 'translateY(-50%)',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    {showPassword ? (
+                                                        <i className="fa fa-eye" />
+                                                    ) : (
+                                                        <i className="fa fa-eye-slash" />
+                                                    )}
+                                                </span>
                                             </div>
-                                        )}
-                                        <Form.Group controlId="formNamaLengkap" className="mb-3">
-                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
-                                                Nama Lengkap
-                                            </Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                value={user?.name}
-                                                disabled
-                                                style={styles.formControl}
-                                            />
                                         </Form.Group>
 
-                                        <Form.Group controlId="formNomorTelepon" className="mb-3">
-                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
-                                                Nama Telepon
-                                            </Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                value={user?.phone}
-                                                disabled
-                                                style={styles.formControl}
-                                            />
-                                        </Form.Group>
-
-                                        <Form.Group controlId="formEmail" className="mb-3">
-                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
-                                                Email
-                                            </Form.Label>
-                                            <Form.Control
-                                                type="email"
-                                                value={user?.email}
-                                                disabled
-                                                style={styles.formControl}
-                                            />
-                                        </Form.Group>
-                                    </Form>
-                                </Card.Body>
+                                    <div className="text-center">
+                                        <Button
+                                            className="my-2 py-2 px-5"
+                                            type="button"
+                                            style={styles.btnSimpan}
+                                            onClick={handleSaveClick}
+                                        >
+                                            Simpan
+                                        </Button>
+                                    </div>
+                                </Form>
+                            </Card.Body>
                             </Card>
+                    ) : (
+                    <Card className="px-4 pt-4 mx-3">
+                        <p style={styles.fontHeadingBold20} className="mb-3">
+                            Data Profil
+                        </p>
+                        <div style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }}>
+                            <span className="flex-grow-1 text-start position-relative">
+                                Data Diri
+                            </span>
+                        </div>
+                        <Card.Body>
+                            <Form>
+                                {availableImage && (
+                                    <div className="d-flex justify-content-center">
+                                        <Image
+                                            src={user?.photo}
+                                            className="img-fluid w-50"
+                                            roundedCircle
+                                        />
+                                    </div>
+                                )}
+                                <Form.Group controlId="formNamaLengkap" className="mb-3">
+                                    <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
+                                        Nama Lengkap
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        value={user?.name}
+                                        disabled
+                                        style={styles.formControl}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="formNomorTelepon" className="mb-3">
+                                    <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
+                                        Nama Telepon
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        value={user?.phone}
+                                        disabled
+                                        style={styles.formControl}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="formEmail" className="mb-3">
+                                    <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
+                                        Email
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="email"
+                                        value={user?.email}
+                                        disabled
+                                        style={styles.formControl}
+                                    />
+                                </Form.Group>
+                            </Form>
+                        </Card.Body>
+                    </Card>
                         )}
-                    </Col>
-                </Row>
-            </Container>
+                </Col>
+            </Row>
+        </Container >
         </>
     );
 };
