@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Container, Form, Button, Alert } from "react-bootstrap"
 import { useDispatch } from "react-redux"
 import { ForgotPassword } from "../../redux/actions/auth"
@@ -99,11 +99,11 @@ function ForgotPasswordComponent() {
   return (
     <div style={styles.forgotpasswordPage}>
       <Container style={styles.centeredContainer}>
-        <h4 className="fw-bold mb-2">Masukkan Verifikasi Email</h4>
+        <h4 className="fw-bold mb-2">Masukkan Email Anda!</h4>
         <Form onSubmit={onSubmit} className="mt-4">
           <Form.Group className="mb-3" controlId="Email">
             <Form.Label className="fw-medium" style={styles.label}>
-              Email address
+              Email Address
             </Form.Label>
             <Form.Control
               style={styles.input}
