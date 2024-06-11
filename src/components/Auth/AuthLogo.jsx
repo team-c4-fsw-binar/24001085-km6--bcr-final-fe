@@ -1,5 +1,3 @@
-// assets
-
 import * as images from "../../assets/images"
 
 // styles

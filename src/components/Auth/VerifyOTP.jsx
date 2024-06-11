@@ -6,10 +6,8 @@ import { useDispatch } from "react-redux"
 import OtpInput from "react-otp-input"
 
 import { verifyOTP, resendOTP } from "../../redux/actions/auth"
-import * as images from "../../assets/images"
+import logoTerbangAja from "../../assets/images/logo.svg"
 import * as icons from "../../assets/icons"
-
-import "../styles/auth/auth.css"
 
 function OTPComponent() {
   const navigate = useNavigate()
@@ -23,7 +21,6 @@ function OTPComponent() {
   const [verificationCompleted, setVerificationCompleted] = useState(false)
 
   const email = localStorage.getItem("email")
-  const token = localStorage.getItem("token")
 
   const obfuscateEmail = (email) => {
     const atIndex = email.indexOf("@")
@@ -57,10 +54,17 @@ function OTPComponent() {
     return () => clearInterval(timer)
   }, [resendTimer])
 
-  const handleResendOTP = () => {
-    if (resendTimer === 0) {
-      dispatch(resendOTP(null))
-      setResendTimer(60)
+  const handleResendOTP = async () => {
+    if (resendTimer === 0){
+      try {
+        // call resendOTP
+        await dispatch(resendOTP(navigate))
+
+        // Reset timer menjadi 60
+        setResendTimer(60)
+      } catch (error) {
+        console.error("Failed to resend OTP:", error)
+      }
     }
   }
 
@@ -72,21 +76,21 @@ function OTPComponent() {
     e.preventDefault()
 
     // OTP is correct, proceed to verify it with the server
-      if (email && otp) {
-        dispatch(
-          verifyOTP(navigate, email, otp, setIsLoading, (error) => {
-            // Set error message if verification fails
-            showErrorAlert(error)
-          })
-        ).then((success) => {
-          if (success) {
-            // Verification successful, set verificationCompleted to true
-            setVerificationCompleted(true)
-            // Show success message
-            setShowSuccessMessage(true)
-          }
+    if (email && otp) {
+      dispatch(
+        verifyOTP(navigate, email, otp, setIsLoading, (error) => {
+          // Set error message if verification fails
+          showErrorAlert(error)
         })
-      }
+      ).then((success) => {
+        if (success) {
+          // Verification successful, set verificationCompleted to true
+          setVerificationCompleted(true)
+          // Show success message
+          setShowSuccessMessage(true)
+        }
+      })
+    }
   }
 
   const styles = {
@@ -201,7 +205,7 @@ function OTPComponent() {
               />
               <p className="text-center mb-4 mt-3" style={styles.p}>
                 <span
-                  onClick={handleResendOTP}
+                  onClick={resendTimer === 0 ? handleResendOTP : undefined}
                   style={{
                     ...styles.p,
                     color: resendTimer > 0 ? "black" : "red",

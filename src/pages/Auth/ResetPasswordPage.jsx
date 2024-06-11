@@ -6,7 +6,7 @@ const ResetPasswordPage = () => {
   return (
     <div>
       <Row>
-        <Col sm>
+        <Col sm={6} className="d-none d-sm-block">
           <AuthLogo />
         </Col>
         <Col sm>

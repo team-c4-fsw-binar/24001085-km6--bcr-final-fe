@@ -33,6 +33,17 @@ const Login = () => {
     setEmailError(true)
     setPasswordError(true)
   }
+  const handleInputFocus = (e) => {
+    e.target.style.boxShadow = "none"
+    e.target.style.backgroundColor = "none"
+    e.target.style.border = "1px solid #7126b5"
+  }
+
+  const handleInputBlur = (e) => {
+    e.target.style.backgroundColor = "none"
+    e.target.style.border =
+      emailError || passwordError ? "1px solid red" : "1px solid #ced4da"
+  }
 
   const styles = {
     container: {
@@ -51,6 +62,11 @@ const Login = () => {
     },
     forgot: {
       color: "#7126b5",
+      cursor: "pointer",
+    },
+    eyeIcon: {
+      position: "absolute",
+      right: "10px",
       cursor: "pointer",
     },
     button: {
@@ -80,6 +96,9 @@ const Login = () => {
       fontSize: "small",
       borderColor: "red",
     },
+    label: {
+      color: "black",
+    },
   }
 
   return (
@@ -88,7 +107,9 @@ const Login = () => {
         <h5 className="fw-bold">Masuk</h5>
         <Form onSubmit={onSubmit} className="mt-4">
           <Form.Group className="mb-3" controlId="Email">
-            <Form.Label className="fw-medium">Email address</Form.Label>
+            <Form.Label className="fw-medium" style={styles.label}>
+              Email address
+            </Form.Label>
             <Form.Control
               type="email"
               placeholder="name@example.com"
@@ -98,13 +119,17 @@ const Login = () => {
               }}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
               required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="Password">
             <Row>
               <Col className="col-md-6">
-                <Form.Label className="fw-medium">Password</Form.Label>
+                <Form.Label className="fw-medium" style={styles.label}>
+                  Password
+                </Form.Label>
               </Col>
               <Col className="col-md-6 text-end">
                 <Link to="/forgot-password">
@@ -122,18 +147,15 @@ const Login = () => {
                 }}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
                 required
               />
-              <span
+              <i
+                className={`fa ${passwordVisible ? "fa-eye" : "fa-eye-slash"}`}
+                style={styles.eyeIcon}
                 onClick={togglePasswordVisibility}
-                className="fa fa-fw field-icon toggle-password"
-              >
-                {passwordVisible ? (
-                  <i className="fa fa-eye" />
-                ) : (
-                  <i className="fa fa-eye-slash" />
-                )}
-              </span>
+              />
             </div>
           </Form.Group>
           <Button

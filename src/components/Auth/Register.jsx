@@ -6,7 +6,8 @@ import { register } from "../../redux/actions/auth"
 import "../styles/auth/auth.css"
 import GoogleLogin from "./GoogleLogin"
 
-import { checkIcon, falseIcon } from "../../assets"
+import checkIcon from "../../assets/icons/check-icon.svg"
+import falseIcon from "../../assets/icons/false-icon.svg"
 
 function Register() {
   const navigate = useNavigate()
@@ -53,10 +54,6 @@ function Register() {
     return re.test(phone)
   }
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible)
-  }
-
   const showErrorAlert = (errorMessage) => {
     setErrorMessage(errorMessage)
   }
@@ -77,6 +74,7 @@ function Register() {
       justifyContent: "center",
       alignItems: "center",
       minHeight: "100vh",
+      paddingBottom: "20px",
     },
     centeredContainer: {
       maxWidth: "500px",
@@ -113,6 +111,9 @@ function Register() {
       right: "0.5rem",
       top: "50%",
       transform: "translateY(-50%)",
+    },
+    label: {
+      color: "black",
     },
     wrongIcon: {
       position: "absolute",
@@ -158,10 +159,12 @@ function Register() {
   return (
     <div style={styles.registerPage}>
       <Container style={styles.centeredContainer}>
-        <h4 className="fw-bold pb-3">Daftar</h4>
+        <h4 className="fw-bold pb-2">Daftar</h4>
         <Form onSubmit={onSubmit}>
           <Form.Group className="mb-2" controlId="Name">
-            <Form.Label className="fw-medium">Nama</Form.Label>
+            <Form.Label className="fw-medium" style={styles.label}>
+              Nama
+            </Form.Label>
             <Form.Control
               type="text"
               placeholder="Nama Lengkap"
@@ -173,8 +176,10 @@ function Register() {
             />
           </Form.Group>
           <Form.Group className="mb-2" controlId="Email">
-            <Form.Label className="fw-medium">Email address</Form.Label>
-            <div className="input-wrapper">
+            <Form.Label className="fw-medium" style={styles.label}>
+              Email address
+            </Form.Label>
+            <div className="input-wrapper" style={styles.inputWrapper}>
               <Form.Control
                 type="email"
                 placeholder="name@example.com"
@@ -202,7 +207,9 @@ function Register() {
             </div>
           </Form.Group>
           <Form.Group className="mb-2" controlId="Phone">
-            <Form.Label className="fw-medium">Nomor Telepon</Form.Label>
+            <Form.Label className="fw-medium" style={styles.label}>
+              Nomor Telepon
+            </Form.Label>
             <div className="input-wrapper" style={styles.inputWrapper}>
               <Form.Control
                 type="text"
@@ -231,8 +238,11 @@ function Register() {
             </div>
           </Form.Group>
           <Form.Group className="mb-2" controlId="Password">
-            <Form.Label className="fw-medium">Buat Password</Form.Label>
-            <div className="input-wrapper">
+            <Form.Label className="fw-medium" style={styles.label}>
+              {" "}
+              Buat Password
+            </Form.Label>
+            <div className="input-wrapper" style={styles.inputWrapper}>
               <Form.Control
                 type="password"
                 placeholder="Buat Password"
@@ -270,7 +280,7 @@ function Register() {
           <p className="mt-2 text-center mb-2">Atau</p>
           <GoogleLogin text={"Daftar dengan Google"} />
         </Form>
-        <p className="mt-3 text-center fw-semibold">
+        <p className="mt-2 text-center fw-semibold">
           Sudah punya akun?{" "}
           <Link
             to="/login"
@@ -282,12 +292,12 @@ function Register() {
         </p>
       </Container>
       {errorMessage && (
-        <Alert style={styles.alertMessage} className="mt-3 text-center">
+        <Alert style={styles.alertMessage} className="text-center">
           {errorMessage}
         </Alert>
       )}
       {successMessage && (
-        <Alert style={styles.alertSuccessRegis} className="mt-3 text-center">
+        <Alert style={styles.alertSuccessRegis} className="text-center">
           Tautan Verifikasi telah dikirim!
         </Alert>
       )}
