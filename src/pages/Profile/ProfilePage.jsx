@@ -240,7 +240,7 @@ const ProfilePage = () => {
                                         </Form.Group>
 
                                         <Form.Group controlId="formPassword" className="mb-3">
-                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Password</Form.Label>
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Ubah Password</Form.Label>
                                             <div style={{ position: 'relative' }}>
                                                 <Form.Control
                                                     type={showPassword ? "text" : "password"}
