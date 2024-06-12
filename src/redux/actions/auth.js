@@ -115,9 +115,11 @@ export const register =
       const { email } = data.user
 
       localStorage.setItem("email", email)
+      localStorage.setItem("token", token)
 
       dispatch(setToken(token))
       dispatch(setUser(user))
+
       // redirect to OTP
       navigate("/verify-otp")
     } catch (error) {
@@ -175,26 +177,25 @@ export const verifyOTP =
         showErrorToast("Terjadi kesalahan dalam permintaan.")
       }
 
-      dispatch(logout())
+      // dispatch(logout())
     }
     setIsLoading(false)
   }
 
-export const resendOTP = (navigate) => async (dispatch, getState) => {
-  const state = getState()
+export const resendOTP = () => async (dispatch, getState) => {
+  const auth = getState().auth;
 
-  const { token } = state.auth || {}
-
-  // Check if token is undefined, null, or empty string
-  if (!token) {
-    // If token is undefined, null, or empty string, dispatch logout action
+  if (!auth || !auth.token) {
+    // If auth or token is undefined, null, or empty string, dispatch logout action
     dispatch(logout())
     return
   }
 
+  const { token } = auth;
+
   let config = {
-    method: "get",
-    url: `${import.meta.env.VITE_BACKEND_API}/auth/resend-otp`,
+    method: "post",
+    url: `${import.meta.env.VITE_BACKEND_API}/api/auth/resend-otp`,
     headers: {
       Authorization: `Bearer ${token}`,
     },

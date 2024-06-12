@@ -8,10 +8,16 @@ import {
   VerifyOtpPage,
   RegisterPage,
   SearchingPage,
+  ProfilePage,
+  NotificationPage,
+  CheckoutPage,
+  PaymentPage,
+  HistoryPage
 } from "../pages"
 
-import ResetPasswordPage from "../pages/Auth/ResetPasswordPage"
-import ForgotPasswordPage from "../pages/Auth/ForgotPasswordPage"
+// components
+import UserProtected from "../components/Protected/Protected";
+import NonProtected from "../components/Protected/Protected";
 
 const router = createBrowserRouter([
   {
@@ -34,12 +40,8 @@ const router = createBrowserRouter([
     element: <VerifyOtpPage />,
   },
   {
-    path: "/forgot-password",
-    element: <ForgotPasswordPage />,
-  },
-  {
-    path: "/reset-password",
-    element: <ResetPasswordPage />,
+    path: "/history",
+    element: <HistoryPage />,
   },
   {
     path: "/*",
@@ -49,7 +51,23 @@ const router = createBrowserRouter([
     path: "/search",
     element: <SearchingPage />,
   },
-])
+  {
+    path: "/profile",
+    element: <ProfilePage />,
+  },
+  {
+    path: "/notification",
+    element: <NotificationPage />,
+  },
+  {
+    path: "/checkout",
+    element: <CheckoutPage />,
+  },
+  {
+    path: "/payment",
+    element: <PaymentPage />,
+  },
+]);
 
 export default router
 

@@ -3,9 +3,10 @@ import SearchingPage from "./Home/SearchingPage";
 import LoginPage from "./Auth/LoginPage";
 import RegisterPage from "./Auth/RegisterPage";
 import VerifyOtpPage from "./Auth/VerifyOtpPage";
+import ForgotPasswordPage from "./Auth/ForgotPasswordPage";
+import ResetPasswordPage from "./Auth/ResetPasswordPage";
 import NotFoundPage from "./not-found";
 import AccountPage from "./Profile/ProfilePage";
-import UpdateProfilePage from "./Profile/UpdateProfile"
 import NotificationPage from "./Notification/NotificationPage"
 import CheckoutPage from "./Payment/CheckoutPage"
 import PaymentPage from "./Payment/PaymentPage"
@@ -17,10 +18,11 @@ export {
   SearchingPage,
   LoginPage, 
   RegisterPage, 
-  VerifyOtpPage, 
+  VerifyOtpPage,
+  ForgotPasswordPage,
+  ResetPasswordPage,
   NotFoundPage,
   AccountPage,
-  UpdateProfilePage,
   NotificationPage,
   CheckoutPage,
   PaymentPage,

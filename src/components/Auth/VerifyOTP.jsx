@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
 import { Container, Form, Button, Alert, Nav, Image } from "react-bootstrap"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import OtpInput from "react-otp-input"
 
@@ -48,29 +47,25 @@ function OTPComponent() {
       if (resendTimer > 0) {
         setResendTimer((prevTimer) => prevTimer - 1)
       }
-    }, 1000)
+    }, 10)
 
     // Clean up the interval when component unmounts
     return () => clearInterval(timer)
   }, [resendTimer])
 
-  const handleResendOTP = async () => {
-    if (resendTimer === 0){
-      try {
-        // call resendOTP
-        await dispatch(resendOTP(navigate))
 
-        // Reset timer menjadi 60
-        setResendTimer(60)
-      } catch (error) {
-        console.error("Failed to resend OTP:", error)
-      }
-    }
-  }
+  // ini masih belum bisa
+  const handleResendOTP = async (e) => {
+  e.preventDefault()
 
-  const showErrorAlert = (error) => {
+  try {
+    dispatch(resendOTP())
+    setResendTimer(60)
+  } catch (error) {
+    // Set error message if resend fails
     setError(error)
   }
+}
 
   const onSubmit = async (e) => {
     e.preventDefault()
@@ -205,7 +200,7 @@ function OTPComponent() {
               />
               <p className="text-center mb-4 mt-3" style={styles.p}>
                 <span
-                  onClick={resendTimer === 0 ? handleResendOTP : undefined}
+                  onClick={resendTimer === 0 ? handleResendOTP : null}
                   style={{
                     ...styles.p,
                     color: resendTimer > 0 ? "black" : "red",
