@@ -7,10 +7,10 @@ import ForgotPasswordPage from "./Auth/ForgotPasswordPage";
 import ResetPasswordPage from "./Auth/ResetPasswordPage";
 import NotFoundPage from "./not-found";
 import AccountPage from "./Profile/ProfilePage";
-import NotificationPage from "./Notification/NotificationPage"
-import CheckoutPage from "./Payment/CheckoutPage"
-import PaymentPage from "./Payment/PaymentPage"
-import HistoryPage from "./History/HistoryPage"
+import NotificationPage from "./Notification/NotificationPage";
+import CheckoutPage from "./Payment/CheckoutPage";
+import PaymentPage from "./Payment/PaymentPage";
+import HistoryPage from "./History/HistoryPage";
 
 
 export { 

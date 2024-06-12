@@ -8,11 +8,14 @@ import {
   VerifyOtpPage,
   RegisterPage,
   SearchingPage,
-  ProfilePage,
+  AccountPage,
   NotificationPage,
   CheckoutPage,
   PaymentPage,
-  HistoryPage
+  HistoryPage,
+  ForgotPasswordPage,
+  ResetPasswordPage,
+  
 } from "../pages"
 
 // components
@@ -36,6 +39,14 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
+    path: "/forgot-password",
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: "/reset-password/:id/:token",
+    element: <ResetPasswordPage />,
+  },
+  {
     path: "/verify-otp",
     element: <VerifyOtpPage />,
   },
@@ -53,7 +64,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/profile",
-    element: <ProfilePage />,
+    element: <AccountPage />,
   },
   {
     path: "/notification",

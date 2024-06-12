@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit"
+import authReducer from "./reducers/auth"
 import bookingsReducer from "./reducers/booking"
 import paymentsReducer from "./reducers/payment"
 import flightsReducer from "./reducers/flight"
@@ -12,6 +13,7 @@ export default configureStore(
 
     reducer: {
       reducers,
+      auth: authReducer,
       bookings: bookingsReducer,
       payments: paymentsReducer,
       flights: flightsReducer,
