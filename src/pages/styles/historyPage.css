@@ -1,0 +1,14 @@
+.beranda-button {
+  background-color: #a06ece;
+  border-color: #a06ece;
+  color: white;
+}
+.beranda-button:hover {
+  background-color: #5a1e93;
+  border-color: #5a1e93;
+}
+
+.beranda-button:focus {
+  background-color: #5a1e93;
+  border-color: #5a1e93;
+}

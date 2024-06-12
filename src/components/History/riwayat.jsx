@@ -1,10 +1,11 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchBookings } from "../../redux/reducers/booking"
 import { fetchPayments } from "../../redux/reducers/payment"
 import { fetchFlights } from "../../redux/reducers/flight"
 import { fetchAirports } from "../../redux/reducers/airport"
 import auth from "../../redux/reducers/auth"
+import dummyBookings from "./dummybooking.json"
 
 import {
   Card,
@@ -25,7 +26,7 @@ import "../styles/history/riwayat.css"
 
 const DetailPemesanan = () => {
   const dispatch = useDispatch()
-
+  const [bookings, setBookings] = useState([])
   const bookingData = useSelector((state) => state.bookings.data)
   const bookingStatus = useSelector((state) => state.bookings.status)
   const paymentData = useSelector((state) => state.payments.data)
@@ -34,21 +35,33 @@ const DetailPemesanan = () => {
   const flightStatus = useSelector((state) => state.flights.status)
   const airportData = useSelector((state) => state.airports.data)
   const airportStatus = useSelector((state) => state.airports.status)
-
+  const [errorMessage, setErrorMessage] = useState("")
+  const [hoverIndex, setHoverIndex] = useState(null)
+  const [clickedIndex, setClickedIndex] = useState(null)
   const [isCardClicked, setIsCardClicked] = React.useState(false)
   const [selectedCardIndex, setSelectedCardIndex] = React.useState(null)
   const bookingsData = bookingData.data
+  const userId = useSelector((state) => state.auth.user?.id)
 
+  console.log(dummyBookings)
   useEffect(() => {
-    if (bookingStatus === "idle") dispatch(fetchBookings())
+    // if (bookingStatus === "idle") dispatch(fetchBookings())
+    setBookings(dummyBookings)
     if (paymentStatus === "idle") dispatch(fetchPayments())
     if (flightStatus === "idle") dispatch(fetchFlights())
     if (airportStatus === "idle") dispatch(fetchAirports())
-  }, [dispatch, bookingStatus, paymentStatus, flightStatus, airportStatus])
+  }, [dispatch, paymentStatus, flightStatus, airportStatus])
+  const handleMouseEnter = (index) => {
+    setHoverIndex(index)
+  }
 
+  const handleMouseLeave = () => {
+    setHoverIndex(null)
+  }
   const handleCardClick = (index) => {
     setIsCardClicked(true)
     setSelectedCardIndex(index)
+    setClickedIndex(index)
   }
 
   const getPaymentStatus = (payment) => {
@@ -90,6 +103,9 @@ const DetailPemesanan = () => {
     }
   }
 
+  const getBookingsByUserId = (bookings, userId) => {
+    return bookings.filter((booking) => booking.user_id === userId)
+  }
   const getPaymentForBooking = (bookingId) => {
     return paymentData.data.find((payment) => payment.booking_id === bookingId)
   }
@@ -122,13 +138,50 @@ const DetailPemesanan = () => {
   //   flightStatus === "failed" ||
   //   airportStatus === "failed"
   // ) {
-  //   return <p>Error loading data</p>
+  //   return <p>Erro Fetch data</p>
   // }
+
+  const styles = {
+    riwayatCard: {
+      // Adjust background color as needed
+      borderColor: "#ffff",
+      borderWidth: "0px",
+      // boxShadow: "0 10px 10px rgba(0, 0, 0, 0.2)", // Default shadow
+      transition: "all 0.2s ease-in-out", // Smooth transition for hover effect
+      cursor: "pointer",
+    },
+    riwayatCardHover: {
+      // boxShadow: "0px 20px 50px rgba(160, 110, 206, 1)", // Change shadow color
+      transform: "translateY(-3px)", // Simulate a slight "pop" effect
+      borderStyle: "solid",
+      borderWidth: "3px",
+      borderColor: "#a06ece",
+    },
+    riwayatCardClicked: {
+      borderWidth: "5px",
+      borderColor: "#a06ece",
+    },
+  }
+  const formatDate = (dateString) => {
+    const options = { day: "numeric", month: "long", year: "numeric" }
+    return new Date(dateString).toLocaleDateString("id-ID", options)
+  }
+  const formatDateHead = (dateString) => {
+    const options = { month: "long", year: "numeric" }
+    return new Date(dateString).toLocaleDateString("id-ID", options)
+  }
+
+  const formatTime = (timeString) => {
+    const options = { hour: "2-digit", minute: "2-digit", hour12: false }
+    return new Date(timeString)
+      .toLocaleTimeString("id-ID", options)
+      .replace(".", ":")
+  }
 
   return (
     <div>
-      {bookingsData && bookingsData.length > 0 ? (
-        bookingsData.map((booking, index) => {
+      {bookings && bookings.length > 0 ? (
+        bookings.map((booking, index) => {
           const payment = getPaymentForBooking(booking.id)
           const flight = getFlightForBooking(booking.flight_id)
           const departureAirportCity = getAirportCityById(
@@ -139,22 +192,33 @@ const DetailPemesanan = () => {
             flight?.departureAirport
           )
           const arrivalAirportName = getAirportNameById(flight?.arrivalAirport)
+          let cardStyle = styles.riwayatCard
+          if (clickedIndex === index || hoverIndex === index) {
+            cardStyle = { ...cardStyle, ...styles.riwayatCardHover }
+          }
+          if (clickedIndex === index) {
+            cardStyle = { ...cardStyle, ...styles.riwayatCardClicked }
+          }
+
           return (
             <Container>
               <Row>
                 <Col md={7} className="mt-4" id="booking-card">
                   <Container>
-                    <h5>{new Date(booking.orderDate).toLocaleDateString()}</h5>
+                    <h5>{formatDateHead(booking.orderDate)}</h5>
                     <Card
                       key={booking.id}
                       id="riwayat-card"
                       className="p-2 mx-2 rounded-3"
+                      style={cardStyle}
+                      onMouseEnter={() => handleMouseEnter(index)}
+                      onMouseLeave={handleMouseLeave}
                       onClick={() => handleCardClick(index)}
                     >
                       {getPaymentStatus(payment)}
 
-                      <Row className="mx-2">
-                        <Col md={3} sm={4}>
+                      <Row className="mx-2 my-2 g-3">
+                        <Col md={4} sm={4}>
                           <Row>
                             <Col md={2}>
                               <Image src={icons.areaIcon} />
@@ -164,44 +228,36 @@ const DetailPemesanan = () => {
                                 {departureAirportCity}
                               </p>
                               <p className="m-0">
-                                {new Date(
-                                  flight?.departureTime
-                                ).toLocaleDateString()}
+                                {formatDate(flight?.departureTime)}
                               </p>
                               <p className="m-0">
-                                {new Date(
-                                  flight?.departureTime
-                                ).toLocaleTimeString()}
+                                {formatTime(flight?.departureTime)}
                               </p>
                             </Col>
                           </Row>
                         </Col>
                         <Col
-                          md={6}
+                          md={4}
                           sm={4}
-                          className="d-flex flex-column justify-content-center align-items-center"
+                          className="d-flex flex-column justify-content-center align-items-center mx-0"
                         >
                           <p>Duration</p>
                           <Image src={icons.longArrow} width="100%" />
                         </Col>
-                        <Col md={3} sm={4}>
+                        <Col md={4} sm={4}>
                           <Row>
                             <Col md={2}>
-                              <Image src={area} />
+                              <Image src={icons.areaIcon} />
                             </Col>
                             <Col md={10}>
                               <p className="fw-bold col-6 mb-0">
                                 {arrivalAirportCity}
                               </p>
                               <p className="m-0">
-                                {new Date(
-                                  flight?.arrivalTime
-                                ).toLocaleDateString()}
+                                {formatDate(flight?.arrivalTime)}
                               </p>
                               <p className="m-0">
-                                {new Date(
-                                  flight?.arrivalTime
-                                ).toLocaleTimeString()}
+                                {formatTime(flight?.arrivalTime)}
                               </p>
                             </Col>
                           </Row>
@@ -211,16 +267,16 @@ const DetailPemesanan = () => {
                       <Row>
                         <Col>
                           <p className="m-0 fw-bold">Booking Code : </p>
-                          <p className="m-0">{booking.id}</p>
+                          <p className="m-0">{booking.code}</p>
                         </Col>
                         <Col>
                           <p className="m-0 fw-bold">Class :</p>
-                          <p className="m-0">{booking.class}</p>
+                          <p className="m-0">{booking.class} Economy</p>
                         </Col>
                         <Col>
                           <p
-                            className="col-md-6 d-flex justify-content-end fw-bold"
-                            style={{ color: "#A06ECE", fontSize: "20px" }}
+                            className="col-md-6 d-flex justify-content-end fw-bold align-center m-0"
+                            style={{ color: "#A06ECE", fontSize: "15px" }}
                           >
                             IDR {booking.priceAmount}
                           </p>
@@ -233,7 +289,7 @@ const DetailPemesanan = () => {
                 {isCardClicked && index === selectedCardIndex && (
                   <Col md={5} className="mt-4 p-3" id="detail-pesanan">
                     <div
-                      className="border shadow"
+                      className=""
                       style={{
                         // border: "1px solid #A06ECE",
                         minWidth: "27em",
@@ -243,7 +299,7 @@ const DetailPemesanan = () => {
                     >
                       <Row>
                         <Col md={9}>
-                          <Card.Title as="h5">Detail Pesanan</Card.Title>
+                          <Card.Title as="h5">Detail Pemesanan</Card.Title>
                         </Col>
                         <Col
                           md={3}
@@ -260,12 +316,12 @@ const DetailPemesanan = () => {
                           className="mx-2 fw-bold"
                           style={{ color: " #A06ECE", fontSize: "20px" }}
                         >
-                          FGDVBE234
+                          {booking.code}
                         </p>
                       </div>
                       <Row className="d-flex mb-0">
                         <p className="fw-bold col-6 mb-0">
-                          {new Date(flight?.departureTime).toLocaleTimeString()}
+                          {formatTime(flight?.departureTime)}
                         </p>
                         <p
                           className="fw-bold col-6 d-flex justify-content-end mb-0"
@@ -277,19 +333,19 @@ const DetailPemesanan = () => {
                       {/* tanggal */}
                       <p className="m-0">
                         {" "}
-                        {new Date(flight?.departureTime).toLocaleDateString()}
+                        {formatDate(flight?.departureTime)}
                       </p>
                       <p className="m-0">{departureAirportName}</p>
                       <div className="border my-2"></div>
                       <Row className="fw-bold">
-                        <div
-                          className="col-1"
-                        ></div>
-                        <Col md={1}>
+                        <div className="col-1"></div>
+                        <Col md={2}>
                           <p className="my-0 mx-1">JetAir{/*Airline*/} </p>
                           <p>JT302</p>
                         </Col>
-                        <p className="col-sm-9 mx-1">- Economy</p>
+                        <Col>
+                          <p className="col-sm-9 mx-1">- Economy</p>
+                        </Col>
                       </Row>
                       <Row>
                         <Col md={1} className="mt-3">
@@ -307,7 +363,7 @@ const DetailPemesanan = () => {
                       <Row className="d-flex mb-0">
                         <p className="fw-bold col-6 mb-0">
                           {" "}
-                          {new Date(flight?.arrivalTime).toLocaleTimeString()}
+                          {formatTime(flight?.arrivalTime)}
                         </p>
                         <p
                           className="fw-bold col-6 d-flex justify-content-end mb-0"
@@ -317,10 +373,7 @@ const DetailPemesanan = () => {
                         </p>
                       </Row>
                       {/* tanggal */}
-                      <p className="m-0">
-                        {" "}
-                        {new Date(flight?.arrivalTime).toLocaleDateString()}
-                      </p>
+                      <p className="m-0"> {formatDate(flight?.arrivalTime)}</p>
                       <p className="m-0 fw-medium">{arrivalAirportName}</p>
                       <div className="border my-2"></div>
                       <div>
@@ -358,11 +411,7 @@ const DetailPemesanan = () => {
                         >
                           IDR .........
                         </p>
-                        <Button
-                          className="hover"
-                          size="lg"
-                          style={{ backgroundColor: " #A06ECE" }}
-                        >
+                        <Button className="custom-button" size="lg">
                           Cetak Tiket
                         </Button>
                       </Row>

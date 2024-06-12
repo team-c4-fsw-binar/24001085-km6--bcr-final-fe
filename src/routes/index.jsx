@@ -8,6 +8,7 @@ import {
   VerifyOtpPage,
   RegisterPage,
   SearchingPage,
+  HistoryPage,
 } from "../pages"
 
 import ResetPasswordPage from "../pages/Auth/ResetPasswordPage"
@@ -16,10 +17,11 @@ import ForgotPasswordPage from "../pages/Auth/ForgotPasswordPage"
 const router = createBrowserRouter([
   {
     path: "/",
-    element: 
-    <>
-      <HomePage />,
-    </>
+    element: (
+      <>
+        <HomePage />,
+      </>
+    ),
   },
   {
     path: "/register",
@@ -49,7 +51,10 @@ const router = createBrowserRouter([
     path: "/search",
     element: <SearchingPage />,
   },
+  {
+    path: "/history",
+    element: <HistoryPage />,
+  },
 ])
 
 export default router
-

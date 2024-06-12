@@ -12,3 +12,17 @@
   border-width: 5px;
   border-color: #a06ece;
 }
+.custom-button {
+  background-color: #7126b5;
+  border-color: #7126b5;
+  color: white;
+}
+.custom-button:hover {
+  background-color: #5a1e93;
+  border-color: #5a1e93;
+}
+
+.custom-button:focus {
+  background-color: #5a1e93;
+  border-color: #5a1e93;
+}
