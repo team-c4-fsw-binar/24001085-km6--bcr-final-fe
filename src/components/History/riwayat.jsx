@@ -4,8 +4,8 @@ import { fetchBookings } from "../../redux/reducers/booking"
 import { fetchPayments } from "../../redux/reducers/payment"
 import { fetchFlights } from "../../redux/reducers/flight"
 import { fetchAirports } from "../../redux/reducers/airport"
-import auth from "../../redux/reducers/auth"
 import dummyBookings from "./dummybooking.json"
+import dummyPayments from "./dummypayment.json"
 
 import {
   Card,
@@ -27,6 +27,7 @@ import "../styles/history/riwayat.css"
 const DetailPemesanan = () => {
   const dispatch = useDispatch()
   const [bookings, setBookings] = useState([])
+  const [payments, setPayments] = useState([])
   const bookingData = useSelector((state) => state.bookings.data)
   const bookingStatus = useSelector((state) => state.bookings.status)
   const paymentData = useSelector((state) => state.payments.data)
@@ -41,12 +42,12 @@ const DetailPemesanan = () => {
   const [isCardClicked, setIsCardClicked] = React.useState(false)
   const [selectedCardIndex, setSelectedCardIndex] = React.useState(null)
   const bookingsData = bookingData.data
-  const userId = useSelector((state) => state.auth.user?.id)
+  // const userId = useSelector((state) => state.auth.user?.id)
 
-  console.log(dummyBookings)
   useEffect(() => {
     // if (bookingStatus === "idle") dispatch(fetchBookings())
     setBookings(dummyBookings)
+    setPayments(dummyPayments)
     if (paymentStatus === "idle") dispatch(fetchPayments())
     if (flightStatus === "idle") dispatch(fetchFlights())
     if (airportStatus === "idle") dispatch(fetchAirports())
@@ -64,6 +65,49 @@ const DetailPemesanan = () => {
     setClickedIndex(index)
   }
 
+  const getBookingsByUserId = (bookings, userId) => {
+    return bookings.filter((booking) => booking.user_id === userId)
+  }
+  const getPaymentForBooking = (bookingId) => {
+    return dummyPayments.find((payment) => payment.booking_id === bookingId)
+  }
+  // const getPaymentForBooking = (bookingId) => {
+  //   return paymentData.data.find((payment) => payment.booking_id === bookingId)
+  // }
+  const getFlightForBooking = (flightId) => {
+    return flightData.data.find((flight) => flight.id === flightId)
+  }
+
+  const getAirportCityById = (airportId) => {
+    const airport = airportData.data.find((airport) => airport.id === airportId)
+    return airport ? airport.city : "Unknown Airport"
+  }
+  const getAirportNameById = (airportId) => {
+    const airport = airportData.data.find((airport) => airport.id === airportId)
+    return airport ? airport.name : "Unknown Airport"
+  }
+
+  if (
+    bookingStatus === "loading" ||
+    paymentStatus === "loading" ||
+    flightStatus === "loading" ||
+    airportStatus === "loading"
+  ) {
+    return (
+      <div className="row col-12 d-flex justify-content-center">
+        <Spinner animation="border" className="d-flex justify-content-center" />
+      </div>
+    )
+  }
+
+  // if (
+  //   bookingStatus === "failed" ||
+  //   paymentStatus === "failed" ||
+  //   flightStatus === "failed" ||
+  //   airportStatus === "failed"
+  // ) {
+  //   return <p>Error Fetch data</p>
+  // }
   const getPaymentStatus = (payment) => {
     if (!payment) return ""
     switch (payment.status) {
@@ -102,44 +146,6 @@ const DetailPemesanan = () => {
         )
     }
   }
-
-  const getBookingsByUserId = (bookings, userId) => {
-    return bookings.filter((booking) => booking.user_id === userId)
-  }
-  const getPaymentForBooking = (bookingId) => {
-    return paymentData.data.find((payment) => payment.booking_id === bookingId)
-  }
-
-  const getFlightForBooking = (flightId) => {
-    return flightData.data.find((flight) => flight.id === flightId)
-  }
-
-  const getAirportCityById = (airportId) => {
-    const airport = airportData.data.find((airport) => airport.id === airportId)
-    return airport ? airport.city : "Unknown Airport"
-  }
-  const getAirportNameById = (airportId) => {
-    const airport = airportData.data.find((airport) => airport.id === airportId)
-    return airport ? airport.name : "Unknown Airport"
-  }
-
-  if (
-    bookingStatus === "loading" ||
-    paymentStatus === "loading" ||
-    flightStatus === "loading" ||
-    airportStatus === "loading"
-  ) {
-    return <Spinner animation="border" />
-  }
-
-  // if (
-  //   bookingStatus === "failed" ||
-  //   paymentStatus === "failed" ||
-  //   flightStatus === "failed" ||
-  //   airportStatus === "failed"
-  // ) {
-  //   return <p>Erro Fetch data</p>
-  // }
 
   const styles = {
     riwayatCard: {
@@ -411,9 +417,15 @@ const DetailPemesanan = () => {
                         >
                           IDR .........
                         </p>
-                        <Button className="custom-button" size="lg">
-                          Cetak Tiket
-                        </Button>
+                        {payment?.status === "true" ? (
+                          <Button className="custom-button" size="lg">
+                            Cetak Tiket
+                          </Button>
+                        ) : (
+                          <Button className="custom-button-bayar" size="lg">
+                            Lanjut Bayar
+                          </Button>
+                        )}
                       </Row>
                     </div>
                   </Col>

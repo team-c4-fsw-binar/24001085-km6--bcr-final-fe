@@ -26,3 +26,12 @@
   background-color: #5a1e93;
   border-color: #5a1e93;
 }
+
+.custom-button-bayar {
+  background-color: #ff0000;
+  border-color: #ff0000;
+}
+.custom-button-bayar:hover {
+  background-color: #960202;
+  border-color: #851414;
+}

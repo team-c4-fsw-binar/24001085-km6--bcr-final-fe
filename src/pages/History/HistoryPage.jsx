@@ -34,7 +34,6 @@ const HistoryPage = () => {
                 style={{
                   height: "50px",
                   weight: "77px",
-
                   alignContent: "center",
                   fontSize: "23px",
                   fontWeight: "600",
