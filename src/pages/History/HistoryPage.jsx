@@ -3,7 +3,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { BsArrowLeft, BsFunnel } from "react-icons/bs"
-
+import "../styles/historyPage.css"
 import DetailPemesanan from "../../components/History/riwayat"
 import PopupCard from "../../components/Modal/SearchModal"
 import Datepicker from "../../components/Modal/DatepickerModal"
@@ -21,68 +21,62 @@ const HistoryPage = () => {
   }
   return (
     <>
-      <Container>
-        <Row>
-          <h2 className="my-4">Riwayat Pemesanan</h2>
-        </Row>
-        <Row>
-          <Col md={10} className="d-grid  ">
-            <Button
-              className="d-flex justify-content-left rounded-4 "
-              style={{
-                height: "50px",
-                weight: "77px",
-                backgroundColor: " #A06ECE",
-                alignContent: "center",
-                fontSize: "23px",
-                fontWeight: "600",
-              }}
-              onClick={BerandaClick}
+      <div className="shadow">
+        <div className="container mb-4">
+          {" "}
+          <Row>
+            <h2 className="my-4">Riwayat Pemesanan</h2>
+          </Row>
+          <Row>
+            <Col md={10} className="d-grid  ">
+              <Button
+                className="beranda-button d-flex justify-content-left rounded-4 "
+                style={{
+                  height: "50px",
+                  weight: "77px",
+                  alignContent: "center",
+                  fontSize: "23px",
+                  fontWeight: "600",
+                }}
+                onClick={BerandaClick}
+              >
+                <BsArrowLeft className="mx-2 my-1 align-bottom " />
+                Beranda
+              </Button>
+            </Col>
+            <Col md={1} className="d-grid">
+              <Button
+                variant="outline-dark"
+                className="rounded-5"
+                onClick={() => setModalShowDate(true)}
+              >
+                <BsFunnel /> Filter
+              </Button>
+            </Col>
+            <Col
+              md={1}
+              className="d-grid d-flex justify-content-center rounded-5"
             >
-              <BsArrowLeft className="mx-2 my-1 align-bottom " />
-              Beranda
-            </Button>
-          </Col>
-          <Col md={1} className="d-grid">
-            <Button
-              variant="outline-dark"
-              className="rounded-5"
-              onClick={() => setModalShowDate(true)}
-            >
-              <BsFunnel /> Filter
-            </Button>
-          </Col>
-          <Col
-            md={1}
-            className="d-grid d-flex justify-content-center rounded-5"
-          >
-            <Button
-              variant="outline"
-              className="rounded-3"
-              onClick={() => setModalShowCari(true)}
-            >
-              <Image src={icons.searchIcon} />
-            </Button>
-          </Col>
-        </Row>
-
-        <PopupCard
-          show={modalShowCari}
-          onHide={() => setModalShowCari(false)}
-        />
-        <Datepicker
-          show={modalShowDate}
-          onHide={() => setModalShowDate(false)}
-        />
-      </Container>
-      <div
-        className="m-4 mt-5 border "
-        style={{ boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.3)" }}
-      />
-      {/* <div className="border shadow">
-          <div className="border shadow"></div>
+              <Button
+                variant="outline"
+                className="rounded-3"
+                onClick={() => setModalShowCari(true)}
+              >
+                <Image src={icons.searchIcon} />
+              </Button>
+            </Col>
+          </Row>
+          <PopupCard
+            show={modalShowCari}
+            onHide={() => setModalShowCari(false)}
+          />
+          <Datepicker
+            show={modalShowDate}
+            onHide={() => setModalShowDate(false)}
+          />
         </div>
-      </div> */}
+      </div>
+
       <DetailPemesanan />
     </>
   )

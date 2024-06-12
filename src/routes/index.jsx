@@ -12,10 +12,9 @@ import {
   NotificationPage,
   CheckoutPage,
   PaymentPage,
-  HistoryPage,
   ForgotPasswordPage,
   ResetPasswordPage,
-  
+  HistoryPage,
 } from "../pages"
 
 // components
@@ -25,10 +24,11 @@ import NonProtected from "../components/Protected/Protected";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: 
-    <>
-      <HomePage />,
-    </>
+    element: (
+      <>
+        <HomePage />,
+      </>
+    ),
   },
   {
     path: "/register",
@@ -81,4 +81,3 @@ const router = createBrowserRouter([
 ]);
 
 export default router
-

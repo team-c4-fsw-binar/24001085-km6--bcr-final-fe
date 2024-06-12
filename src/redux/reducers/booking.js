@@ -5,7 +5,7 @@ import axios from "axios"
 export const fetchBookings = createAsyncThunk(
   "bookings/fetchBookings",
   async () => {
-    localStorage.getItem("token")
+    const token = localStorage.getItem("token")
     const response = await axios.get(
       `${import.meta.env.VITE_BACKEND_API}/api/bookings`,
       {

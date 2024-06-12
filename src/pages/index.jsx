@@ -12,9 +12,8 @@ import CheckoutPage from "./Payment/CheckoutPage";
 import PaymentPage from "./Payment/PaymentPage";
 import HistoryPage from "./History/HistoryPage";
 
-
-export { 
-  HomePage, 
+export {
+  HomePage,
   SearchingPage,
   LoginPage, 
   RegisterPage, 
@@ -26,5 +25,5 @@ export {
   NotificationPage,
   CheckoutPage,
   PaymentPage,
-  HistoryPage
-};
+  HistoryPage,
+}

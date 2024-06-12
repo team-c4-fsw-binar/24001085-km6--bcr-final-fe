@@ -12,3 +12,26 @@
   border-width: 5px;
   border-color: #a06ece;
 }
+.custom-button {
+  background-color: #7126b5;
+  border-color: #7126b5;
+  color: white;
+}
+.custom-button:hover {
+  background-color: #5a1e93;
+  border-color: #5a1e93;
+}
+
+.custom-button:focus {
+  background-color: #5a1e93;
+  border-color: #5a1e93;
+}
+
+.custom-button-bayar {
+  background-color: #ff0000;
+  border-color: #ff0000;
+}
+.custom-button-bayar:hover {
+  background-color: #960202;
+  border-color: #851414;
+}
