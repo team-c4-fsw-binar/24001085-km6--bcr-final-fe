@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import * as icons from "../../assets/icons";
 
-import "../styles/notification.css";
+// import "../styles/notification.css";
 
 const NotificationPage = () => {
     const [isRead, setIsRead] = useState(false);

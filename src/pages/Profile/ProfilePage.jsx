@@ -5,7 +5,7 @@ import { Container, Row, Col, Card, Image, Form } from "react-bootstrap";
 import * as icons from "../../assets/icons";
 import * as images from "../../assets/images";
 
-import "../styles/profile.css";
+// import "../styles/profile.css";
 
 const ProfilePage = () => {
     const [availableImage, setAvailableImage] = useState(true);
@@ -66,7 +66,7 @@ const ProfilePage = () => {
                             </p>
                             <Card.Body>
                                 <Form>
-                                    {availableImage &&  (
+                                    {availableImage && (
                                         <div className="d-flex justify-content-center">
                                             <Image
                                                 src={images.avatar}

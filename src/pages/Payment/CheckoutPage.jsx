@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import * as icons from "../../assets/icons";
-import "../styles/checkout.css";
+// import "../styles/checkout.css";
 
 const CheckoutPage = () => {
     const [hasFamilyNamePemesan, setHasFamilyNamePemesan] = useState(true);

@@ -5,7 +5,7 @@ import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap"
 import * as icons from "../../assets/icons";
 import * as images from "../../assets/images";
 
-import "../styles/payment.css"
+// import "../styles/payment.css"
 
 const PaymentPage = () => {
     const [user, setuser] = useState(true);

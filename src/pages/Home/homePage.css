@@ -1,0 +1,120 @@
+.homepageContainerBanner {
+  background: linear-gradient(to right, rgba(113, 38, 181, 0.5) 50%, #e2d4f0);
+  padding: 70px;
+}
+
+.sectionSortBooking {
+  background: white;
+  padding: 20px;
+  margin: auto;
+  transform: translateY(-40%);
+}
+
+.destinasiFavoritContainer {
+  transform: translateY(-10%);
+}
+
+.custom-button:hover {
+  background-color: #5a2091;
+  border-color: #5a2091;
+}
+
+.customSwitchTogleDate .form-check-input {
+  width: 3rem;
+  height: 1.5rem;
+}
+
+.customSwitchTogleDate .form-check-input:checked {
+  background-color: #4b1979;
+  border-color: #4b1979;
+}
+
+.customSwitchTogleDate .form-check-input:focus {
+  box-shadow: none;
+}
+
+.btnDestinasi {
+  background-color: #e2d4f0;
+  color: black;
+  border: none;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  padding-left: 24px;
+  padding-right: 24px;
+  border-radius: 12px;
+}
+
+.btnDestinasi:hover,
+.btnDestinasi.active {
+  background-color: #7126b5;
+  color: white;
+  border: none;
+}
+
+.btnDestinasi:hover img,
+.btnDestinasi.active img {
+  filter: brightness(0) invert(1);
+}
+
+.btnSimpanModal:hover {
+  background-color: #5a2091;
+}
+
+.list-group-item.active {
+  background-color: #7126b5;
+  border-color: #7126b5;
+  color: white;
+}
+
+.btnPassengersCounter {
+  background-color: transparent;
+  border: 2px solid #7126b5;
+  color: #7126b5;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 35px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.btnPassengersCounter:hover {
+  background-color: #7126b5;
+  color: white;
+}
+
+.inputTextDecorationNone:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  .homepageContainerBanner {
+    display: none;
+  }
+
+  .destinasiFavoritContainer {
+    transform: translateY(0%);
+  }
+
+  .sectionSortBooking {
+    transform: translateY(0%);
+    padding: 15px;
+  }
+  .btnDestinasi {
+    padding: 10px 20px;
+    font-size: 12px;
+  }
+
+  .cardDestinasi {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex: 0 1 calc(50% - 10px);
+    box-sizing: border-box;
+  }
+}
+/* mobile end */

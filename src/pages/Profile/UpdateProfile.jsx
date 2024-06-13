@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Button, Image, Form } from "react-bootstrap"
 import { Link, useNavigate } from 'react-router-dom';
 import * as icons from "../../assets/icons";
 
-import "../styles/updateProfile.css";
+// import "../styles/updateProfile.css";
 
 const UpdateProfilePage = () => {
     const [isSaved, setIsSaved] = useState(false);

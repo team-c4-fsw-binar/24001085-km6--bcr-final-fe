@@ -1,107 +1,111 @@
-import { useState } from 'react';
-import { 
-  Container, Row, Col, Form, Button, Card, Modal, ListGroup, CloseButton 
+import { useEffect, useState } from 'react';
+import {
+  Container, Row, Col, Form, Button, Card, Modal, ListGroup, CloseButton
 } from 'react-bootstrap';
 
 import { Link } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+
+import "./homePage.css";
+import DatePickerModal from '../../components/Modal/DatepickerModal';
 import * as images from "../../assets/images"
 import * as icons from "../../assets/icons"
+import { getFilteredTickets } from '../../redux/actions/home';
 
-import "../styles/homePage.css"
 
 const HomePage = () => {
-  const [fromModalOpen, setFromModalOpen] = useState(false);
-  const [toModalOpen, setToModalOpen] = useState(false);
-  const [seatClassModalOpen, setSeatClassModalOpen] = useState(false);
-  const [counterModalOpen, setCounterModalOpen] = useState(false);
+  const styles = {
+    fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
+    fontBodyRegular12: { fontWeight: 400, fontSize: '12px' },
+    fontBodyRegular14: { fontWeight: 400, fontSize: '14px' },
+    fontBodyMedium10: { fontWeight: 500, fontSize: '10px' },
+    fontBodyMedium12: { fontWeight: 500, fontSize: '12px' },
+    fontBodyMedium14: { fontWeight: 500, fontSize: '14px' },
+    fontBodyBold10: { fontWeight: 700, fontSize: '10px' },
+    fontBodyBold12: { fontWeight: 700, fontSize: '12px' },
+    fontBodyBold14: { fontWeight: 700, fontSize: '14px' },
+    fontTitleRegular16: { fontWeight: 400, fontSize: '16px' },
+    fontTitleRegular18: { fontWeight: 400, fontSize: '18px' },
+    fontTitleMedium16: { fontWeight: 500, fontSize: '16px' },
+    fontTitleMedium18: { fontWeight: 500, fontSize: '18px' },
+    fontTitleBold16: { fontWeight: 700, fontSize: '16px' },
+    fontTitleBold18: { fontWeight: 700, fontSize: '18px' },
+    fontHeadingRegular20: { fontWeight: 400, fontSize: '20px' },
+    fontHeadingRegular24: { fontWeight: 400, fontSize: '24px' },
+    fontHeadingMedium20: { fontWeight: 500, fontSize: '20px' },
+    fontHeadingMedium24: { fontWeight: 500, fontSize: '24px' },
+    fontHeadingBold20: { fontWeight: 700, fontSize: '20px' },
+    fontHeadingBold24: { fontWeight: 700, fontSize: '24px' },
+
+    titleBrand: {
+      color: '#7126b5',
+    },
+    customButton: {
+      backgroundColor: '#7126b5',
+      borderColor: '#7126b5',
+    },
+
+    inputDestination: {
+      border: 'none',
+      borderRadius: '0',
+      borderBottom: 'solid #d0d0d0 1px',
+    },
+
+    btnSimpanModal: {
+      backgroundColor: '#7126b5',
+      border: 'none',
+    },
+
+  };
+
+  const [name, city, country] = useState("");
+
+
+
+  // togle switch for return
   const [toggleSwitch, setToggleSwitch] = useState(false);
 
-  const [fromLocation, setFromLocation] = useState("");
-  const [toLocation, setToLocation] = useState("");
-  const [seatClass, setSeatClass] = useState("");
-  const [tempSeatClass, setTempSeatClass] = useState("");
+  // modal destination
+  const [fromModalOpen, setFromModalOpen] = useState(false);
+  const [toModalOpen, setToModalOpen] = useState(false);
+  const [fromLocation, setFromLocation] = useState();
+  const [toLocation, setToLocation] = useState();
 
-  const [dewasa, setDewasa] = useState(0);
-  const [anak, setAnak] = useState(0);
-  const [bayi, setBayi] = useState(0);
+  const [selectedFrom, setSelectedFrom] = useState();
+  const [selectedTo, setSelectedTo] = useState();
 
-  const [tempDewasa, setTempDewasa] = useState(dewasa);
-  const [tempAnak, setTempAnak] = useState(anak);
-  const [tempBayi, setTempBayi] = useState(bayi);
-
-  //  date picker
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [modalShow, setModalShow] = useState(false);
-
-  const handleDateChange = (dates) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
-  };
-
-  // date picker end
-
-  const handleCounterSave = () => {
-    setDewasa(tempDewasa);
-    setAnak(tempAnak);
-    setBayi(tempBayi);
-    setCounterModalOpen(false);
-  };
-
-  const totalPassengers = dewasa + anak + bayi;
-
-  const [recentSearches, setRecentSearches] = useState(['Jakarta', 'Bandung', 'Surabaya']);
-
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const airports = await getFilteredTickets()
+        console.log(airports);
+        setFromLocation(airports.data.data.map((item) => ({ value: item.id, label: item.name })))
+        setToLocation(fromLocation);
+      }
+      catch (err) {
+        console.log(err);
+      }
+    }
+    fetch();
+  }, [])
 
   const handleFromModalClose = () => setFromModalOpen(false);
   const handleToModalClose = () => setToModalOpen(false);
-  const handleSeatClassModalClose = () => setSeatClassModalOpen(false);
-  const handleCounterModalClose = () => setCounterModalOpen(false);
-
   const handleFromInputClick = () => setFromModalOpen(true);
   const handleToInputClick = () => setToModalOpen(true);
+
+
+  // seat class
+  const [seatClassModalOpen, setSeatClassModalOpen] = useState(false);
+  const [seatClass, setSeatClass] = useState("");
+  const [tempSeatClass, setTempSeatClass] = useState("");
+  const handleSeatClassModalClose = () => setSeatClassModalOpen(false);
+  const handleCounterModalClose = () => setCounterModalOpen(false);
   const handleSeatClassInputClick = () => {
     setTempSeatClass(seatClass); // Set temp seat class to current seat class
     setSeatClassModalOpen(true);
   };
-
-  const handleCounterInputClick = () => {
-    setTempDewasa(dewasa);
-    setTempAnak(anak);
-    setTempBayi(bayi);
-    setCounterModalOpen(true);
-  };
-
-  const handleLocationSelect = (type, location) => {
-    if (type === "from") {
-      setFromLocation(location);
-      setFromModalOpen(false);
-    } else {
-      setToLocation(location);
-      setToModalOpen(false);
-    }
-    setRecentSearches([location, ...recentSearches]);
-  };
-
-  const handleDelete = (index) => {
-    if (index === 'all') {
-      setRecentSearches([]);
-    } else {
-      setRecentSearches(recentSearches.filter((_, i) => i !== index));
-    }
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      handleLocationSelect(event.target.value);
-    }
-  };
-
-
   const handleSeatClassSelect = (seatClass) => {
     setTempSeatClass(seatClass);
   };
@@ -111,86 +115,138 @@ const HomePage = () => {
     setSeatClassModalOpen(false);
   };
 
+
+
+
+  // total passenger 
+  const [counterModalOpen, setCounterModalOpen] = useState(false);
+  const [dewasa, setDewasa] = useState(0);
+  const [anak, setAnak] = useState(0);
+  const [bayi, setBayi] = useState(0);
+  const [tempDewasa, setTempDewasa] = useState(dewasa);
+  const [tempAnak, setTempAnak] = useState(anak);
+  const [tempBayi, setTempBayi] = useState(bayi);
+  const handleCounterSave = () => {
+    setDewasa(tempDewasa);
+    setAnak(tempAnak);
+    setBayi(tempBayi);
+    setCounterModalOpen(false);
+  };
+  const totalPassengers = dewasa + anak + bayi;
+  const handleCounterInputClick = () => {
+    setTempDewasa(dewasa);
+    setTempAnak(anak);
+    setTempBayi(bayi);
+    setCounterModalOpen(true);
+  };
+
+
+  //  date picker
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [modalShow, setModalShow] = useState(false);
+
+
+  // swap destination
+  const handleSwapLocations = () => {
+    const tempLocation = fromLocation;
+    setFromLocation(toLocation);
+    setToLocation(tempLocation);
+  };
+
   return (
     <>
-      <div className="homepage-container text-center">
+      <div className="homepageContainerBanner text-center">
         <img src={images.bannerImg} alt="Banner" className="img-fluid imageBanner" />
       </div>
-      <Container className="sectionSort shadow rounded">
+      <Container className="sectionSortBooking shadow rounded">
         <Form>
-          <p className='font-heading-bold-20'>Pilih Jadwal Penerbangan spesial di <span className='titleBrand'>TerbangAja</span> </p>
-          <Row className=''>
+          <p style={styles.fontHeadingBold20}>Pilih Jadwal Penerbangan spesial di <span style={styles.titleBrand}>TerbangAja</span></p>
+          <Row className='mb-md-0 mb-2'>
             <Col md={5}>
               <Form.Group className="mb-3" controlId="">
                 <div className='d-flex gap-2' onClick={handleFromInputClick}>
                   <img src={icons.departureIcon} alt="" className="" />
-                  <p className='font-body-regular-14 mb-0 align-self-center'>From</p>
-                  <input className="form-control inputDestination" type="text" id="from" value={fromLocation} readOnly />
+                  <p style={styles.fontBodyRegular14} className='mb-0 pe-2 align-self-center'>From</p>
+                  <input style={styles.inputDestination} className="form-control inputTextDecorationNone" type="text" value={selectedFrom?.label || ""} />
                 </div>
               </Form.Group>
             </Col>
             <Col md={2}>
-              <img src={icons.swapIcon} alt="" className="" />
+              <img
+                src={icons.swapIcon}
+                alt="Swap Locations"
+                className="cursor-pointer"
+                onClick={handleSwapLocations}
+                style={{ cursor: 'pointer' }}
+              />
             </Col>
             <Col md={5}>
               <Form.Group className="mb-3" controlId="">
                 <div className='d-flex gap-2' onClick={handleToInputClick}>
                   <img src={icons.departureIcon} alt="" className="" />
-                  <p className='font-body-regular-14 mb-0 align-self-center'>To</p>
-                  <input className="form-control inputDestination" type="text" id="to" value={toLocation} readOnly />
+                  <p style={styles.fontBodyRegular14} className='mb-0 pe-2 align-self-center'>To</p>
+                  <input style={styles.inputDestination} className="form-control inputTextDecorationNone" type="text" id="to" value={selectedTo?.label || ""} />
                 </div>
               </Form.Group>
             </Col>
           </Row>
           <Row className='mb-2'>
-            <Col md={5}>
+            <Col md={1} className='mb-md-0 mb-2'>
               <div className='d-flex gap-2'>
                 <img src={icons.dateIcon} alt="date" className="" />
-                <p className='font-body-regular-14 mb-0 align-self-center'>date</p>
-                <div>
-                  <p className='font-title-regular-16'>Departure</p>
+                <p style={styles.fontBodyRegular14} className='mb-0 pe-2 align-self-center'>Date</p>
+              </div>
+            </Col>
+            <Col md={2}>
+              <div>
+                <p style={styles.fontTitleRegular16}>Departure</p>
+                <input
+                  style={styles.inputDestination}
+                  className="form-control inputTextDecorationNone"
+                  type="text"
+                  id="departureDate"
+                  value={startDate ? startDate.toLocaleDateString() : ''}
+                  readOnly
+                  onClick={() => setModalShow(true)}
+                />
+              </div>
+            </Col>
+            <Col md={2}>
+              <div>
+                <p style={styles.fontTitleRegular16}>Return</p>
+                {toggleSwitch && (
                   <input
-                    className="form-control inputDestination"
+                    style={styles.inputDestination}
+                    className="form-control inputTextDecorationNone"
                     type="text"
-                    id="departureDate"
-                    value={startDate ? startDate.toLocaleDateString() : ''}
+                    id="returnDate"
+                    value={endDate ? endDate.toLocaleDateString() : ''}
                     readOnly
                     onClick={() => setModalShow(true)}
                   />
-                </div>
-                <div>
-                  <p className='font-title-regular-16'>Return</p>
-                  {toggleSwitch && (
-                    <input
-                      className="form-control inputDestination"
-                      type="text"
-                      id="returnDate"
-                      value={endDate ? endDate.toLocaleDateString() : ''}
-                      readOnly
-                      onClick={() => setModalShow(true)}
-                    />
-                  )}
-                </div>
+                )}
               </div>
             </Col>
             <Col md={2}>
               <Form.Check
                 type="switch"
                 id="custom-switch"
-                className="align-self-center custom-switch"
+                className="align-self-center customSwitchTogleDate"
                 checked={toggleSwitch}
                 onChange={(e) => setToggleSwitch(e.target.checked)}
               />
             </Col>
-            <Col md={5}>
+            <Col md={5} className='mt-md-0 mt-3'>
               <Form.Group className="mb-3" controlId="">
                 <div className='d-flex gap-2'>
                   <img src={icons.seatIcon} alt="" className="" />
-                  <p className='font-body-regular-14 mb-0 align-self-center'>To</p>
+                  <p style={styles.fontBodyRegular14} className='mb-0 pe-2 align-self-center'>To</p>
                   <div>
-                    <p className='font-title-regular-16'>Passengers</p>
+                    <p style={styles.fontTitleRegular16}>Passengers</p>
                     <input
-                      className="form-control inputDestination"
+                      style={styles.inputDestination}
+                      className="form-control inputTextDecorationNone"
                       type="text"
                       id="passengers"
                       value={`${totalPassengers} penumpang`}
@@ -199,9 +255,10 @@ const HomePage = () => {
                     />
                   </div>
                   <div>
-                    <p className='font-title-regular-16'>Seat Class</p>
+                    <p style={styles.fontTitleRegular16}>Seat Class</p>
                     <input
-                      className="form-control inputDestination"
+                      style={styles.inputDestination}
+                      className="form-control inputTextDecorationNone"
                       type="text"
                       id="seatClass"
                       value={seatClass}
@@ -214,128 +271,128 @@ const HomePage = () => {
             </Col>
           </Row>
           <Link to='/search'>
-            <Button className='font-title-bold-16 w-100 custom-button' variant="primary" type="submit">
-                Cari Penerbangan
+            <Button style={{ ...styles.customButton, ...styles.fontTitleBold16 }} className='w-100' variant="primary" type="submit">
+              Cari Penerbangan
             </Button>
           </Link>
-        </Form>
-      </Container>
+        </Form >
+      </Container >
 
 
-      <Container className='destinasiFavorit'>
+      <Container className='destinasiFavoritContainer'>
         <div>
-          <p className=' font-title-bold-16'>Destinasi Favorit</p>
-          <div className='d-flex flex-wrap  '>
-            <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 active font-body-regular-14 ' variant="primary">
+          <p style={styles.fontHeadingBold20} className='my-3'>Destinasi Favorit</p>
+          <div className='d-flex flex-wrap my-3'>
+            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
               <img src={icons.findIcon} alt="" className="me-2" />Semua
             </Button>
-            <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 font-body-regular-14' variant="primary">
+            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
               <img src={icons.findIcon} alt="" className="me-2" />Asia</Button>
-            <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 font-body-regular-14' variant="primary">
+            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
               <img src={icons.findIcon} alt="" className="me-2" />Amerika</Button>
-            <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 font-body-regular-14' variant="primary">
+            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
               <img src={icons.findIcon} alt="" className="me-2" />Australia</Button>
-            <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 font-body-regular-14' variant="primary">
+            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
               <img src={icons.findIcon} alt="" className="me-2" />Eropa</Button>
-            <Button className='btn-destinasi d-flex align-items-center me-2 mb-2 font-body-regular-14' variant="primary">
+            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
               <img src={icons.findIcon} alt="" className="me-2" />Afrika</Button>
           </div>
         </div>
 
         <Row xs={1} sm={2} md={3} lg={4} xl={5} className="mx-3 g-4">
           <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
+            <div className='cardDestinasi rounded border'>
+              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
+                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
+                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
+                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
                   </Card.Text>
                 </Card.Body>
               </Card>
             </div>
           </Col>
           <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
+            <div className='cardDestinasi rounded border'>
+              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
+                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
+                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
+                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
                   </Card.Text>
                 </Card.Body>
               </Card>
             </div>
           </Col>
           <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
+            <div className='cardDestinasi rounded border'>
+              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
+                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
+                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
+                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
                   </Card.Text>
                 </Card.Body>
               </Card>
             </div>
           </Col>
           <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
+            <div className='cardDestinasi rounded border'>
+              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
+                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
+                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
+                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
                   </Card.Text>
                 </Card.Body>
               </Card>
             </div>
           </Col>
           <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
+            <div className='cardDestinasi rounded border'>
+              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
+                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
+                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
+                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
                   </Card.Text>
                 </Card.Body>
               </Card>
             </div>
           </Col>
           <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
+            <div className='cardDestinasi rounded border'>
+              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
+                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
+                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
+                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
                   </Card.Text>
                 </Card.Body>
               </Card>
             </div>
           </Col>
           <Col>
-            <div className='cardDestinasi'>
-              <Card style={{ width: '12rem' }}> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
+            <div className='cardDestinasi rounded border'>
+              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
                 <Card.Body>
                   <Card.Text>
-                    <p className='font-body-medium-12 mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p className='primaryColor font-body-bold-10 mb-0'>AirAsia</p>
-                    <p className='font-body-medium-10 mb-0'>20 - 30 Maret 2023</p>
-                    <p className='font-body-medium-10 mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
+                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
+                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
+                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
+                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
                   </Card.Text>
                 </Card.Body>
               </Card>
@@ -345,71 +402,56 @@ const HomePage = () => {
       </Container >
 
       {/* Modal for selecting From location */}
-      <Modal Modal show={fromModalOpen} onHide={handleFromModalClose} centered >
-        <Modal.Body>
-          <div className='row w-100 justify-content-between align-items-center'>
-            <Form.Group controlId="locationSearch" className='col-11'>
-              <Form.Control
-                type="text"
-                className='font-body-regular-14'
-                placeholder="Masukkan Kota atau Negara"
-                onKeyPress={handleKeyPress}
-              />
-            </Form.Group>
+      <Modal show={fromModalOpen} onHide={handleFromModalClose} centered size='md'>
+        <Modal.Body className='overflow-auto' >
+          <div className='row justify-content-center align-items-center'>
+            <select onChange={(e) => {
+              const value = e.target.value
+              setSelectedFrom({
+                value: value.split("-")[0],
+                label: value.split("-")[1],
+              })
+              console.log(value)
+            }} value={`${selectedFrom?.value}-${selectedFrom?.label}`} className='col-md-10' name='from' id='from'>
+              {fromLocation && fromLocation.map((item) => {
+                return (<option value={`${item.value}-${item.label}`}>{item.label}</option>)
+              })}
+            </select>
             <CloseButton
               onClick={handleFromModalClose}
               className="close-button col-2"
             />
           </div>
-          <div className="d-flex justify-content-between mt-4">
-            <Form.Label className='font-title-medium-16'>Pencarian Terkini</Form.Label>
-            <Form.Label className='font-body-medium-14 text-danger' onClick={() => handleDelete('all')}>Hapus</Form.Label>
-          </div>
-          <ListGroup>
-            {recentSearches.map((search, index) => (
-              <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
-                {search}
-                <button type="button" className="btn-close" aria-label="Close" onClick={() => handleDelete(index)}></button>
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
         </Modal.Body>
       </Modal >
 
-      {/* Modal for selecting To location */}
-      <Modal Modal show={toModalOpen} onHide={handleToModalClose} centered >
-        <Modal.Body>
-          <div className='row w-100 justify-content-between align-items-center'>
-            <Form.Group controlId="locationSearch" className='col-11'>
-              <Form.Control
-                type="text"
-                className='font-body-regular-14'
-                placeholder="Masukkan Kota atau Negara"
-                onKeyPress={handleKeyPress}
-              />
-            </Form.Group>
+
+      {/* Modal for selecting From location */}
+      <Modal show={toModalOpen} onHide={handleToModalClose} centered size='md'>
+        <Modal.Body className='overflow-auto' >
+          <div className='row justify-content-center align-items-center'>
+            <select onChange={(e) => {
+              const value = e.target.value
+              setSelectedTo({
+                value: value.split("-")[0],
+                label: value.split("-")[1],
+              })
+              console.log(value)
+            }} value={`${selectedTo?.value}-${selectedTo?.label}`} className='col-md-10' name='to' id='to'>
+              {toLocation && toLocation.map((item) => {
+                return (<option value={`${item.value}-${item.label}`}>{item.label}</option>)
+              })}
+            </select>
             <CloseButton
               onClick={handleToModalClose}
               className="close-button col-2"
             />
           </div>
-          <div className="d-flex justify-content-between mt-4">
-            <Form.Label className='font-title-medium-16'>Pencarian Terkini</Form.Label>
-            <Form.Label className='font-body-medium-14 text-danger' onClick={() => handleDelete('all')}>Hapus</Form.Label>
-          </div>
-          <ListGroup>
-            {recentSearches.map((search, index) => (
-              <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
-                {search}
-                <button type="button" className="btn-close" aria-label="Close" onClick={() => handleDelete(index)}></button>
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
         </Modal.Body>
       </Modal >
 
       {/* Modal Seat Class */}
-      <Modal Modal show={seatClassModalOpen} onHide={handleSeatClassModalClose} centered >
+      <Modal show={seatClassModalOpen} onHide={handleSeatClassModalClose} centered >
         <Modal.Header closeButton>
         </Modal.Header>
         <Modal.Body>
@@ -433,80 +475,70 @@ const HomePage = () => {
           </ListGroup>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant='' className='btn-simpan-modal text-white font-title-medium-16 px-3 py-2' onClick={handleSeatClassSave}>
+          <Button variant='' style={{ ...styles.btnSimpanModal, ...styles.fontTitleMedium16 }} className='text-white px-3 py-2' onClick={handleSeatClassSave}>
             Simpan
           </Button>
         </Modal.Footer>
       </Modal >
 
       {/* Modal Counter for Passengers */}
-      <Modal Modal show={counterModalOpen} onHide={handleCounterModalClose} centered >
+      <Modal show={counterModalOpen} onHide={handleCounterModalClose} centered >
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
           <div className="counter-section">
             <div className="my-2">
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <p className="font-body-bold-14 mb-0">Dewasa</p>
-                  <p className="font-body-regular-12 mb-0">(12 tahun ke atas)</p>
+                  <p style={styles.fontBodyBold14} className="mb-0">Dewasa</p>
+                  <p style={styles.fontBodyRegular12} className="mb-0">(12 tahun ke atas)</p>
                 </div>
                 <div className="d-flex align-items-center">
-                  <Button className='btn-passengers-counter' onClick={() => setTempDewasa(Math.max(tempDewasa - 1, 0))}>-</Button>
-                  <p className="font-body-regular-14 mx-3 mb-0">{tempDewasa}</p>
-                  <Button className='btn-passengers-counter' onClick={() => setTempDewasa(tempDewasa + 1)}>+</Button>
+                  <Button className='btnPassengersCounter' onClick={() => setTempDewasa(Math.max(tempDewasa - 1, 0))}>-</Button>
+                  <p style={styles.fontBodyRegular14} className="mx-3 mb-0">{tempDewasa}</p>
+                  <Button className='btnPassengersCounter' onClick={() => setTempDewasa(tempDewasa + 1)}>+</Button>
                 </div>
               </div>
             </div>
             <div className="my-2">
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <p className="font-body-bold-14 mb-0">Anak</p>
-                  <p className="font-body-regular-12 mb-0">(2 - 11 tahun)</p>
+                  <p style={styles.fontBodyBold14} className="mb-0">Anak</p>
+                  <p style={styles.fontBodyRegular12} className="mb-0">(2 - 11 tahun)</p>
                 </div>
                 <div className="d-flex align-items-center">
-                  <Button className='btn-passengers-counter' onClick={() => setTempAnak(Math.max(tempAnak - 1, 0))}>-</Button>
-                  <p className="font-body-regular-14 mx-3 mb-0">{tempAnak}</p>
-                  <Button className='btn-passengers-counter' onClick={() => setTempAnak(tempAnak + 1)}>+</Button>
+                  <Button className='btnPassengersCounter' onClick={() => setTempAnak(Math.max(tempAnak - 1, 0))}>-</Button>
+                  <p style={styles.fontBodyRegular14} className="mx-3 mb-0">{tempAnak}</p>
+                  <Button className='btnPassengersCounter' onClick={() => setTempAnak(tempAnak + 1)}>+</Button>
                 </div>
               </div>
             </div>
             <div className="my-2">
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <p className="font-body-bold-14 mb-0">Bayi</p>
-                  <p className="font-body-regular-12 mb-0">(Dibawah 2 tahun)</p>
+                  <p style={styles.fontBodyBold14} className="mb-0">Bayi</p>
+                  <p style={styles.fontBodyRegular12} className="mb-0">(Dibawah 2 tahun)</p>
                 </div>
                 <div className="d-flex align-items-center">
-                  <Button className='btn-passengers-counter' onClick={() => setTempBayi(Math.max(tempBayi - 1, 0))}>-</Button>
-                  <p className="font-body-regular-14 mx-3 mb-0">{tempBayi}</p>
-                  <Button className='btn-passengers-counter' onClick={() => setTempBayi(tempBayi + 1)}>+</Button>
+                  <Button className='btnPassengersCounter' onClick={() => setTempBayi(Math.max(tempBayi - 1, 0))}>-</Button>
+                  <p style={styles.fontBodyRegular14} className="mx-3 mb-0">{tempBayi}</p>
+                  <Button className='btnPassengersCounter' onClick={() => setTempBayi(tempBayi + 1)}>+</Button>
                 </div>
               </div>
             </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant='' className='btn-simpan-modal text-white font-title-medium-16 px-3 py-2' onClick={handleCounterSave}>
+          <Button variant='' style={{ ...styles.btnSimpanModal, ...styles.fontTitleMedium16 }} className='text-white px-3 py-2' onClick={handleCounterSave}>
             Simpan
           </Button>
         </Modal.Footer>
       </Modal >
 
-      {/* Modal for datepicker */}
-      <Modal Modal show={modalShow} onHide={() => setModalShow(false)} centered >
-        <Modal.Body>
-          <DatePicker
-            variant=""
-            selected={startDate}
-            onChange={handleDateChange}
-            startDate={startDate}
-            endDate={endDate}
-            selectsRange
-            inline
-            minDate={new Date()}
-          />
-        </Modal.Body>
-      </Modal >
+      {/* datepicker  modal */}
+      < DatePickerModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+      />
     </>
   )
 }

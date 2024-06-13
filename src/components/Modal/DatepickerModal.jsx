@@ -9,7 +9,7 @@ import "../styles/history/datepicker.css";
 const datepicker = (props) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
-  
+
   const onChange = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
@@ -35,6 +35,7 @@ const datepicker = (props) => {
           startDate={startDate}
           endDate={endDate}
           selectsRange
+          minDate={new Date()}
           inline
         />
       </Modal.Body>
