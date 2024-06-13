@@ -20,6 +20,7 @@ import {
 // components
 import UserProtected from "../components/Protected/Protected";
 import NonProtected from "../components/Protected/NonProtected";
+import NavbarComponent from "../components/Navigation/Navbar";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <NonProtected>
+          <NavbarComponent />
           <HomePage />,
         </NonProtected>
       </>
