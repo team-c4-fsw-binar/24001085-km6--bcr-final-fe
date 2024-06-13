@@ -19,64 +19,124 @@ import {
 
 // components
 import UserProtected from "../components/Protected/Protected";
-import NonProtected from "../components/Protected/Protected";
+import NonProtected from "../components/Protected/NonProtected";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <>
-        <HomePage />,
+        <NonProtected>
+          <HomePage />,
+        </NonProtected>
       </>
     ),
   },
   {
     path: "/register",
-    element: <RegisterPage />,
+    element: (
+      <>
+        <NonProtected>
+          <RegisterPage />,
+        </NonProtected>
+      </>
+    ),
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element:(
+    <>
+      <NonProtected>
+        <LoginPage />,
+      </NonProtected>
+    </>
+    ),
   },
   {
     path: "/forgot-password",
-    element: <ForgotPasswordPage />,
+    element: (
+      <>
+        <UserProtected>
+          <ForgotPasswordPage />
+        </UserProtected>
+      </>
+    ),
   },
   {
     path: "/reset-password/:id/:token",
-    element: <ResetPasswordPage />,
+    element: (
+      <>
+        <UserProtected>
+          <ResetPasswordPage />
+        </UserProtected>
+      </>
+    ),
   },
   {
     path: "/verify-otp",
-    element: <VerifyOtpPage />,
+    element: (
+      <>
+        <UserProtected>
+          <VerifyOtpPage />
+        </UserProtected>
+      </>
+    ),
   },
   {
     path: "/history",
-    element: <HistoryPage />,
+    element: (
+      <>
+        <UserProtected>
+          <HistoryPage />
+        </UserProtected>
+      </>
+    ),
   },
   {
     path: "/*",
-    element: <NotFoundPage />,
+    element: (
+      <NotFoundPage />
+    ),
   },
   {
     path: "/search",
-    element: <SearchingPage />,
+    element: (
+      <NonProtected>
+        <SearchingPage />
+      </NonProtected>
+    ),
   },
   {
     path: "/profile",
-    element: <AccountPage />,
+    element: (
+      <UserProtected>
+        <AccountPage />
+      </UserProtected>
+    ),
   },
   {
     path: "/notification",
-    element: <NotificationPage />,
+    element: (
+      <UserProtected>
+        <NotificationPage />
+      </UserProtected>
+    ),
   },
   {
     path: "/checkout",
-    element: <CheckoutPage />,
+    element: (
+      <UserProtected>
+        <CheckoutPage />
+      </UserProtected>
+    ),
   },
   {
     path: "/payment",
-    element: <PaymentPage />,
+    element: (
+      <UserProtected>
+        <PaymentPage />
+      </UserProtected>
+    ),
   },
 ]);
 
