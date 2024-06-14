@@ -97,7 +97,10 @@ const router = createBrowserRouter([
   {
     path: "/*",
     element: (
-      <NotFoundPage />
+      <>
+        <NavbarComponent />
+        <NotFoundPage />
+      </>
     ),
   },
   {
@@ -112,6 +115,7 @@ const router = createBrowserRouter([
     path: "/profile",
     element: (
       <UserProtected>
+        <NavbarComponent />
         <AccountPage />
       </UserProtected>
     ),
