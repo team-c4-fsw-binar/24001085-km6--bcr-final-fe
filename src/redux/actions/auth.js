@@ -155,6 +155,8 @@ export const verifyOTP =
       const { data } = response.data
       const { token, user } = data
 
+      localStorage.setItem("token", token)
+
       // Change the token value in the reducer
       dispatch(setToken(token))
       dispatch(setUser(user))

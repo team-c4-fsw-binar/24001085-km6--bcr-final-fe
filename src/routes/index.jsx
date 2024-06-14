@@ -89,6 +89,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <UserProtected>
+          <NavbarComponent />
           <HistoryPage />
         </UserProtected>
       </>

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProfile, putProfile } from "../../redux/actions/profile";
 
 import * as icons from "../../assets/icons";
+import { logout } from "../../redux/actions/auth";
 
 const ProfilePage = () => {
     const dispatch = useDispatch();
@@ -179,11 +180,10 @@ const ProfilePage = () => {
                                 </Button>
                             </div>
                             <div style={styles.sidebar}>
-                                <Button as={Link}
-                                    to="/logout" style={styles.sidebarBody}>
-                                    <Image src={icons.logoutIcon} alt="logout" className="me-3" />
-                                    <p>Keluar</p>
-                                </Button>
+                            <Button onClick={() => dispatch(logout())} style={styles.sidebarBody}>
+                                <Image src={icons.logoutIcon} alt="logout" className="me-3" />
+                                <p>Keluar</p>
+                            </Button>
                             </div>
                             <div style={styles.textVersion}>Version 1.1.0</div>
                         </div>
