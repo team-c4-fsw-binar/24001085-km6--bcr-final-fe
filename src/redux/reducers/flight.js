@@ -24,7 +24,11 @@ const flightsSlice = createSlice({
     status: "idle",
     error: null,
   },
-  reducers: {},
+  reducers: {
+    setFlights: (state, action) => {
+      state.flgihts = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchFlights.pending, (state) => {
@@ -41,4 +45,5 @@ const flightsSlice = createSlice({
   },
 })
 
+export const { setFlights } = flightsSlice.actions;
 export default flightsSlice.reducer
