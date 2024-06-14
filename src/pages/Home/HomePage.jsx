@@ -79,7 +79,7 @@ const HomePage = () => {
       try {
         const airports = await getAirports()
         console.log(airports);
-        setFromLocation(airports.data.data.map((item) => ({ value: item.id, label: item.name })))
+        setFromLocation(airports.data.data.results.map((item) => ({ value: item.id, label: item.name })))
         setToLocation(fromLocation);
       }
       catch (err) {
