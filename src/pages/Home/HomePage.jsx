@@ -2,16 +2,16 @@ import { useEffect, useState } from 'react';
 import {
   Container, Row, Col, Form, Button, Card, Modal, ListGroup, CloseButton
 } from 'react-bootstrap';
-
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
+import { getAirports } from '../../redux/actions/home';
+
 import 'react-datepicker/dist/react-datepicker.css';
-
-
 import "./homePage.css";
 import DatePickerModal from '../../components/Modal/DatepickerModal';
 import * as images from "../../assets/images"
 import * as icons from "../../assets/icons"
-import { getFilteredTickets } from '../../redux/actions/home';
+
 
 
 const HomePage = () => {
@@ -59,7 +59,7 @@ const HomePage = () => {
 
   };
 
-  const [name, city, country] = useState("");
+
 
 
   // togle switch for return
@@ -77,7 +77,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const airports = await getFilteredTickets()
+        const airports = await getAirports()
         console.log(airports);
         setFromLocation(airports.data.data.map((item) => ({ value: item.id, label: item.name })))
         setToLocation(fromLocation);
@@ -95,6 +95,12 @@ const HomePage = () => {
   const handleToInputClick = () => setToModalOpen(true);
 
 
+
+  // modal destination coba
+  const [searchHistory, setSearchHistory] = useState(['Jakarta', 'Bandung', 'Surabaya']);
+  const handleClearHistory = () => setSearchHistory([]);
+
+
   // seat class
   const [seatClassModalOpen, setSeatClassModalOpen] = useState(false);
   const [seatClass, setSeatClass] = useState("");
@@ -109,8 +115,11 @@ const HomePage = () => {
     setTempSeatClass(seatClass);
   };
 
+
+  // handle save
   const handleSeatClassSave = () => {
     setSeatClass(tempSeatClass);
+    console.log(tempSeatClass);
     setSeatClassModalOpen(false);
   };
 
@@ -122,26 +131,29 @@ const HomePage = () => {
   const [dewasa, setDewasa] = useState(0);
   const [anak, setAnak] = useState(0);
   const [bayi, setBayi] = useState(0);
+  const [totalSeat, setTotalSeat] = useState(0);
+  const [total_passengers, setTotalPassenger] = useState(0);
   const [tempDewasa, setTempDewasa] = useState(dewasa);
   const [tempAnak, setTempAnak] = useState(anak);
   const [tempBayi, setTempBayi] = useState(bayi);
-  const handleCounterSave = () => {
-    setDewasa(tempDewasa);
-    setAnak(tempAnak);
-    setBayi(tempBayi);
-    setCounterModalOpen(false);
-  };
-  const totalPassengers = dewasa + anak + bayi;
   const handleCounterInputClick = () => {
     setTempDewasa(dewasa);
     setTempAnak(anak);
     setTempBayi(bayi);
     setCounterModalOpen(true);
   };
+  const handleCounterSave = () => {
+    setDewasa(tempDewasa);
+    setAnak(tempAnak);
+    setBayi(tempBayi);
+    setTotalSeat(tempDewasa + tempAnak);
+    setTotalPassenger(tempDewasa + tempAnak + tempBayi);
+    setCounterModalOpen(false);
+  };
 
 
   //  date picker
-  const [startDate, setStartDate] = useState(null);
+  const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
   const [modalShow, setModalShow] = useState(false);
 
@@ -248,7 +260,7 @@ const HomePage = () => {
                       className="form-control inputTextDecorationNone"
                       type="text"
                       id="passengers"
-                      value={`${totalPassengers} penumpang`}
+                      value={`${total_passengers} penumpang`}
                       readOnly
                       onClick={handleCounterInputClick}
                     />
@@ -401,28 +413,29 @@ const HomePage = () => {
       </Container >
 
       {/* Modal for selecting From location */}
-      <Modal show={fromModalOpen} onHide={handleFromModalClose} centered size='md'>
-        <Modal.Body className='overflow-auto' >
-          <div className='row justify-content-center align-items-center'>
-            <select onChange={(e) => {
-              const value = e.target.value
-              setSelectedFrom({
-                value: value.split("-")[0],
-                label: value.split("-")[1],
-              })
-              console.log(value)
-            }} value={`${selectedFrom?.value}-${selectedFrom?.label}`} className='col-md-10' name='from' id='from'>
-              {fromLocation && fromLocation.map((item) => {
-                return (<option value={`${item.value}-${item.label}`}>{item.label}</option>)
-              })}
-            </select>
-            <CloseButton
-              onClick={handleFromModalClose}
-              className="close-button col-2"
-            />
-          </div>
+      <Modal show={fromModalOpen} onHide={handleFromModalClose}>
+        <Modal.Header closeButton>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control type="text" placeholder="Masukkan Kota atau Negara" />
+          <ListGroup className="mt-3">
+            {searchHistory.map((item, index) => (
+              <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
+                {item}
+                <Button variant="light" onClick={() => {
+                  const newHistory = searchHistory.filter((_, i) => i !== index);
+                  setSearchHistory(newHistory);
+                }}>
+                  &times;
+                </Button>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+          <Button variant="link" onClick={handleClearHistory} className="text-danger mt-2">
+            Hapus
+          </Button>
         </Modal.Body>
-      </Modal >
+      </Modal>
 
 
       {/* Modal for selecting From location */}
@@ -455,20 +468,20 @@ const HomePage = () => {
         </Modal.Header>
         <Modal.Body>
           <ListGroup>
-            <ListGroup.Item action active={tempSeatClass === "Economy"} onClick={() => handleSeatClassSelect("Economy")}>
-              <div className='d-flex justify-content-between'> Economy {tempSeatClass === "Economy" && <img src={icons.checkIcon} alt="Check" />}</div>
+            <ListGroup.Item action active={tempSeatClass === "economy"} onClick={() => handleSeatClassSelect("economy")}>
+              <div className='d-flex justify-content-between'> Economy {tempSeatClass === "economy" && <img src={icons.checkIcon} alt="Check" />}</div>
               harga
             </ListGroup.Item>
-            <ListGroup.Item action active={tempSeatClass === "Premium Economy"} onClick={() => handleSeatClassSelect("Premium Economy")}>
-              <div className='d-flex justify-content-between'> Premium Economy {tempSeatClass === "Premium Economy" && <img src={icons.checkIcon} alt="Check" />}</div>
+            <ListGroup.Item action active={tempSeatClass === "premium"} onClick={() => handleSeatClassSelect("premium")}>
+              <div className='d-flex justify-content-between'> Premium Economy {tempSeatClass === "premium" && <img src={icons.checkIcon} alt="Check" />}</div>
               harga
             </ListGroup.Item>
-            <ListGroup.Item action active={tempSeatClass === "Business"} onClick={() => handleSeatClassSelect("Business")}>
-              <div className='d-flex justify-content-between'>Business {tempSeatClass === "Business" && <img src={icons.checkIcon} alt="Check" />}</div>
+            <ListGroup.Item action active={tempSeatClass === "business"} onClick={() => handleSeatClassSelect("business")}>
+              <div className='d-flex justify-content-between'>Business {tempSeatClass === "business" && <img src={icons.checkIcon} alt="Check" />}</div>
               harga
             </ListGroup.Item>
-            <ListGroup.Item action active={tempSeatClass === "First Class"} onClick={() => handleSeatClassSelect("First Class")}>
-              <div className='d-flex justify-content-between'>First Class {tempSeatClass === "First Class" && <img src={icons.checkIcon} alt="Check" />}</div>
+            <ListGroup.Item action active={tempSeatClass === "first_class"} onClick={() => handleSeatClassSelect("first_class")}>
+              <div className='d-flex justify-content-between'>First Class {tempSeatClass === "first_class" && <img src={icons.checkIcon} alt="Check" />}</div>
               harga
             </ListGroup.Item>
           </ListGroup>
@@ -535,6 +548,11 @@ const HomePage = () => {
 
       {/* datepicker  modal */}
       < DatePickerModal
+        startDate={startDate}
+        endDate={endDate}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
+        toggleSwitch={toggleSwitch}
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
