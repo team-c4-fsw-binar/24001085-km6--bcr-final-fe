@@ -48,14 +48,13 @@ const DetailPemesanan = () => {
     // if (bookingStatus === "idle") dispatch(fetchBookings())
     setBookings(dummyBookings)
     setPayments(dummyPayments)
-    if (paymentStatus === "idle") dispatch(fetchPayments())
+    // if (paymentStatus === "idle") dispatch(fetchPayments())
     if (flightStatus === "idle") dispatch(fetchFlights())
     if (airportStatus === "idle") dispatch(fetchAirports())
   }, [dispatch, paymentStatus, flightStatus, airportStatus])
   const handleMouseEnter = (index) => {
     setHoverIndex(index)
   }
-
   const handleMouseLeave = () => {
     setHoverIndex(null)
   }
@@ -75,15 +74,19 @@ const DetailPemesanan = () => {
   //   return paymentData.data.find((payment) => payment.booking_id === bookingId)
   // }
   const getFlightForBooking = (flightId) => {
-    return flightData.data.find((flight) => flight.id === flightId)
+    return flightData.data.results.find((flight) => flight.id === flightId)
   }
 
   const getAirportCityById = (airportId) => {
-    const airport = airportData.data.find((airport) => airport.id === airportId)
+    const airport = airportData.data.results.find(
+      (airport) => airport.id === airportId
+    )
     return airport ? airport.city : "Unknown Airport"
   }
   const getAirportNameById = (airportId) => {
-    const airport = airportData.data.find((airport) => airport.id === airportId)
+    const airport = airportData.data.results.find(
+      (airport) => airport.id === airportId
+    )
     return airport ? airport.name : "Unknown Airport"
   }
 
