@@ -124,6 +124,7 @@ const router = createBrowserRouter([
     path: "/notification",
     element: (
       <UserProtected>
+        <NavbarComponent />
         <NotificationPage />
       </UserProtected>
     ),
@@ -132,6 +133,7 @@ const router = createBrowserRouter([
     path: "/checkout",
     element: (
       <UserProtected>
+        <NavbarComponent />
         <CheckoutPage />
       </UserProtected>
     ),
@@ -140,6 +142,7 @@ const router = createBrowserRouter([
     path: "/payment",
     element: (
       <UserProtected>
+        <NavbarComponent />
         <PaymentPage />
       </UserProtected>
     ),
