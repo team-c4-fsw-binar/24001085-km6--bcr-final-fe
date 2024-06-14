@@ -6,19 +6,22 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import "../styles/history/datepicker.css";
 
-const datepicker = (props) => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(null);
-
-  const onChange = (dates) => {
+const datepicker = ({ startDate, endDate, setStartDate, setEndDate, toggleSwitch, show, onHide }) => {
+  const onChangeReturn = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
   };
 
+  const onChange = (dates) => {
+    const start = dates;
+    setStartDate(start);
+  };
+
   return (
     <Modal
-      {...props}
+      show={show}
+      onHide={onHide}
       size="medium"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -29,18 +32,28 @@ const datepicker = (props) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <DatePicker
-          selected={startDate}
-          onChange={onChange}
-          startDate={startDate}
-          endDate={endDate}
-          selectsRange
-          minDate={new Date()}
-          inline
-        />
+        {
+          toggleSwitch ? (<DatePicker
+            selected={startDate}
+            onChange={onChangeReturn}
+            startDate={startDate}
+            endDate={endDate}
+            selectsRange
+            minDate={new Date()}
+            inline
+          />) : (
+            <DatePicker
+              selected={startDate}
+              onChange={onChange}
+              startDate={startDate}
+              minDate={new Date()}
+              inline
+            />
+          )
+        }
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
+        <Button onClick={onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );
