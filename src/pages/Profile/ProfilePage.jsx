@@ -9,7 +9,7 @@ import { logout } from "../../redux/actions/auth";
 const ProfilePage = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
-
+    const [profile, setProfile] = useState(null);
     const [dataName, setDataName] = useState("");
     const [dataPhone, setDataPhone] = useState("");
     const [dataEmail, setDataEmail] = useState("");
@@ -19,15 +19,19 @@ const ProfilePage = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const [availableImage] = useState(true);
-    const [showPassword, setShowPassword] = useState(false);
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [activeTab, setActiveTab] = useState('profile');
 
     const navigateTo = useNavigate();
 
+    
     useEffect(() => {
-        // get profile
-        dispatch(getProfile(null, null, null));
+        dispatch(getProfile(null, null, null)).then((response) => {
+            setProfile(response.data); // Mengupdate state profile dengan data dari API atau Redux state
+        });
     }, [dispatch]);
 
     useEffect(() => {
@@ -68,8 +72,28 @@ const ProfilePage = () => {
         }
     };
 
-    const toggleShowPassword = () => {
-        setShowPassword(!showPassword);
+    const toggleShowOldPassword = () => {
+        setShowOldPassword(!showOldPassword);
+    };
+
+    const toggleShowNewPassword = () => {
+        setShowNewPassword(!showNewPassword);
+    };
+
+    const toggleShowConfirmPassword = () => {
+        setShowConfirmPassword(!showConfirmPassword);
+    };
+
+    const renderVerificationStatus = () => {
+        if (user && user.isVerified) {
+            return (
+                <p style={{ color: 'green', fontWeight: 'bold', marginBottom: '10px' }}>Verified</p>
+            );
+        } else {
+            return (
+                <p style={{ color: 'red', fontWeight: 'bold', marginBottom: '10px' }}>Not Verified</p>
+            );
+        }
     };
 
     const styles = {
@@ -336,6 +360,19 @@ const ProfilePage = () => {
                             <Card className="px-4 pt-4 mx-3">
                                 <p style={styles.fontHeadingBold20} className="mb-3">Pengaturan Akun</p>
                                 <div style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }}>
+                                    <span className="flex-grow-1 text-start position-relative">Status Akun</span>
+                                </div>
+                                <Card.Body>
+                                    <Form>
+                                    <Form.Group controlId="formNamaLengkap" className="mb-3 d-flex justify-content-between">
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
+                                                Verifikasi Email
+                                            </Form.Label>
+                                            {renderVerificationStatus()}
+                                        </Form.Group>
+                                    </Form>
+                                </Card.Body>
+                                <div style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }}>
                                     <span className="flex-grow-1 text-start position-relative">Ubah Password</span>
                                 </div>
                                 <Card.Body>
@@ -344,13 +381,13 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Password Lama</Form.Label>
                                             <div style={{ position: 'relative' }}>
                                                 <Form.Control
-                                                    type={showPassword ? "text" : "password"}
+                                                    type={showOldPassword ? "text" : "password"}
                                                     value={oldPassword}
                                                     onChange={(e) => setOldPassword(e.target.value)}
                                                     style={styles.formControl}
                                                 />
                                                 <span
-                                                    onClick={toggleShowPassword}
+                                                    onClick={toggleShowOldPassword}
                                                     className="fa fa-fw field-icon toggle-password"
                                                     style={{
                                                         position: 'absolute',
@@ -360,7 +397,7 @@ const ProfilePage = () => {
                                                         cursor: 'pointer'
                                                     }}
                                                 >
-                                                    {showPassword ? (
+                                                    {showOldPassword  ? (
                                                         <i className="fa fa-eye" />
                                                     ) : (
                                                         <i className="fa fa-eye-slash" />
@@ -372,13 +409,13 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Password Baru</Form.Label>
                                             <div style={{ position: 'relative' }}>
                                                 <Form.Control
-                                                    type={showPassword ? "text" : "password"}
+                                                    type={showNewPassword  ? "text" : "password"}
                                                     value={newPassword}
                                                     onChange={(e) => setNewPassword(e.target.value)}
                                                     style={styles.formControl}
                                                 />
                                                 <span
-                                                    onClick={toggleShowPassword}
+                                                    onClick={toggleShowNewPassword}
                                                     className="fa fa-fw field-icon toggle-password"
                                                     style={{
                                                         position: 'absolute',
@@ -388,7 +425,7 @@ const ProfilePage = () => {
                                                         cursor: 'pointer'
                                                     }}
                                                 >
-                                                    {showPassword ? (
+                                                    {showNewPassword  ? (
                                                         <i className="fa fa-eye" />
                                                     ) : (
                                                         <i className="fa fa-eye-slash" />
@@ -400,13 +437,13 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Konfirmasi Password Baru</Form.Label>
                                             <div style={{ position: 'relative' }}>
                                                 <Form.Control
-                                                    type={showPassword ? "text" : "password"}
+                                                    type={showConfirmPassword  ? "text" : "password"}
                                                     value={confirmPassword}
                                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                                     style={styles.formControl}
                                                 />
                                                 <span
-                                                    onClick={toggleShowPassword}
+                                                    onClick={toggleShowConfirmPassword}
                                                     className="fa fa-fw field-icon toggle-password"
                                                     style={{
                                                         position: 'absolute',
@@ -416,7 +453,7 @@ const ProfilePage = () => {
                                                         cursor: 'pointer'
                                                     }}
                                                 >
-                                                    {showPassword ? (
+                                                    {showConfirmPassword  ? (
                                                         <i className="fa fa-eye" />
                                                     ) : (
                                                         <i className="fa fa-eye-slash" />
