@@ -251,6 +251,8 @@ function Register() {
                   setIsPasswordValid(isValid)
                   if (!isValid) {
                     setErrorMessage("Password min 8 karakter!")
+                  }else {
+                    setErrorMessage(""); // Pastikan pesan kesalahan dihapus jika password valid
                   }
                 }}
                 required

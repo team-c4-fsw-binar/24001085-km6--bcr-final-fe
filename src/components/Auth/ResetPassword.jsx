@@ -63,14 +63,8 @@ const onSubmit = async (e) => {
   }
   setPasswordMismatch(false)
   if (isPasswordValid) {
-    try {
-      await dispatch(
-        resetPassword(navigate, id, token, password, setIsLoading, showErrorAlert)
-      )
+      dispatch(resetPassword(navigate, id, token, password, setIsLoading, showErrorAlert))
       handleSuccessMessage()
-    } catch (error) {
-      showErrorAlert("Gagal mereset password. Silakan coba lagi.")
-    }
   }
 }
 
