@@ -180,7 +180,7 @@ const ProfilePage = () => {
                                 </Button>
                             </div>
                             <div style={styles.sidebar}>
-                            <Button onClick={() => dispatch(logout())} style={styles.sidebarBody}>
+                            <Button onClick={() => dispatch(logout())} as={Link} to="/" style={styles.sidebarBody}>
                                 <Image src={icons.logoutIcon} alt="logout" className="me-3" />
                                 <p>Keluar</p>
                             </Button>

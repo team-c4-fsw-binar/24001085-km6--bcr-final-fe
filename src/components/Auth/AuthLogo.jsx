@@ -3,7 +3,7 @@ import * as images from "../../assets/images"
 // styles
 import "../styles/auth/auth.css"
 
-const AuthLogo = () => {
+export default function AuthLogoComponent() {
   return (
     <div className="gradient-background d-flex align-items-center justify-content-center position-relative">
       <img src={images.logoTerbangAja} alt="Logo" className="logo w-50 position-relative" />
@@ -11,5 +11,3 @@ const AuthLogo = () => {
     </div>
   )
 }
-
-export default AuthLogo
