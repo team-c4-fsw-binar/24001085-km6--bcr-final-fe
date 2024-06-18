@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import * as icons from "../../assets/icons";
@@ -20,8 +20,8 @@ const CheckoutPage = () => {
     const [seats, setSeats] = useState(
         Array.from({ length: 12 }, (_, rowIndex) =>
             Array.from({ length: 6 }, (_, colIndex) => ({
-                row: rowIndex + 1,
-                col: String.fromCharCode(65 + colIndex), // Convert index to letter (A-F)
+                row: String.fromCharCode(65 + colIndex), // Convert index to letter (A-F)
+                col: rowIndex + 1,
                 reserved: Math.random() < 0.3, // Randomly reserve some seats for demo
                 selected: false,
             }))
@@ -54,7 +54,7 @@ const CheckoutPage = () => {
         setSuccess("Data Anda berhasil tersimpan!");
     };
 
-    const handleSeatClick = (rowIndex, colIndex) => {
+    const handleSeatClick = (colIndex, rowIndex) => {
         setSeats((prevSeats) =>
             prevSeats.map((row, rIndex) =>
                 row.map((seat, cIndex) =>
@@ -145,8 +145,8 @@ const CheckoutPage = () => {
             gap: '5px',
         },
         seat: {
-            width: '40px',
-            height: '40px',
+            width: '35px',
+            height: '35px',
             fontSize: '16px',
             fontWeight: 500,
             display: 'flex',
@@ -155,6 +155,7 @@ const CheckoutPage = () => {
             border: 'none',
             backgroundColor: '#73CA5C',
             color: '#fff',
+            overflow: 'hidden',
         },
         seatReserved: {
             backgroundColor: 'grey',
@@ -196,6 +197,27 @@ const CheckoutPage = () => {
         alertCustomGreen: {
             backgroundColor: '#73CA5C',
             color: '#FFFFFF',
+        },
+        aisle: {
+            width: '20px',
+            height: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#8A8A8A',
+        },
+        headerRow: {
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: '8px',
+        },
+        headerCell: {
+            margin: '2px',
+            width: '38px',
+            height: '30px',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            color: '#8A8A8A',
         },
     };
 
@@ -375,7 +397,7 @@ const CheckoutPage = () => {
                         </Card>
                         <Card className="p-4 mb-4 mx-3 border">
                             <h4 style={styles.fontHeadingBold20} className="mb-3">
-                                Pilih Kursi - Depature
+                                Pilih Kursi - Departure
                             </h4>
                             {!isSaved && (
                                 <p style={{ ...styles.cardSeat, ...styles.fontBodyMedium14 }} className="mb-3 text-center">
@@ -392,22 +414,38 @@ const CheckoutPage = () => {
                                 </p>
                             )}
                             <div style={styles.seatSelection}>
+                                <div style={styles.headerRow}>
+                                    <div style={styles.headerCell}>A</div>
+                                    <div style={styles.headerCell}>B</div>
+                                    <div style={styles.headerCell}>C</div>
+                                    <div style={styles.aisle}></div> {/* Aisle space */}
+                                    <div style={styles.headerCell}>D</div>
+                                    <div style={styles.headerCell}>E</div>
+                                    <div style={styles.headerCell}>F</div>
+                                </div>
                                 {seats.map((row, rowIndex) => (
                                     <div key={rowIndex} style={styles.seatRow}>
                                         {row.map((seat, colIndex) => (
-                                            <Button
-                                                key={colIndex}
-                                                style={{
-                                                    ...styles.seat,
-                                                    ...(seat.reserved ? styles.seatReserved : {}),
-                                                    ...(seat.selected ? styles.seatSelected : {}),
-                                                }}
-                                                onClick={() => handleSeatClick(rowIndex, colIndex)}
-                                                disabled={seat.reserved || isSaved}
-                                                variant="success"
-                                            >
-                                                {seat.row}{seat.col}
-                                            </Button>
+                                            <React.Fragment key={colIndex}>
+                                                {colIndex === 3 && (
+                                                    <div style={styles.aisle}>
+                                                        {rowIndex + 1}
+                                                    </div>
+                                                )} {/* Aisle Separator with Row Number */}
+                                                <Button
+                                                    key={colIndex}
+                                                    style={{
+                                                        ...styles.seat,
+                                                        ...(seat.reserved ? styles.seatReserved : {}),
+                                                        ...(seat.selected ? styles.seatSelected : {}),
+                                                    }}
+                                                    onClick={() => handleSeatClick(colIndex, rowIndex)}
+                                                    disabled={seat.reserved || isSaved}
+                                                    variant="success"
+                                                >
+                                                    {seat.row}{seat.col}
+                                                </Button>
+                                            </React.Fragment>
                                         ))}
                                     </div>
                                 ))}
@@ -433,22 +471,38 @@ const CheckoutPage = () => {
                                     </p>
                                 )}
                                 <div style={styles.seatSelection}>
+                                    <div style={styles.headerRow}>
+                                        <div style={styles.headerCell}>A</div>
+                                        <div style={styles.headerCell}>B</div>
+                                        <div style={styles.headerCell}>C</div>
+                                        <div style={styles.aisle}></div> {/* Aisle space */}
+                                        <div style={styles.headerCell}>D</div>
+                                        <div style={styles.headerCell}>E</div>
+                                        <div style={styles.headerCell}>F</div>
+                                    </div>
                                     {seats.map((row, rowIndex) => (
                                         <div key={rowIndex} style={styles.seatRow}>
                                             {row.map((seat, colIndex) => (
-                                                <Button
-                                                    key={colIndex}
-                                                    style={{
-                                                        ...styles.seat,
-                                                        ...(seat.reserved ? styles.seatReserved : {}),
-                                                        ...(seat.selected ? styles.seatSelected : {}),
-                                                    }}
-                                                    onClick={() => handleSeatClick(rowIndex, colIndex)}
-                                                    disabled={seat.reserved || isSaved}
-                                                    variant="success"
-                                                >
-                                                    {seat.row}{seat.col}
-                                                </Button>
+                                                <React.Fragment key={colIndex}>
+                                                    {colIndex === 3 && (
+                                                        <div style={styles.aisle}>
+                                                            {rowIndex + 1}
+                                                        </div>
+                                                    )} {/* Aisle Separator with Row Number */}
+                                                    <Button
+                                                        key={colIndex}
+                                                        style={{
+                                                            ...styles.seat,
+                                                            ...(seat.reserved ? styles.seatReserved : {}),
+                                                            ...(seat.selected ? styles.seatSelected : {}),
+                                                        }}
+                                                        onClick={() => handleSeatClick(colIndex, rowIndex)}
+                                                        disabled={seat.reserved || isSaved}
+                                                        variant="success"
+                                                    >
+                                                        {seat.row}{seat.col}
+                                                    </Button>
+                                                </React.Fragment>
                                             ))}
                                         </div>
                                     ))}
