@@ -97,7 +97,7 @@ async (dispatch, getState) => {
 };
     
 
-export const changePassword = (navigate, successRedirect, errorRedirect, formData) =>
+export const changePassword = (navigate, successRedirect, errorRedirect, formData) => 
     async (dispatch, getState) => {
         const { token } = getState().auth;
 
@@ -109,25 +109,27 @@ export const changePassword = (navigate, successRedirect, errorRedirect, formDat
             return;
         }
 
-        let config = {
-            method: 'post',
-            url: `${import.meta.env.VITE_BACKEND_API}/api/auth/change-password`,
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data'
-            },
-            data: formData,
-        };
-
         try {
-            await axios.request(config);
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/change-password`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Password change failed');
+            }
+
             toast.success('Password changed successfully');
 
             if (navigate && successRedirect) {
                 navigate(successRedirect);
             }
         } catch (error) {
-            toast.error(error?.response?.data?.message || 'Password change failed');
+            toast.error(error.message || 'Password change failed');
             if (navigate && errorRedirect) {
                 navigate(errorRedirect);
             }

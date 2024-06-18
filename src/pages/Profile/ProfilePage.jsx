@@ -61,8 +61,8 @@ const ProfilePage = () => {
             const formData = new FormData();
             formData.append('current_password', currentPassword);
             formData.append('new_password', newPassword);
-
-            dispatch(putProfile(navigateTo, '/profile', null, formData));
+    
+            dispatch(changePassword(navigateTo, '/profile', null, formData));
             setActiveTab('profile');
             setCurrentPassword('');
             setNewPassword('');
