@@ -1,5 +1,5 @@
 import { Row, Col } from "react-bootstrap"
-import Register from "../../components/Auth/Register"
+import RegisterComponent from "../../components/Auth/Register"
 import AuthLogo from "../../components/Auth/AuthLogo"
 
 const RegisterPage = () => {
@@ -10,7 +10,7 @@ const RegisterPage = () => {
           <AuthLogo />
         </Col>
         <Col sm>
-          <Register />
+          <RegisterComponent />
         </Col>
       </Row>
     </div>

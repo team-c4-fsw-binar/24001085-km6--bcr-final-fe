@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react"
 import { Container, Form, Button, Alert } from "react-bootstrap"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { resetPassword } from "../../redux/actions/auth"
 
 function ResetPasswordComponent() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const { id, token } = useParams()
 
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -64,7 +65,7 @@ const onSubmit = async (e) => {
   if (isPasswordValid) {
     try {
       await dispatch(
-        resetPassword(navigate, password, setIsLoading, showErrorAlert)
+        resetPassword(navigate, id, token, password, setIsLoading, showErrorAlert)
       )
       handleSuccessMessage()
     } catch (error) {

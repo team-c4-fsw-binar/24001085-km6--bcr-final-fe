@@ -58,9 +58,9 @@ const router = createBrowserRouter([
     path: "/forgot-password",
     element: (
       <>
-        <UserProtected>
+        <NonProtected>
           <ForgotPasswordPage />
-        </UserProtected>
+        </NonProtected>
       </>
     ),
   },
@@ -68,9 +68,9 @@ const router = createBrowserRouter([
     path: "/reset-password/:id/:token",
     element: (
       <>
-        <UserProtected>
+        <NonProtected>
           <ResetPasswordPage />
-        </UserProtected>
+        </NonProtected>
       </>
     ),
   },

@@ -13,7 +13,6 @@ function Register() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const [passwordVisible, setPasswordVisible] = useState(false)
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -130,7 +129,6 @@ function Register() {
       backgroundColor: "red",
       color: "white",
       bottom: "0",
-      marginBottom: "10px",
       width: "fit-content",
       padding: "10px",
       borderRadius: "15px",
@@ -142,7 +140,6 @@ function Register() {
       backgroundColor: "#73ca5c",
       color: "white",
       bottom: "0",
-      marginBottom: "5px",
       width: "fit-content",
       padding: "10px",
       borderRadius: "15px",
@@ -239,7 +236,6 @@ function Register() {
           </Form.Group>
           <Form.Group className="mb-2" controlId="Password">
             <Form.Label className="fw-medium" style={styles.label}>
-              {" "}
               Buat Password
             </Form.Label>
             <div className="input-wrapper" style={styles.inputWrapper}>
@@ -255,8 +251,6 @@ function Register() {
                   setIsPasswordValid(isValid)
                   if (!isValid) {
                     setErrorMessage("Password min 8 karakter!")
-                  } else {
-                    setErrorMessage("")
                   }
                 }}
                 required
@@ -298,7 +292,7 @@ function Register() {
       )}
       {successMessage && (
         <Alert style={styles.alertSuccessRegis} className="text-center">
-          Tautan Verifikasi telah dikirim!
+          Tautan Verifikasi Telah Dikirim!
         </Alert>
       )}
     </div>
