@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, Image, Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { getProfile, putProfile } from "../../redux/actions/profile";
+import { getProfile, putProfile, changePassword } from "../../redux/actions/profile";
 import * as icons from "../../assets/icons";
 import { logout } from "../../redux/actions/auth";
 
@@ -14,12 +14,12 @@ const ProfilePage = () => {
     const [dataPhone, setDataPhone] = useState("");
     const [dataEmail, setDataEmail] = useState("");
     const [dataPhoto, setDataPhoto] = useState();
-    const [oldPassword, setOldPassword] = useState("");
+    const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const [availableImage] = useState(true);
-    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -59,12 +59,12 @@ const ProfilePage = () => {
     const handlePasswordChangeClick = () => {
         if (newPassword && newPassword === confirmPassword) {
             const formData = new FormData();
-            formData.append('old_password', oldPassword);
+            formData.append('current_password', currentPassword);
             formData.append('new_password', newPassword);
 
             dispatch(putProfile(navigateTo, '/profile', null, formData));
             setActiveTab('profile');
-            setOldPassword('');
+            setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
         } else {
@@ -72,8 +72,8 @@ const ProfilePage = () => {
         }
     };
 
-    const toggleShowOldPassword = () => {
-        setShowOldPassword(!showOldPassword);
+    const toggleShowCurrentPassword = () => {
+        setShowCurrentPassword(!showCurrentPassword);
     };
 
     const toggleShowNewPassword = () => {
@@ -377,17 +377,17 @@ const ProfilePage = () => {
                                 </div>
                                 <Card.Body>
                                     <Form>
-                                        <Form.Group controlId="formOldPassword" className="mb-3">
+                                        <Form.Group controlId="formCurrentPassword" className="mb-3">
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Password Lama</Form.Label>
                                             <div style={{ position: 'relative' }}>
                                                 <Form.Control
-                                                    type={showOldPassword ? "text" : "password"}
-                                                    value={oldPassword}
-                                                    onChange={(e) => setOldPassword(e.target.value)}
+                                                    type={showCurrentPassword ? "text" : "password"}
+                                                    value={currentPassword}
+                                                    onChange={(e) => setCurrentPassword(e.target.value)}
                                                     style={styles.formControl}
                                                 />
                                                 <span
-                                                    onClick={toggleShowOldPassword}
+                                                    onClick={toggleShowCurrentPassword}
                                                     className="fa fa-fw field-icon toggle-password"
                                                     style={{
                                                         position: 'absolute',
@@ -397,7 +397,7 @@ const ProfilePage = () => {
                                                         cursor: 'pointer'
                                                     }}
                                                 >
-                                                    {showOldPassword  ? (
+                                                    {showCurrentPassword  ? (
                                                         <i className="fa fa-eye" />
                                                     ) : (
                                                         <i className="fa fa-eye-slash" />
