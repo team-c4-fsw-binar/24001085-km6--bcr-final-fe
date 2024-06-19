@@ -526,109 +526,109 @@ const CheckoutPage = () => {
                             </Button>
                         </div>
                     </Col>
-                    <Col sm={6} className="my-3">
-                        <Card className="p-4 mb-4" style={{ border: 'none' }}>
-                            <div className="border-bottom pb-2">
-                                <p style={styles.fontTitleBold18}>Detail Penerbangan</p>
-                                <div className="d-flex align-items-center">
-                                    <p style={styles.fontTitleBold16} className="my-0 me-auto">07:00</p>
-                                    <p style={{ ...styles.fontBodyBold12, ...styles.textKeberangkatan }} className="my-0">Keberangkatan</p>
-                                </div>
-                                <p style={styles.fontBodyRegular14} className="my-0">3 Maret 2023</p>
-                                <p style={styles.fontBodyMedium14} className="me-auto my-0">Soekarno Hatta - Terminal 1A Domestik</p>
-                            </div>
-
-                            <div className="border-bottom py-2">
-                                <p style={styles.fontBodyBold14} className="my-0 ms-4">Jet Air - Economy</p>
-                                <p style={styles.fontBodyBold14} className="ms-4 mb-3">JT - 203</p>
-                                <div className="d-flex align-items-start">
-                                    <Image src={icons.informationIcon} alt="information" className="me-1" />
-                                    <div>
-                                        <p style={styles.fontBodyBold14} className="my-0">Informasi:</p>
-                                        <p style={styles.fontBodyRegular14} className="my-0">Bagasi 20 kg</p>
-                                        <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin 7 kg</p>
-                                        <p style={styles.fontBodyRegular14} className="my-0">In-Flight Entertainment</p>
+                    {isSaved && (
+                        <Col sm={6} className="my-3">
+                            <Card className="p-4 mb-4" style={{ border: 'none' }}>
+                                <div className="border-bottom pb-2">
+                                    <p style={styles.fontTitleBold18}>Detail Penerbangan</p>
+                                    <div className="d-flex align-items-center">
+                                        <p style={styles.fontTitleBold16} className="my-0 me-auto">07:00</p>
+                                        <p style={{ ...styles.fontBodyBold12, ...styles.textKeberangkatan }} className="my-0">Keberangkatan</p>
                                     </div>
+                                    <p style={styles.fontBodyRegular14} className="my-0">3 Maret 2023</p>
+                                    <p style={styles.fontBodyMedium14} className="me-auto my-0">Soekarno Hatta - Terminal 1A Domestik</p>
                                 </div>
-                            </div>
 
-                            <div className="py-2">
-                                <div className="d-flex align-items-center">
-                                    <p style={styles.fontBodyBold14} className="my-0 me-auto">11:00</p>
-                                    <p style={{ ...styles.fontBodyBold12, ...styles.textKedatangan }} className="my-0">Kedatangan</p>
-                                </div>
-                                <p style={styles.fontBodyRegular14} className="my-0">3 Maret 2023</p>
-                                <p style={styles.fontBodyMedium14} className="my-0">Melbourne International Airport</p>
-                            </div>
-
-                            {isReturn && (
-                                <>
-                                    <hr />
-                                    <div className="border-bottom pb-2">
-                                        <div className="d-flex align-items-center">
-                                            <p style={styles.fontTitleBold16} className="my-0 me-auto">13:00</p>
-                                            <p style={{ ...styles.fontBodyBold12, ...styles.textKeberangkatan }} className="my-0">Kepulangan</p>
+                                <div className="border-bottom py-2">
+                                    <p style={styles.fontBodyBold14} className="my-0 ms-4">Jet Air - Economy</p>
+                                    <p style={styles.fontBodyBold14} className="ms-4 mb-3">JT - 203</p>
+                                    <div className="d-flex align-items-start">
+                                        <Image src={icons.informationIcon} alt="information" className="me-1" />
+                                        <div>
+                                            <p style={styles.fontBodyBold14} className="my-0">Informasi:</p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi 20 kg</p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin 7 kg</p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">In-Flight Entertainment</p>
                                         </div>
-                                        <p style={styles.fontBodyRegular14} className="my-0">20 April 2023</p>
-                                        <p style={styles.fontBodyMedium14} className="me-auto my-0">Melbourne International Airport</p>
                                     </div>
+                                </div>
 
-                                    <div className="border-bottom py-2">
-                                        <p style={styles.fontBodyBold14} className="my-0 ms-4">Jet Air - Business</p>
-                                        <p style={styles.fontBodyBold14} className="ms-4 mb-3">JT - 203</p>
-                                        <div className="d-flex align-items-start">
-                                            <Image src={icons.informationIcon} alt="information" className="me-1" />
-                                            <div>
-                                                <p style={styles.fontBodyBold14} className="my-0">Informasi:</p>
-                                                <p style={styles.fontBodyRegular14} className="my-0">Bagasi 20 kg</p>
-                                                <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin 7 kg</p>
-                                                <p style={styles.fontBodyRegular14} className="my-0">In-Flight Entertainment</p>
+                                <div className="py-2">
+                                    <div className="d-flex align-items-center">
+                                        <p style={styles.fontBodyBold14} className="my-0 me-auto">11:00</p>
+                                        <p style={{ ...styles.fontBodyBold12, ...styles.textKedatangan }} className="my-0">Kedatangan</p>
+                                    </div>
+                                    <p style={styles.fontBodyRegular14} className="my-0">3 Maret 2023</p>
+                                    <p style={styles.fontBodyMedium14} className="my-0">Melbourne International Airport</p>
+                                </div>
+
+                                {isReturn && (
+                                    <>
+                                        <hr />
+                                        <div className="border-bottom pb-2">
+                                            <div className="d-flex align-items-center">
+                                                <p style={styles.fontTitleBold16} className="my-0 me-auto">13:00</p>
+                                                <p style={{ ...styles.fontBodyBold12, ...styles.textKeberangkatan }} className="my-0">Kepulangan</p>
+                                            </div>
+                                            <p style={styles.fontBodyRegular14} className="my-0">20 April 2023</p>
+                                            <p style={styles.fontBodyMedium14} className="me-auto my-0">Melbourne International Airport</p>
+                                        </div>
+
+                                        <div className="border-bottom py-2">
+                                            <p style={styles.fontBodyBold14} className="my-0 ms-4">Jet Air - Business</p>
+                                            <p style={styles.fontBodyBold14} className="ms-4 mb-3">JT - 203</p>
+                                            <div className="d-flex align-items-start">
+                                                <Image src={icons.informationIcon} alt="information" className="me-1" />
+                                                <div>
+                                                    <p style={styles.fontBodyBold14} className="my-0">Informasi:</p>
+                                                    <p style={styles.fontBodyRegular14} className="my-0">Bagasi 20 kg</p>
+                                                    <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin 7 kg</p>
+                                                    <p style={styles.fontBodyRegular14} className="my-0">In-Flight Entertainment</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div className="py-2">
-                                        <div className="d-flex align-items-center">
-                                            <p style={styles.fontBodyBold14} className="my-0 me-auto">11:00</p>
-                                            <p style={{ ...styles.fontBodyBold12, ...styles.textKedatangan }} className="my-0">Kedatangan</p>
+                                        <div className="py-2">
+                                            <div className="d-flex align-items-center">
+                                                <p style={styles.fontBodyBold14} className="my-0 me-auto">11:00</p>
+                                                <p style={{ ...styles.fontBodyBold12, ...styles.textKedatangan }} className="my-0">Kedatangan</p>
+                                            </div>
+                                            <p style={styles.fontBodyRegular14} className="my-0">21 April 2023</p>
+                                            <p style={styles.fontBodyMedium14} className="my-0">Soekarno Hatta - Terminal 1A Domestik</p>
                                         </div>
-                                        <p style={styles.fontBodyRegular14} className="my-0">21 April 2023</p>
-                                        <p style={styles.fontBodyMedium14} className="my-0">Soekarno Hatta - Terminal 1A Domestik</p>
+                                        <hr />
+                                    </>
+                                )}
+
+                                <div className="border-bottom py-2 ms-2">
+                                    <p style={styles.fontBodyBold14} className="my-0">Rincian Harga</p>
+                                    <div className="d-flex">
+                                        <p style={styles.fontBodyRegular14} className="me-auto my-0">2 Dewasa</p>
+                                        <p style={styles.fontBodyRegular14} className="my-0">IDR 9.550.000</p>
                                     </div>
-                                    <hr />
-                                </>
-                            )}
+                                    <div className="d-flex">
+                                        <p style={styles.fontBodyRegular14} className="me-auto my-0">1 Bayi</p>
+                                        <p style={styles.fontBodyRegular14} className="my-0">IDR 0</p>
+                                    </div>
+                                    <div className="d-flex">
+                                        <p style={styles.fontBodyRegular14} className="me-auto my-0">Pajak</p>
+                                        <p style={styles.fontBodyRegular14} className="my-0">IDR 300.000</p>
+                                    </div>
+                                </div>
 
-                            <div className="border-bottom py-2 ms-2">
-                                <p style={styles.fontBodyBold14} className="my-0">Rincian Harga</p>
-                                <div className="d-flex">
-                                    <p style={styles.fontBodyRegular14} className="me-auto my-0">2 Dewasa</p>
-                                    <p style={styles.fontBodyRegular14} className="my-0">IDR 9.550.000</p>
+                                <div className="d-flex pt-2 ms-2">
+                                    <p style={styles.fontTitleBold16} className="me-auto">Total</p>
+                                    <h4 style={{ ...styles.fontTitleBold18, ...styles.textTotal }} className="font-title-bold-18 text-total">IDR 9.850.000</h4>
                                 </div>
-                                <div className="d-flex">
-                                    <p style={styles.fontBodyRegular14} className="me-auto my-0">1 Bayi</p>
-                                    <p style={styles.fontBodyRegular14} className="my-0">IDR 0</p>
-                                </div>
-                                <div className="d-flex">
-                                    <p style={styles.fontBodyRegular14} className="me-auto my-0">Pajak</p>
-                                    <p style={styles.fontBodyRegular14} className="my-0">IDR 300.000</p>
-                                </div>
-                            </div>
-
-                            <div className="d-flex pt-2 ms-2">
-                                <p style={styles.fontTitleBold16} className="me-auto">Total</p>
-                                <h4 style={{ ...styles.fontTitleBold18, ...styles.textTotal }} className="font-title-bold-18 text-total">IDR 9.850.000</h4>
-                            </div>
-                        </Card>
-                        {isSaved && (
+                            </Card>
                             <Link to="/payment">
                                 <Button style={{ ...styles.btnLanjutBayar, ...styles.fontHeadingMedium20 }}
                                     className="btn w-100 py-2 mb-3" type="submit" variant="">
                                     Lanjut Bayar
                                 </Button>
                             </Link>
-                        )}
-                    </Col>
+                        </Col>
+                    )}
                 </Row>
             </Container >
         </>
