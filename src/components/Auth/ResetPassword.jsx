@@ -60,24 +60,18 @@ function ResetPasswordComponent() {
     }
   }, [password, confirmPassword]);
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setPasswordMismatch(true);
-      return;
-    }
-    setPasswordMismatch(false);
-    if (isPasswordValid) {
-      try {
-        await dispatch(
-          resetPassword(navigate, id, token, password, setIsLoading, showErrorAlert)
-        );
-        handleSuccessMessage();
-      } catch (error) {
-        showErrorAlert("Gagal Mereset Password. Silakan Coba Lagi.");
-      }
-    }
-  };
+const onSubmit = async (e) => {
+  e.preventDefault()
+  if (password !== confirmPassword) {
+    setPasswordMismatch(true)
+    return
+  }
+  setPasswordMismatch(false)
+  if (isPasswordValid) {
+      dispatch(resetPassword(navigate, id, token, password, setIsLoading, showErrorAlert))
+      handleSuccessMessage()
+  }
+}
 
   const styles = {
     resetpasswordPage: {
