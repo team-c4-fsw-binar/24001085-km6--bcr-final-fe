@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProfile, putProfile, changePassword } from "../../redux/actions/profile";
 import * as icons from "../../assets/icons";
 import { logout } from "../../redux/actions/auth";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProfilePage = () => {
     const dispatch = useDispatch();
@@ -14,6 +16,7 @@ const ProfilePage = () => {
     const [dataPhone, setDataPhone] = useState("");
     const [dataEmail, setDataEmail] = useState("");
     const [dataPhoto, setDataPhoto] = useState();
+    const [storedPassword, setStoredPassword] = useState("");       
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,10 +30,11 @@ const ProfilePage = () => {
 
     const navigateTo = useNavigate();
 
-    
+
     useEffect(() => {
         dispatch(getProfile(null, null, null)).then((response) => {
             setProfile(response.data); // Mengupdate state profile dengan data dari API atau Redux state
+            setStoredPassword(response.data.password);
         });
     }, [dispatch]);
 
@@ -57,18 +61,23 @@ const ProfilePage = () => {
     };
 
     const handlePasswordChangeClick = () => {
+        if (currentPassword !== storedPassword) {
+            toast.error("Password saat ini tidak sesuai.");
+            return;
+        }
+
         if (newPassword && newPassword === confirmPassword) {
             const formData = new FormData();
             formData.append('current_password', currentPassword);
             formData.append('new_password', newPassword);
-    
+
             dispatch(changePassword(navigateTo, '/profile', null, formData));
             setActiveTab('profile');
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
         } else {
-            alert("Password baru dan konfirmasi password harus sama.");
+            toast.error("Password baru dan konfirmasi password harus sama.");
         }
     };
 
@@ -269,7 +278,7 @@ const ProfilePage = () => {
 
                                         <Form.Group controlId="formNomorTelepon" className="mb-3">
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
-                                                Nama Telepon
+                                                Nomor Telepon
                                             </Form.Label>
                                             <Form.Control
                                                 type="text"
@@ -323,7 +332,7 @@ const ProfilePage = () => {
                                         </Form.Group>
 
                                         <Form.Group controlId="formNomorTelepon" className="mb-3">
-                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Telepon</Form.Label>
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nomor Telepon</Form.Label>
                                             <Form.Control
                                                 type="text"
                                                 value={dataPhone}
@@ -364,7 +373,7 @@ const ProfilePage = () => {
                                 </div>
                                 <Card.Body>
                                     <Form>
-                                    <Form.Group controlId="formNamaLengkap" className="mb-3 d-flex justify-content-between">
+                                        <Form.Group controlId="formNamaLengkap" className="mb-3 d-flex justify-content-between">
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
                                                 Verifikasi Email
                                             </Form.Label>
@@ -397,7 +406,7 @@ const ProfilePage = () => {
                                                         cursor: 'pointer'
                                                     }}
                                                 >
-                                                    {showCurrentPassword  ? (
+                                                    {showCurrentPassword ? (
                                                         <i className="fa fa-eye" />
                                                     ) : (
                                                         <i className="fa fa-eye-slash" />
@@ -409,7 +418,7 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Password Baru</Form.Label>
                                             <div style={{ position: 'relative' }}>
                                                 <Form.Control
-                                                    type={showNewPassword  ? "text" : "password"}
+                                                    type={showNewPassword ? "text" : "password"}
                                                     value={newPassword}
                                                     onChange={(e) => setNewPassword(e.target.value)}
                                                     style={styles.formControl}
@@ -425,7 +434,7 @@ const ProfilePage = () => {
                                                         cursor: 'pointer'
                                                     }}
                                                 >
-                                                    {showNewPassword  ? (
+                                                    {showNewPassword ? (
                                                         <i className="fa fa-eye" />
                                                     ) : (
                                                         <i className="fa fa-eye-slash" />
@@ -437,7 +446,7 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Konfirmasi Password Baru</Form.Label>
                                             <div style={{ position: 'relative' }}>
                                                 <Form.Control
-                                                    type={showConfirmPassword  ? "text" : "password"}
+                                                    type={showConfirmPassword ? "text" : "password"}
                                                     value={confirmPassword}
                                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                                     style={styles.formControl}
@@ -453,7 +462,7 @@ const ProfilePage = () => {
                                                         cursor: 'pointer'
                                                     }}
                                                 >
-                                                    {showConfirmPassword  ? (
+                                                    {showConfirmPassword ? (
                                                         <i className="fa fa-eye" />
                                                     ) : (
                                                         <i className="fa fa-eye-slash" />
@@ -471,6 +480,9 @@ const ProfilePage = () => {
                                                 Simpan
                                             </Button>
                                         </div>
+                                        <ToastContainer
+                                            theme="colored"
+                                        />
                                     </Form>
                                 </Card.Body>
                             </Card>
