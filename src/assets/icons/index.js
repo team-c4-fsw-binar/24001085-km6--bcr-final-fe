@@ -21,6 +21,7 @@ import filterButton from "./filter.svg"
 import informationIcon from "./information.svg"
 import dropdown_Down from "./dropdown-down.svg"
 import dropdown_Up from "./dropdown-up.svg"
+import profileIcon from "./profile.svg"
 
 
 export {
@@ -47,4 +48,5 @@ export {
   dropdown_Down,
   dropdown_Up,
   informationIcon,
+  profileIcon,
 }
