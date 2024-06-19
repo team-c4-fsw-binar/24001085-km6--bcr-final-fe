@@ -2,7 +2,7 @@ import OTPComponent from "../../components/Auth/VerifyOTP"
 
 const OTPPage = () => {
   return (
-    <div>
+    <div className="noScroll">
       <OTPComponent />
     </div>
   )

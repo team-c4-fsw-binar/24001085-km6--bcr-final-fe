@@ -1,6 +1,4 @@
-import { createBrowserRouter } from "react-router-dom"
-
-// pages
+import { createBrowserRouter } from "react-router-dom";
 import {
   HomePage,
   LoginPage,
@@ -15,9 +13,7 @@ import {
   ForgotPasswordPage,
   ResetPasswordPage,
   HistoryPage,
-} from "../pages"
-
-// components
+} from "../pages";
 import UserProtected from "../components/Protected/Protected";
 import NonProtected from "../components/Protected/NonProtected";
 import NavbarComponent from "../components/Navigation/Navbar";
@@ -26,128 +22,138 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <>
+      <div>
         <NonProtected>
           <NavbarComponent />
-          <HomePage />,
+          <HomePage />
         </NonProtected>
-      </>
+      </div>
     ),
   },
   {
     path: "/register",
     element: (
-      <>
+      <div>
         <NonProtected>
-          <RegisterPage />,
+          <RegisterPage />
         </NonProtected>
-      </>
+      </div>
     ),
   },
   {
     path: "/login",
-    element:(
-    <>
-      <NonProtected>
-        <LoginPage />,
-      </NonProtected>
-    </>
+    element: (
+      <div>
+        <NonProtected>
+          <LoginPage />
+        </NonProtected>
+      </div>
     ),
   },
   {
     path: "/forgot-password",
     element: (
-      <>
+      <div>
         <NonProtected>
           <ForgotPasswordPage />
         </NonProtected>
-      </>
+      </div>
     ),
   },
   {
     path: "/reset-password/:id/:token",
     element: (
-      <>
+      <div>
         <NonProtected>
           <ResetPasswordPage />
         </NonProtected>
-      </>
+      </div>
     ),
   },
   {
     path: "/verify-otp",
     element: (
-      <>
+      <div>
         <UserProtected>
           <VerifyOtpPage />
         </UserProtected>
-      </>
+      </div>
     ),
   },
   {
     path: "/history",
     element: (
-      <>
+      <div>
         <UserProtected>
           <NavbarComponent />
           <HistoryPage />
         </UserProtected>
-      </>
+      </div>
     ),
   },
   {
     path: "/*",
     element: (
-      <>
+      <div>
         <NavbarComponent />
         <NotFoundPage />
-      </>
+      </div>
     ),
   },
   {
     path: "/search",
     element: (
-      <NonProtected>
-        <SearchingPage />
-      </NonProtected>
+      <div>
+        <NonProtected>
+          <SearchingPage />
+        </NonProtected>
+      </div>
     ),
   },
   {
     path: "/profile",
     element: (
-      <UserProtected>
-        <NavbarComponent />
-        <AccountPage />
-      </UserProtected>
+      <div>
+        <UserProtected>
+          <NavbarComponent />
+          <AccountPage />
+        </UserProtected>
+      </div>
     ),
   },
   {
     path: "/notification",
     element: (
-      <UserProtected>
-        <NavbarComponent />
-        <NotificationPage />
-      </UserProtected>
+      <div>
+        <UserProtected>
+          <NavbarComponent />
+          <NotificationPage />
+        </UserProtected>
+      </div>
     ),
   },
   {
     path: "/checkout",
     element: (
-      <UserProtected>
-        <NavbarComponent />
-        <CheckoutPage />
-      </UserProtected>
+      <div>
+        <UserProtected>
+          <NavbarComponent />
+          <CheckoutPage />
+        </UserProtected>
+      </div>
     ),
   },
   {
     path: "/payment",
     element: (
-      <UserProtected>
-        <NavbarComponent />
-        <PaymentPage />
-      </UserProtected>
+      <div>
+        <UserProtected>
+          <NavbarComponent />
+          <PaymentPage />
+        </UserProtected>
+      </div>
     ),
   },
 ]);
 
-export default router
+export default router;

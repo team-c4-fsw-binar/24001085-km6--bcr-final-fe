@@ -1,9 +1,3 @@
-* {
-  font-family: "Inter", sans-serif;
-  overflow-x: hidden;
-  overflow-y: visible;
-}
-
 /* style for AuthLogo */
 .gradient-background {
   background: linear-gradient(
@@ -12,6 +6,7 @@
       rgba(255, 233, 202, 0) 100%  
     );
   height: 100vh;
+  position: relative;
 }
 
 .flower-image {

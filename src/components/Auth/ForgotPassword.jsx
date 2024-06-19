@@ -56,8 +56,8 @@ function ForgotPasswordComponent() {
       width: "100%",
     },
     input: {
-      borderRadius: "16px",
-      height: "50px",
+      borderRadius: "10px",
+      height: "3rem",
     },
     button: {
       backgroundColor: "#7126b5",
@@ -69,6 +69,7 @@ function ForgotPasswordComponent() {
     },
     label: {
       color: "black",
+      marginBottom: "0.2rem",
     },
     alertMessage: {
       position: "absolute",
@@ -99,12 +100,12 @@ function ForgotPasswordComponent() {
   return (
     <div style={styles.forgotpasswordPage}>
       <Container style={styles.centeredContainer}>
-        <h4 className="fw-bold mb-2">Masukkan Email Anda!</h4>
+        <h4 className="fw-bold mb-2 text-center">Masukkan Email Anda!</h4>
         <Form onSubmit={onSubmit} className="mt-4">
           <Form.Group className="mb-3" controlId="Email">
-            <Form.Label className="fw-medium" style={styles.label}>
+            <h6 className="fw-medium" style={styles.label}>
               Email Address
-            </Form.Label>
+            </h6>
             <Form.Control
               style={styles.input}
               type="email"

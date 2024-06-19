@@ -4,12 +4,12 @@ import AuthLogoComponent from "../../components/Auth/AuthLogo"
 
 const LoginPage = () => {
   return (
-    <div>
+    <div className="noScroll">
       <Row>
-        <Col sm={6} className="d-none d-sm-block">
+        <Col className="d-none d-md-block">
           <AuthLogoComponent />
         </Col>
-        <Col sm>
+        <Col>
           <LoginComponent />
         </Col>
       </Row>
