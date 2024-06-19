@@ -16,6 +16,7 @@ const authSlice = createSlice({
         localStorage.setItem("token", action.payload);
       } else {
         localStorage.removeItem("token");
+        localStorage.removeItem("email");
       }
 
       state.token = action.payload;

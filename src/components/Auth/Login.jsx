@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import ButtonGoogleLogin from "./GoogleLogin"
-import { login, resetPassword } from "../../redux/actions/auth"
+import { login } from "../../redux/actions/auth"
 
 import { Form, Row, Col, Container, Button, Alert } from "react-bootstrap"
 
@@ -108,7 +108,7 @@ const Login = () => {
         <Form onSubmit={onSubmit} className="mt-4">
           <Form.Group className="mb-3" controlId="Email">
             <Form.Label className="fw-medium" style={styles.label}>
-              Email address
+              Email Address
             </Form.Label>
             <Form.Control
               type="email"
