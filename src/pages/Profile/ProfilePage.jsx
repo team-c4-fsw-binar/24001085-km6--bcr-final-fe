@@ -41,6 +41,7 @@ const ProfilePage = () => {
     }, [user]);
 
     const handleSaveClick = () => {
+        setIsLoading(true);
         const formData = new FormData();
         formData.append('name', dataName);
         formData.append('phone', dataPhone);
@@ -48,9 +49,16 @@ const ProfilePage = () => {
         if (dataPhoto) {
             formData.append('photo', dataPhoto);
         }
-
-        dispatch(putProfile(navigateTo, '/profile', null, formData));
-        setActiveTab('profile');
+        dispatch(putProfile(navigateTo, '/profile', null, formData))
+            .then(() => {
+                setIsLoading(false); // Stop loading on success
+                setActiveTab('profile');
+            })
+            .catch((error) => {
+                setIsLoading(false); // Stop loading on error
+                toast.error("Failed to save profile changes.");
+                console.error("Error saving profile:", error);
+            });
     };
 
     const handleFileChange = (e) => {
@@ -78,7 +86,6 @@ const ProfilePage = () => {
             setConfirmPassword('');
             setActiveTab('profile');
         } else {
-            toast.error("Password saat ini tidak sesuai.");
             if (newPassword === currentPassword) {
                 toast.error("Password baru tidak boleh sama dengan password lama.");
             } else {
@@ -266,7 +273,6 @@ const ProfilePage = () => {
                         {activeTab === 'profile' && (
                             <Card className="px-4 pt-4 mx-3">
                                 <p style={styles.fontHeadingBold20} className="mb-3">Data Profil</p>
-                                {isLoading && <p>Loading....</p>}
                                 <div style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }}>
                                     <span className="flex-grow-1 text-start position-relative">Data Diri</span>
                                 </div>
@@ -375,8 +381,9 @@ const ProfilePage = () => {
                                                 type="button"
                                                 style={styles.btnSimpan}
                                                 onClick={handleSaveClick}
+                                                disabled={isLoading}
                                             >
-                                                Simpan
+                                                {isLoading ? "Menyimpan..." : "Simpan"}
                                             </Button>
                                         </div>
                                     </Form>
