@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotification, putNotification } from "../../redux/actions/notification";
 import * as icons from "../../assets/icons";
+import { ToastContainer } from 'react-toastify';
 
 const NotificationPage = () => {
     const [notifications, setNotifications] = useState([]);
@@ -157,9 +158,8 @@ const NotificationPage = () => {
                                         </small>
                                         <span className="ml-2">
                                             <i
-                                                className={`bi bi-dot ${
-                                                    notification.isRead ? "text-success" : "text-danger"
-                                                }`}
+                                                className={`bi bi-dot ${notification.isRead ? "text-success" : "text-danger"
+                                                    }`}
                                             ></i>
                                         </span>
                                     </Col>
@@ -174,20 +174,23 @@ const NotificationPage = () => {
 
             {currentNotification && (
                 <Modal
-                show={showModal}
-                onHide={handleCloseModal}
-                centered
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title className="h6">Notification Details</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <h5>{currentNotification.title}</h5>
-                    <p>{currentNotification.content}</p>
-                    <small>{new Date(currentNotification.updatedAt).toLocaleString()}</small>
-                </Modal.Body>
-            </Modal>
-        )}
+                    show={showModal}
+                    onHide={handleCloseModal}
+                    centered
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title className="h6">Notification Details</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <h5>{currentNotification.title}</h5>
+                        <p>{currentNotification.content}</p>
+                        <small>{new Date(currentNotification.updatedAt).toLocaleString()}</small>
+                    </Modal.Body>
+                </Modal>
+            )}
+            <ToastContainer
+                theme="colored"
+            />
         </>
     );
 };
