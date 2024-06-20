@@ -18,9 +18,9 @@ import {
 } from "../pages"
 
 // components
-import UserProtected from "../components/Protected/Protected";
-import NonProtected from "../components/Protected/NonProtected";
-import NavbarComponent from "../components/Navigation/Navbar";
+import UserProtected from "../components/Protected/Protected"
+import NonProtected from "../components/Protected/NonProtected"
+import NavbarComponent from "../components/Navigation/Navbar"
 
 const router = createBrowserRouter([
   {
@@ -46,12 +46,12 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element:(
-    <>
-      <NonProtected>
-        <LoginPage />,
-      </NonProtected>
-    </>
+    element: (
+      <>
+        <NonProtected>
+          <LoginPage />,
+        </NonProtected>
+      </>
     ),
   },
   {
@@ -148,6 +148,6 @@ const router = createBrowserRouter([
       </UserProtected>
     ),
   },
-]);
+])
 
 export default router

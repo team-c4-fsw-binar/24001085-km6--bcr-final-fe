@@ -6,7 +6,7 @@ import { BsArrowLeft, BsFunnel } from "react-icons/bs"
 import "../styles/historyPage.css"
 import DetailPemesanan from "../../components/History/riwayat"
 import PopupCard from "../../components/Modal/SearchModal"
-import Datepicker from "../../components/Modal/DatepickerModal"
+import Datepicker from "../../components/Modal/DatepickerModalHistory"
 
 import * as icons from "../../assets/icons"
 
@@ -25,10 +25,12 @@ const HistoryPage = () => {
         <div className="container mb-4">
           {" "}
           <Row>
-            <h2 className="my-4">Riwayat Pemesanan</h2>
+            <h4 className="my-4" style={{ fontWeight: 700, fontSize: "20px" }}>
+              Riwayat Pemesanan
+            </h4>
           </Row>
-          <Row>
-            <Col md={10} className="d-grid  ">
+          <Row className="p-2">
+            <Col md={10} className="container d-grid">
               <Button
                 className="beranda-button d-flex justify-content-left rounded-4 "
                 style={{
@@ -70,10 +72,10 @@ const HistoryPage = () => {
             show={modalShowCari}
             onHide={() => setModalShowCari(false)}
           />
-          <Datepicker
+          {/* <Datepicker
             show={modalShowDate}
             onHide={() => setModalShowDate(false)}
-          />
+          /> */}
         </div>
       </div>
 
