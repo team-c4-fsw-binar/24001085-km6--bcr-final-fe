@@ -16,7 +16,7 @@ const ProfilePage = () => {
     const [dataPhone, setDataPhone] = useState("");
     const [dataEmail, setDataEmail] = useState("");
     const [dataPhoto, setDataPhoto] = useState();
-    const [storedPassword, setStoredPassword] = useState("");       
+    const [storedPassword, setStoredPassword] = useState("");
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -49,15 +49,23 @@ const ProfilePage = () => {
 
     const handleSaveClick = () => {
         const formData = new FormData();
-        formData.append('name', dataName);
-        formData.append('phone', dataPhone);
+        formData.append('namaLengkap', dataName);
+        formData.append('nomorTelepon', dataPhone);
         formData.append('email', dataEmail);
-        if (dataPhoto) {
-            formData.append('photo', dataPhoto);
+        if (document.getElementById('formFotoProfil').files[0]) {
+            formData.append('fotoProfil', document.getElementById('formFotoProfil').files[0]);
+        } else {
+            formData.append('fotoProfil', profilePicture);
         }
 
         dispatch(putProfile(navigateTo, '/profile', null, formData));
         setActiveTab('profile');
+    };
+
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setDataPhoto(e.target.files[0]);
+        }
     };
 
     const handlePasswordChangeClick = () => {
@@ -100,7 +108,16 @@ const ProfilePage = () => {
             );
         } else {
             return (
-                <p style={{ color: 'red', fontWeight: 'bold', marginBottom: '10px' }}>Not Verified</p>
+                <div>
+                    <p style={{ color: 'red', fontWeight: 'bold', marginBottom: '10px' }}>Not Verified</p>
+                    <Button
+                        className="px-4"
+                        style={{ backgroundColor: '#7126B5', border: 'none' }}
+                        onClick={() => window.location.href = '/verify-otp'}
+                    >
+                        Verify
+                    </Button>
+                </div>
             );
         }
     };
@@ -312,15 +329,16 @@ const ProfilePage = () => {
                                 <Card.Body>
                                     <Form enctype="multipart/form-data">
                                         <Form.Group controlId="formFotoProfil" className="mb-3">
-                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Foto Profil</Form.Label>
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
+                                                Foto Profil
+                                            </Form.Label>
                                             <Form.Control
                                                 type="file"
                                                 accept="image/*"
-                                                onChange={(e) => setDataPhoto(e.target.files[0])}
+                                                onChange={handleFileChange}
                                                 style={styles.formControl}
                                             />
                                         </Form.Group>
-
                                         <Form.Group controlId="formNamaLengkap" className="mb-3">
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Lengkap</Form.Label>
                                             <Form.Control
