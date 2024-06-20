@@ -16,7 +16,6 @@ const ProfilePage = () => {
     const [dataPhone, setDataPhone] = useState("");
     const [dataEmail, setDataEmail] = useState("");
     const [dataPhoto, setDataPhoto] = useState();
-    const [storedPassword, setStoredPassword] = useState("");
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,16 +26,10 @@ const ProfilePage = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [activeTab, setActiveTab] = useState('profile');
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigateTo = useNavigate();
 
-
-    useEffect(() => {
-        dispatch(getProfile(null, null, null)).then((response) => {
-            setProfile(response.data); // Mengupdate state profile dengan data dari API atau Redux state
-            setStoredPassword(response.data.password);
-        });
-    }, [dispatch]);
 
     useEffect(() => {
         if (user) {
@@ -67,25 +60,33 @@ const ProfilePage = () => {
     };
 
     const handlePasswordChangeClick = () => {
-        if (currentPassword !== storedPassword) {
-            toast.error("Password saat ini tidak sesuai.");
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            toast.error("Semua kolom password harus diisi jika ingin mengubah password.");
             return;
         }
 
-        if (newPassword && newPassword === confirmPassword) {
-            const formData = new FormData();
-            formData.append('current_password', currentPassword);
-            formData.append('new_password', newPassword);
+        if (newPassword !== currentPassword && newPassword === confirmPassword) {
+            const formDataPassword = new FormData();
+            formDataPassword.append('current_password', currentPassword);
+            formDataPassword.append('new_password', newPassword);
 
-            dispatch(changePassword(navigateTo, '/profile', null, formData));
-            setActiveTab('profile');
+            // Memanggil dispatch untuk mengubah password
+            dispatch(changePassword(navigateTo, '/profile', null, formDataPassword));
+
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
+            setActiveTab('profile');
         } else {
-            toast.error("Password baru dan konfirmasi password harus sama.");
+            toast.error("Password saat ini tidak sesuai.");
+            if (newPassword === currentPassword) {
+                toast.error("Password baru tidak boleh sama dengan password lama.");
+            } else {
+                toast.error("Password baru dan konfirmasi password harus sama.");
+            }
         }
     };
+
 
     const toggleShowCurrentPassword = () => {
         setShowCurrentPassword(!showCurrentPassword);
@@ -265,6 +266,7 @@ const ProfilePage = () => {
                         {activeTab === 'profile' && (
                             <Card className="px-4 pt-4 mx-3">
                                 <p style={styles.fontHeadingBold20} className="mb-3">Data Profil</p>
+                                {isLoading && <p>Loading....</p>}
                                 <div style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }}>
                                     <span className="flex-grow-1 text-start position-relative">Data Diri</span>
                                 </div>
