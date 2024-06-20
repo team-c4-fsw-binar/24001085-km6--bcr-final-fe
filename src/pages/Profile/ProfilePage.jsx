@@ -49,13 +49,11 @@ const ProfilePage = () => {
 
     const handleSaveClick = () => {
         const formData = new FormData();
-        formData.append('namaLengkap', dataName);
-        formData.append('nomorTelepon', dataPhone);
+        formData.append('name', dataName);
+        formData.append('phone', dataPhone);
         formData.append('email', dataEmail);
-        if (document.getElementById('formFotoProfil').files[0]) {
-            formData.append('fotoProfil', document.getElementById('formFotoProfil').files[0]);
-        } else {
-            formData.append('fotoProfil', profilePicture);
+        if (dataPhoto) {
+            formData.append('photo', dataPhoto);
         }
 
         dispatch(putProfile(navigateTo, '/profile', null, formData));
@@ -498,9 +496,6 @@ const ProfilePage = () => {
                                                 Simpan
                                             </Button>
                                         </div>
-                                        <ToastContainer
-                                            theme="colored"
-                                        />
                                     </Form>
                                 </Card.Body>
                             </Card>
@@ -508,6 +503,9 @@ const ProfilePage = () => {
                     </Col>
                 </Row>
             </Container>
+            <ToastContainer
+                theme="colored"
+            />
         </>
     );
 };
