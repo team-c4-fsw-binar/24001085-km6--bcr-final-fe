@@ -4,12 +4,12 @@ import ForgotPasswordComponent from "../../components/Auth/ForgotPassword"
 
 const ForgotPasswordPage = () => {
   return (
-    <div>
+    <div className="noScroll">
       <Row>
-        <Col sm={6} className="d-none d-sm-block">
+        <Col className="d-none d-md-block">
           <AuthLogo />
         </Col>
-        <Col sm>
+        <Col>
           <ForgotPasswordComponent />
         </Col>
       </Row>

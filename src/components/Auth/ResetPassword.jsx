@@ -1,59 +1,64 @@
-import { useState, useEffect } from "react"
-import { Container, Form, Button, Alert } from "react-bootstrap"
-import { useNavigate, useParams } from "react-router-dom"
-import { useDispatch } from "react-redux"
-import { resetPassword } from "../../redux/actions/auth"
+import { useState, useEffect } from "react";
+import { Container, Form, Button, Alert } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { resetPassword } from "../../redux/actions/auth";
 
 function ResetPasswordComponent() {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const { id, token } = useParams()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { id, token } = useParams();
 
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [isPasswordValid, setIsPasswordValid] = useState(null)
-  const [passwordVisible, setPasswordVisible] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
-  const [successMessage, setSuccessMessage] = useState(false)
-  const [passwordMismatch, setPasswordMismatch] = useState(false)
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isPasswordValid, setIsPasswordValid] = useState(null);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState(false);
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
 
   const validatePassword = (password) => {
-    return password.length >= 8
-  }
+    return password.length >= 8;
+  };
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible)
-  }
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
 
   useEffect(() => {
-    let timer
+    let timer;
     if (successMessage) {
       timer = setTimeout(() => {
-        setSuccessMessage(false)
-      }, 10000)
+        setSuccessMessage(false);
+      }, 10000);
     }
-    return () => clearTimeout(timer)
-  }, [successMessage])
+    return () => clearTimeout(timer);
+  }, [successMessage]);
 
   const handleSuccessMessage = () => {
-    setSuccessMessage(true)
-  }
+    setSuccessMessage(true);
+  };
 
   const showErrorAlert = (errorMessage) => {
-    setErrorMessage(errorMessage)
-  }
+    setErrorMessage(errorMessage);
+  };
 
   useEffect(() => {
     // Memeriksa kecocokan password setiap kali password atau confirmPassword berubah
     if (password !== "" && confirmPassword !== "") {
       if (password === confirmPassword) {
-        setPasswordMismatch(false)
+        setPasswordMismatch(false);
       } else {
-        setPasswordMismatch(true)
+        setPasswordMismatch(true);
       }
     }
-  }, [password, confirmPassword])
+  }, [password, confirmPassword]);
 
 const onSubmit = async (e) => {
   e.preventDefault()
@@ -63,14 +68,8 @@ const onSubmit = async (e) => {
   }
   setPasswordMismatch(false)
   if (isPasswordValid) {
-    try {
-      await dispatch(
-        resetPassword(navigate, id, token, password, setIsLoading, showErrorAlert)
-      )
+      dispatch(resetPassword(navigate, id, token, password, setIsLoading, showErrorAlert))
       handleSuccessMessage()
-    } catch (error) {
-      showErrorAlert("Gagal mereset password. Silakan coba lagi.")
-    }
   }
 }
 
@@ -87,8 +86,8 @@ const onSubmit = async (e) => {
       width: "100%",
     },
     input: {
-      borderRadius: "16px",
-      height: "50px",
+      borderRadius: "10px",
+      height: "3rem",
     },
     inputError: {
       borderColor: "red",
@@ -114,6 +113,7 @@ const onSubmit = async (e) => {
     },
     label: {
       color: "black",
+      marginBottom: "0.2rem",
     },
     eyeIcon: {
       position: "absolute",
@@ -146,17 +146,17 @@ const onSubmit = async (e) => {
       fontSize: "small",
       borderColor: "#73ca5c",
     },
-  }
+  };
 
   return (
     <div style={styles.resetpasswordPage}>
       <Container style={styles.centeredContainer}>
-        <h4 className="fw-bold pb-3">Reset Password</h4>
-        <Form onSubmit={onSubmit}>
-          <Form.Group className="mb-2" controlId="Password">
-            <Form.Label className="fw-medium" style={styles.label}>
+        <h4 className="fw-bold text-center">Reset Password</h4>
+        <Form onSubmit={onSubmit} className="mt-4">
+          <Form.Group controlId="Password" className="mt-2 mb-2">
+            <h6 className="fw-medium" style={styles.label}>
               Masukkan Password Baru
-            </Form.Label>
+            </h6>
             <div style={styles.inputWrapper}>
               <Form.Control
                 type={passwordVisible ? "text" : "password"}
@@ -169,13 +169,13 @@ const onSubmit = async (e) => {
                 className={`input ${isPasswordValid === false ? "error" : ""}`}
                 value={password}
                 onChange={(e) => {
-                  setPassword(e.target.value)
-                  const isValid = validatePassword(e.target.value)
-                  setIsPasswordValid(isValid)
+                  setPassword(e.target.value);
+                  const isValid = validatePassword(e.target.value);
+                  setIsPasswordValid(isValid);
                   if (!isValid) {
-                    setErrorMessage("Password min 8 karakter!")
+                    setErrorMessage("Password min 8 karakter!");
                   } else {
-                    setErrorMessage("")
+                    setErrorMessage("");
                   }
                 }}
                 required
@@ -187,13 +187,13 @@ const onSubmit = async (e) => {
               />
             </div>
           </Form.Group>
-          <Form.Group className="mb-2 mt-4" controlId="ConfirmPassword">
-            <Form.Label className="fw-medium" style={styles.label}>
+          <Form.Group className="mb-4 mt-2" controlId="ConfirmPassword">
+            <h6 className="fw-medium" style={styles.label}>
               Ulangi Password Baru
-            </Form.Label>
+            </h6>
             <div style={styles.inputWrapper}>
               <Form.Control
-                type={passwordVisible ? "text" : "password"}
+                type={confirmPasswordVisible ? "text" : "password"}
                 placeholder="***************"
                 style={{
                   ...styles.input,
@@ -203,21 +203,21 @@ const onSubmit = async (e) => {
                 className={`input ${isPasswordValid === false ? "error" : ""}`}
                 value={confirmPassword}
                 onChange={(e) => {
-                  setConfirmPassword(e.target.value)
-                  const isValid = validatePassword(e.target.value)
-                  setIsPasswordValid(isValid)
+                  setConfirmPassword(e.target.value);
+                  const isValid = validatePassword(e.target.value);
+                  setIsPasswordValid(isValid);
                   if (!isValid) {
-                    setErrorMessage("Password min 8 karakter!")
+                    setErrorMessage("Password min 8 karakter!");
                   } else {
-                    setErrorMessage("")
+                    setErrorMessage("");
                   }
                 }}
                 required
               />
               <i
-                className={`fa ${passwordVisible ? "fa-eye" : "fa-eye-slash"}`}
+                className={`fa ${confirmPasswordVisible ? "fa-eye" : "fa-eye-slash"}`}
                 style={styles.eyeIcon}
-                onClick={togglePasswordVisibility}
+                onClick={toggleConfirmPasswordVisibility}
               />
             </div>
           </Form.Group>
@@ -245,7 +245,7 @@ const onSubmit = async (e) => {
         <Alert style={styles.alertSuccess}>Reset password berhasil!</Alert>
       )}
     </div>
-  )
+  );
 }
 
-export default ResetPasswordComponent
+export default ResetPasswordComponent;
