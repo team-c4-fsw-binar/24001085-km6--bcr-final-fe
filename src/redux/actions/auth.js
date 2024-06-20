@@ -206,32 +206,35 @@ export const resendOTP = () => async (dispatch, getState) => {
   dispatch(setToken(token))
 }
 
-export const ForgotPassword =
-  (email, setIsLoading) => async (dispatch) => {
-    // make loading
-    setIsLoading(true)
+export const ForgotPassword = (email, setIsLoading, showErrorAlert) => async (dispatch) => {
+  setIsLoading(true);
 
-    let data = JSON.stringify({
-      email: email,
-    })
+  let data = JSON.stringify({
+    email: email,
+  });
 
-    let config = {
-      method: "post",
-      url: `${import.meta.env.VITE_BACKEND_API}/api/auth/forgot-password`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
+  let config = {
+    method: "post",
+    url: `${import.meta.env.VITE_BACKEND_API}/api/auth/forgot-password`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: data,
+  };
+
+  try {
+    await axios.request(config);
+    setIsLoading(false);
+  } catch (error) {
+    if (error.response && error.response.status) {
+      showErrorAlert("Email Tidak Terdaftar");
+    } else {
+      dispatch(logout());
     }
-
-    try {
-      await axios.request(config)
-    } catch (error) {
-      dispatch(logout())
-    }
-
-    setIsLoading(false)
+    
+    setIsLoading(false);
   }
+};
 
 export const resetPassword =
   (navigate, id, token, password, setIsLoading, showErrorAlert) =>

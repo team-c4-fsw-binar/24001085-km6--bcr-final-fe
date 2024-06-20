@@ -13,13 +13,12 @@ function ForgotPasswordComponent() {
   const [successMessage, setSuccessMessage] = useState(false)
   const [emailError, setEmailError] = useState(false)
 
-
   useEffect(() => {
     let timer
     if (successMessage) {
       timer = setTimeout(() => {
         setSuccessMessage(false)
-      }, 10000)
+      }, 1000)
     }
     return () => clearTimeout(timer)
   }, [successMessage])
@@ -29,19 +28,18 @@ function ForgotPasswordComponent() {
   }
 
   const showErrorAlert = (errorMessage) => {
-    setErrorMessage(errorMessage)
-    setEmailError(true)
-  }
+    setErrorMessage(errorMessage);
+    setEmailError(true);
+    setIsLoading(false);
+  };
 
   const onSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (email) {
-      const success = await dispatch(ForgotPassword(email, setIsLoading))
-      if (success) {
-        handleSuccessMessage()
-      }
+      dispatch(ForgotPassword(email, setIsLoading, showErrorAlert))
+      handleSuccessMessage()
     }
-  }
+  };
 
   const styles = {
     forgotpasswordPage: {
@@ -56,8 +54,8 @@ function ForgotPasswordComponent() {
       width: "100%",
     },
     input: {
-      borderRadius: "16px",
-      height: "50px",
+      borderRadius: "10px",
+      height: "3rem",
     },
     button: {
       backgroundColor: "#7126b5",
@@ -69,16 +67,16 @@ function ForgotPasswordComponent() {
     },
     label: {
       color: "black",
+      marginBottom: "0.2rem",
     },
     alertMessage: {
       position: "absolute",
       backgroundColor: "red",
       color: "white",
-      bottom: "0",
-      marginBottom: "10px",
+      bottom: "30px",
       width: "fit-content",
       padding: "10px",
-      borderRadius: "5%",
+      borderRadius: "15px",
       fontSize: "small",
       borderColor: "red",
     },
@@ -86,8 +84,7 @@ function ForgotPasswordComponent() {
       position: "absolute",
       backgroundColor: "#73ca5c",
       color: "white",
-      bottom: "0",
-      marginBottom: "5%",
+      bottom: "30px",
       width: "fit-content",
       padding: "10px",
       borderRadius: "15px",
@@ -99,12 +96,12 @@ function ForgotPasswordComponent() {
   return (
     <div style={styles.forgotpasswordPage}>
       <Container style={styles.centeredContainer}>
-        <h4 className="fw-bold mb-2">Masukkan Email Anda!</h4>
+        <h4 className="fw-bold mb-2 text-center">Masukkan Email Anda!</h4>
         <Form onSubmit={onSubmit} className="mt-4">
           <Form.Group className="mb-3" controlId="Email">
-            <Form.Label className="fw-medium" style={styles.label}>
+            <h6 className="fw-medium" style={styles.label}>
               Email Address
-            </Form.Label>
+            </h6>
             <Form.Control
               style={styles.input}
               type="email"

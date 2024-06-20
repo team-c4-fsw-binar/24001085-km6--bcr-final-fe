@@ -47,7 +47,7 @@ function OTPComponent() {
       if (resendTimer > 0) {
         setResendTimer((prevTimer) => prevTimer - 1)
       }
-    }, 10)
+    }, 1000)
 
     // Clean up the interval when component unmounts
     return () => clearInterval(timer)
@@ -113,16 +113,16 @@ function OTPComponent() {
     },
 
     inputStyle: {
-      width: "40px",
-      height: "40px",
+      width: "3rem",
+      height: "3rem",
       border: "1px solid #d0d0d0",
-      borderRadius: "16px",
-      margin: "10px 10px",
+      borderRadius: "10px",
+      margin: "8px",
       fontSize: "16px",
       textAlign: "center",
       color: "black",
       backgroundColor: "white",
-      marginTop: "5%",
+      marginTop: "2rem",
     },
     focusStyle: {
       borderColor: "#007bff",
@@ -181,7 +181,7 @@ function OTPComponent() {
       <div className="OTP-Form">
         <Container style={styles.centeredContainer}>
           <div className="justify-content-center">
-            <h4 className="fw-bold mt-2 masuk">Masukkan OTP</h4>
+            <h4 className="fw-bold mt-2 masuk text-center">Masukkan Kode OTP!</h4>
           </div>
           <p className="text-center mt-4" style={styles.p}>
             Ketik 6 digit kode yang dikirimkan ke{" "}
