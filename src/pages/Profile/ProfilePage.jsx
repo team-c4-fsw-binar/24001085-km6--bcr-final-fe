@@ -68,30 +68,42 @@ const ProfilePage = () => {
     };
 
     const handlePasswordChangeClick = () => {
+        setIsLoading(true);
         if (!currentPassword || !newPassword || !confirmPassword) {
+            setIsLoading(false);
             toast.error("Semua kolom password harus diisi jika ingin mengubah password.");
             return;
         }
 
-        if (newPassword !== currentPassword && newPassword === confirmPassword) {
-            const formDataPassword = new FormData();
-            formDataPassword.append('current_password', currentPassword);
-            formDataPassword.append('new_password', newPassword);
-
-            // Memanggil dispatch untuk mengubah password
-            dispatch(changePassword(navigateTo, '/profile', null, formDataPassword));
-
-            setCurrentPassword('');
-            setNewPassword('');
-            setConfirmPassword('');
-            setActiveTab('profile');
-        } else {
-            if (newPassword === currentPassword) {
-                toast.error("Password baru tidak boleh sama dengan password lama.");
-            } else {
-                toast.error("Password baru dan konfirmasi password harus sama.");
-            }
+        if (newPassword === currentPassword) {
+            setIsLoading(false);
+            toast.error("Password baru tidak boleh sama dengan password lama.");
+            return;
         }
+
+        if (newPassword !== confirmPassword) {
+            setIsLoading(false);
+            toast.error("Password baru dan konfirmasi password harus sama.");
+            return;
+        }
+
+        const formDataPassword = new FormData();
+        formDataPassword.append('current_password', currentPassword);
+        formDataPassword.append('new_password', newPassword);
+
+        dispatch(changePassword(navigateTo, '/profile', null, formDataPassword))
+            .then(() => {
+                setIsLoading(false);
+                setCurrentPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+                setActiveTab('profile');
+            })
+            .catch((error) => {
+                setIsLoading(false);
+                toast.error("Failed to change password.");
+                console.error("Error changing password:", error);
+            });
     };
 
 
@@ -119,7 +131,7 @@ const ProfilePage = () => {
                     <Button
                         className="px-4"
                         style={{ backgroundColor: '#7126B5', border: 'none' }}
-                        onClick={() => window.location.href = '/verify-otp'}
+                        onClick={() => navigateTo('/verify-otp')}
                     >
                         Verify
                     </Button>
@@ -501,8 +513,9 @@ const ProfilePage = () => {
                                                 type="button"
                                                 style={styles.btnSimpan}
                                                 onClick={handlePasswordChangeClick}
-                                            >
-                                                Simpan
+                                                disabled={isLoading}
+                                                >
+                                                    {isLoading ? "Menyimpan..." : "Simpan"}
                                             </Button>
                                         </div>
                                     </Form>
