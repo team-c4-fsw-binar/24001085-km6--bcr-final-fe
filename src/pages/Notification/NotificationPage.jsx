@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Image } from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Modal, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotification, putNotification } from "../../redux/actions/notification";
@@ -7,6 +7,9 @@ import * as icons from "../../assets/icons";
 
 const NotificationPage = () => {
     const [notifications, setNotifications] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [currentNotification, setCurrentNotification] = useState(null);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const token = useSelector((state) => state.auth.token);
@@ -87,6 +90,13 @@ const NotificationPage = () => {
                 );
             }
         }
+        setCurrentNotification(notification);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setCurrentNotification(null);
     };
 
     return (
@@ -95,7 +105,7 @@ const NotificationPage = () => {
                 <Container className="py-4">
                     <h4 style={styles.fontHeadingBold20}>Notifikasi</h4>
                     <div className="d-flex gap-2 mx-3 mt-4 align-items-center">
-                        <div className="w-75" style={{ ...styles.bgBeranda, padding: '10px 5px' }}>
+                        <div className="w-100" style={{ ...styles.bgBeranda, padding: '10px 5px' }}>
                             <div className="d-flex">
                                 <Link to="/">
                                     <Image src={icons.whiteLeftIcon} alt="arrow-left" className="px-3" />
@@ -105,12 +115,6 @@ const NotificationPage = () => {
                                 </Link>
                             </div>
                         </div>
-                        <Link to="/filter">
-                            <Image src={icons.filterButton} alt="filter" className="me-4 me-md-0" />
-                        </Link>
-                        <Link to="/search">
-                            <Image src={icons.searchIcon} alt="search" />
-                        </Link>
                     </div>
                 </Container>
             </div>
@@ -119,7 +123,7 @@ const NotificationPage = () => {
                     notifications.map((notification) => (
                         <Card
                             key={notification.id}
-                            className="mb-2 w-75"
+                            className="mb-2"
                             style={styles.card}
                             onClick={() => handleMarkAsRead(notification.id)} // Call handleMarkAsRead onClick
                         >
@@ -167,6 +171,23 @@ const NotificationPage = () => {
                     <p>Loading...</p>
                 )}
             </Container>
+
+            {currentNotification && (
+                <Modal
+                show={showModal}
+                onHide={handleCloseModal}
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title className="h6">Notification Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <h5>{currentNotification.title}</h5>
+                    <p>{currentNotification.content}</p>
+                    <small>{new Date(currentNotification.updatedAt).toLocaleString()}</small>
+                </Modal.Body>
+            </Modal>
+        )}
         </>
     );
 };
