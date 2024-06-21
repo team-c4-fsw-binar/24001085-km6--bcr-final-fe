@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { postPassengers } from "../../redux/actions/checkout";
 import * as icons from "../../assets/icons";
 import "./Checkout.css";
 
 const CheckoutPage = () => {
-    const [hasFamilyNamePemesan, setHasFamilyNamePemesan] = useState(true);
-    const [hasFamilyNamePenumpang, setHasFamilyNamePenumpang] = useState(true);
-    const [user, setUser] = useState(true);
-    // const token = localStorage.getItem("token");
+    const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth);
+
+    const [hasFamilyNamePemesan, setHasFamilyNamePemesan] = useState(false);
+    const [hasFamilyNamePenumpang, setHasFamilyNamePenumpang] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [time, setTime] = useState("");
@@ -17,7 +19,6 @@ const CheckoutPage = () => {
     const [isExpired, setIsExpired] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [isReturn, setIsReturn] = useState(true);
-
 
     // Update time every second
     useEffect(() => {
@@ -44,7 +45,13 @@ const CheckoutPage = () => {
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     };
 
-    const [userDetails, setUserDetails] = useState({
+    const [profileDetails, setProfileDetails] = useState({
+        name: "",
+        phone: "",
+        email: "",
+    });
+
+    const [manualDetails, setManualDetails] = useState({
         user_id: "",
         name: "",
         born_date: "",
@@ -52,6 +59,29 @@ const CheckoutPage = () => {
         identity_number: "",
         publisher_country: "",
     });
+
+    // Mengisi profile details dari Redux state saat komponen dimuat
+    useEffect(() => {
+        if (user) {
+            setProfileDetails({
+                name: user.name || "",
+                phone: user.phone || "",
+                email: user.email || "",
+            });
+        }
+    }, [user]);
+
+    // Mengisi manual details sesuai input pengguna
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setManualDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
+    };
+
+    // Menggabungkan profileDetails dan manualDetails menjadi satu objek userDetails untuk pengiriman
+    const userDetails = {
+        ...manualDetails,
+        ...profileDetails,
+    };
 
     // Departure
     const [departureSeats, setDepartureSeats] = useState(
@@ -99,8 +129,8 @@ const CheckoutPage = () => {
                 )
             )
         );
-    };    
-    
+    };
+
     const handleTogglePemesan = () => {
         setHasFamilyNamePemesan(!hasFamilyNamePemesan);
     };
@@ -112,11 +142,6 @@ const CheckoutPage = () => {
     const simpan = () => {
         setIsSaved(true);
         setSuccess("Data Anda berhasil tersimpan!");
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setUserDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
@@ -354,9 +379,15 @@ const CheckoutPage = () => {
                                     )}
                                 </p>
                                 <Form>
-                                    <Form.Group controlId="formNamaLengkap" className="mb-3">
+                                    <Form.Group controlId="formNamaLengkapPemesan" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Lengkap</Form.Label>
-                                        <Form.Control style={styles.formControl} type="text" placeholder="Harry" readOnly={isSaved} />
+                                        <Form.Control
+                                            style={styles.formControl}
+                                            type="text"
+                                            readOnly={isSaved}
+                                            value={profileDetails.name}
+                                            onChange={(e) => setProfileDetails({ ...profileDetails, name: e.target.value })}
+                                        />
                                     </Form.Group>
 
                                     <Form.Group controlId="formToggleFamilyNamePemesan" className="mb-3 d-flex align-items-center">
@@ -373,18 +404,37 @@ const CheckoutPage = () => {
                                     {hasFamilyNamePemesan && (
                                         <Form.Group controlId="formNamaKeluargaPemesan" className="mb-3">
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Keluarga</Form.Label>
-                                            <Form.Control style={styles.formControl} type="text" placeholder="Potter" readOnly={isSaved} />
+                                            <Form.Control
+                                                style={styles.formControl}
+                                                type="text"
+                                                readOnly={isSaved}
+                                                value={manualDetails.family_name}
+                                                onChange={handleInputChange}
+                                                name="family_name"
+                                            />
                                         </Form.Group>
                                     )}
 
                                     <Form.Group controlId="formNomorTelepon" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nomor Telepon</Form.Label>
-                                        <Form.Control style={styles.formControl} type="text" placeholder="123456789" readOnly={isSaved} />
+                                        <Form.Control
+                                            style={styles.formControl}
+                                            type="text"
+                                            readOnly={isSaved}
+                                            value={profileDetails.phone}
+                                            onChange={(e) => setProfileDetails({ ...profileDetails, phone: e.target.value })}
+                                        />
                                     </Form.Group>
 
                                     <Form.Group controlId="formEmail" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Email</Form.Label>
-                                        <Form.Control style={styles.formControl} type="email" placeholder="Contoh: johndoe@gmail.com" readOnly={isSaved} />
+                                        <Form.Control
+                                            style={styles.formControl}
+                                            type="email"
+                                            readOnly={isSaved}
+                                            value={profileDetails.email}
+                                            onChange={(e) => setProfileDetails({ ...profileDetails, email: e.target.value })}
+                                        />
                                     </Form.Group>
                                 </Form>
                             </Card>
@@ -401,21 +451,29 @@ const CheckoutPage = () => {
                                         <Image src={icons.checkIcon} alt="checklist" className="ms-2" />
                                     )}
                                 </p>
-                                <Form>
+                                <Form onSubmit={handleSubmit}>
                                     <Form.Group controlId="formTitle" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Title</Form.Label>
-                                        <Form.Control style={styles.formControl} type="text" placeholder="Mr." readOnly={isSaved} />
+                                        <Form.Control
+                                            style={styles.formControl}
+                                            type="text"
+                                            readOnly={isSaved}
+                                            value={manualDetails.title}
+                                            onChange={handleInputChange}
+                                            name="title"
+                                        />
                                     </Form.Group>
 
                                     <Form.Group controlId="formNamaLengkapPenumpang" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Lengkap</Form.Label>
-                                        <Form.Control style={styles.formControl}
+                                        <Form.Control
+                                            style={styles.formControl}
                                             type="text"
-                                            name="name"
-                                            value={userDetails.name}
+                                            readOnly={isSaved}
+                                            value={manualDetails.name}
                                             onChange={handleInputChange}
-                                            required
-                                            readOnly={isSaved} />
+                                            name="name"
+                                        />
                                     </Form.Group>
 
                                     <Form.Group controlId="formToggleFamilyNamePenumpang" className="mb-3 d-flex align-items-center">
@@ -432,57 +490,72 @@ const CheckoutPage = () => {
                                     {hasFamilyNamePenumpang && (
                                         <Form.Group controlId="formNamaKeluargaPenumpang" className="mb-3">
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Keluarga</Form.Label>
-                                            <Form.Control style={styles.formControl} type="text" placeholder="Potter" readOnly={isSaved} />
+                                            <Form.Control
+                                                style={styles.formControl}
+                                                type="text"
+                                                readOnly={isSaved}
+                                                value={manualDetails.family_name}
+                                                onChange={handleInputChange}
+                                                name="family_name"
+                                            />
                                         </Form.Group>
                                     )}
 
                                     <Form.Group controlId="formTanggalLahir" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Tanggal Lahir</Form.Label>
-                                        <Form.Control style={styles.formControl}
+                                        <Form.Control
+                                            style={styles.formControl}
                                             type="date"
-                                            name="born_date"
-                                            value={userDetails.born_date}
+                                            readOnly={isSaved}
+                                            value={manualDetails.born_date}
                                             onChange={handleInputChange}
-                                            required
-                                            readOnly={isSaved} />
+                                            name="born_date"
+                                        />
                                     </Form.Group>
 
                                     <Form.Group controlId="formKewarganegaraan" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Kewarganegaraan</Form.Label>
-                                        <Form.Control style={styles.formControl}
+                                        <Form.Control
+                                            style={styles.formControl}
                                             type="text"
-                                            name="citizenship"
-                                            value={userDetails.citizenship}
+                                            readOnly={isSaved}
+                                            value={manualDetails.citizenship}
                                             onChange={handleInputChange}
-                                            required
-                                            readOnly={isSaved} />
+                                            name="citizenship"
+                                        />
                                     </Form.Group>
 
                                     <Form.Group controlId="formKtpPaspor" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>KTP/Paspor</Form.Label>
-                                        <Form.Control style={styles.formControl}
+                                        <Form.Control
+                                            style={styles.formControl}
                                             type="text"
-                                            name="identity_number"
-                                            value={userDetails.identity_number}
+                                            readOnly={isSaved}
+                                            value={manualDetails.identity_number}
                                             onChange={handleInputChange}
-                                            required
-                                            readOnly={isSaved} />
+                                            name="identity_number"
+                                        />
                                     </Form.Group>
 
                                     <Form.Group controlId="formNegaraPenerbit" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Negara Penerbit</Form.Label>
-                                        <Form.Control style={styles.formControl}
+                                        <Form.Control
+                                            style={styles.formControl}
                                             type="text"
-                                            name="publisher_country"
-                                            value={userDetails.publisher_country}
+                                            readOnly={isSaved}
+                                            value={manualDetails.publisher_country}
                                             onChange={handleInputChange}
-                                            required
-                                            readOnly={isSaved} />
+                                            name="publisher_country"
+                                        />
                                     </Form.Group>
 
                                     <Form.Group controlId="formBerlakuSampai" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Berlaku Sampai</Form.Label>
-                                        <Form.Control style={styles.formControl} type="date" readOnly={isSaved} />
+                                        <Form.Control
+                                            style={styles.formControl}
+                                            type="date"
+                                            readOnly={isSaved}
+                                        />
                                     </Form.Group>
                                 </Form>
                             </Card>
