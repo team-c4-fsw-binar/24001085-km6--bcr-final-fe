@@ -80,7 +80,7 @@ const CheckoutPage = () => {
     // Menggabungkan profileDetails dan manualDetails menjadi satu objek userDetails untuk pengiriman
     const userDetails = {
         ...manualDetails,
-        ...profileDetails,
+        // ...profileDetails,
     };
 
     // Departure
