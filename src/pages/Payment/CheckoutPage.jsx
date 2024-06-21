@@ -4,14 +4,11 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { postPassengers } from "../../redux/actions/checkout";
 import * as icons from "../../assets/icons";
-import "./Checkout.css";
 
 const CheckoutPage = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
 
-    const [hasFamilyNamePemesan, setHasFamilyNamePemesan] = useState(false);
-    const [hasFamilyNamePenumpang, setHasFamilyNamePenumpang] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [time, setTime] = useState("");
@@ -129,14 +126,6 @@ const CheckoutPage = () => {
                 )
             )
         );
-    };
-
-    const handleTogglePemesan = () => {
-        setHasFamilyNamePemesan(!hasFamilyNamePemesan);
-    };
-
-    const handleTogglePenumpang = () => {
-        setHasFamilyNamePenumpang(!hasFamilyNamePenumpang);
     };
 
     const simpan = () => {
@@ -360,7 +349,7 @@ const CheckoutPage = () => {
                     )}
                 </Container>
             </div>
-            {!isExpired && (
+            {(!isExpired || isSaved) &&(
                 <Container>
                     <Row>
                         <Col sm={6} className="my-3">
@@ -387,33 +376,9 @@ const CheckoutPage = () => {
                                             readOnly={isSaved}
                                             value={profileDetails.name}
                                             onChange={(e) => setProfileDetails({ ...profileDetails, name: e.target.value })}
+                                            disabled
                                         />
                                     </Form.Group>
-
-                                    <Form.Group controlId="formToggleFamilyNamePemesan" className="mb-3 d-flex align-items-center">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }} className="mb-0">Punya Nama Keluarga?</Form.Label>
-                                        <Form.Check
-                                            type="switch"
-                                            checked={hasFamilyNamePemesan}
-                                            onChange={handleTogglePemesan}
-                                            className="custom-switch-checkout d-flex justify-content-center align-items-center py-2"
-                                            disabled={isSaved}
-                                        />
-                                    </Form.Group>
-
-                                    {hasFamilyNamePemesan && (
-                                        <Form.Group controlId="formNamaKeluargaPemesan" className="mb-3">
-                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Keluarga</Form.Label>
-                                            <Form.Control
-                                                style={styles.formControl}
-                                                type="text"
-                                                readOnly={isSaved}
-                                                value={manualDetails.family_name}
-                                                onChange={handleInputChange}
-                                                name="family_name"
-                                            />
-                                        </Form.Group>
-                                    )}
 
                                     <Form.Group controlId="formNomorTelepon" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nomor Telepon</Form.Label>
@@ -423,6 +388,7 @@ const CheckoutPage = () => {
                                             readOnly={isSaved}
                                             value={profileDetails.phone}
                                             onChange={(e) => setProfileDetails({ ...profileDetails, phone: e.target.value })}
+                                            disabled
                                         />
                                     </Form.Group>
 
@@ -434,6 +400,7 @@ const CheckoutPage = () => {
                                             readOnly={isSaved}
                                             value={profileDetails.email}
                                             onChange={(e) => setProfileDetails({ ...profileDetails, email: e.target.value })}
+                                            disabled
                                         />
                                     </Form.Group>
                                 </Form>
@@ -475,31 +442,6 @@ const CheckoutPage = () => {
                                             name="name"
                                         />
                                     </Form.Group>
-
-                                    <Form.Group controlId="formToggleFamilyNamePenumpang" className="mb-3 d-flex align-items-center">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }} className="mb-0">Punya Nama Keluarga?</Form.Label>
-                                        <Form.Check
-                                            type="switch"
-                                            checked={hasFamilyNamePenumpang}
-                                            onChange={handleTogglePenumpang}
-                                            className="custom-switch-checkout d-flex justify-content-center align-items-center py-2"
-                                            disabled={isSaved}
-                                        />
-                                    </Form.Group>
-
-                                    {hasFamilyNamePenumpang && (
-                                        <Form.Group controlId="formNamaKeluargaPenumpang" className="mb-3">
-                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Keluarga</Form.Label>
-                                            <Form.Control
-                                                style={styles.formControl}
-                                                type="text"
-                                                readOnly={isSaved}
-                                                value={manualDetails.family_name}
-                                                onChange={handleInputChange}
-                                                name="family_name"
-                                            />
-                                        </Form.Group>
-                                    )}
 
                                     <Form.Group controlId="formTanggalLahir" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Tanggal Lahir</Form.Label>
@@ -772,10 +714,6 @@ const CheckoutPage = () => {
                                     <div className="d-flex">
                                         <p style={styles.fontBodyRegular14} className="me-auto my-0">1 Bayi</p>
                                         <p style={styles.fontBodyRegular14} className="my-0">IDR 0</p>
-                                    </div>
-                                    <div className="d-flex">
-                                        <p style={styles.fontBodyRegular14} className="me-auto my-0">Pajak</p>
-                                        <p style={styles.fontBodyRegular14} className="my-0">IDR 300.000</p>
                                     </div>
                                 </div>
 
