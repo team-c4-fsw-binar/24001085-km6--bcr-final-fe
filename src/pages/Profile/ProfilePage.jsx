@@ -384,6 +384,7 @@ const ProfilePage = () => {
                                                 value={dataEmail}
                                                 onChange={(e) => setDataEmail(e.target.value)}
                                                 style={styles.formControl}
+                                                disabled
                                             />
                                         </Form.Group>
 
