@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { postPassengers } from "../../redux/actions/checkout";
 import * as icons from "../../assets/icons";
 
 const CheckoutPage = () => {
@@ -49,7 +48,6 @@ const CheckoutPage = () => {
     });
 
     const [manualDetails, setManualDetails] = useState({
-        user_id: "",
         name: "",
         born_date: "",
         citizenship: "",
@@ -349,7 +347,7 @@ const CheckoutPage = () => {
                     )}
                 </Container>
             </div>
-            {(!isExpired || isSaved) &&(
+            {(!isExpired || isSaved) && (
                 <Container>
                     <Row>
                         <Col sm={6} className="my-3">
@@ -419,17 +417,35 @@ const CheckoutPage = () => {
                                     )}
                                 </p>
                                 <Form onSubmit={handleSubmit}>
-                                    <Form.Group controlId="formTitle" className="mb-3">
+                                    <Form.Group controlId="formTitle" className="mb-3" style={{ position: 'relative' }}>
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Title</Form.Label>
                                         <Form.Control
-                                            style={styles.formControl}
-                                            type="text"
+                                            as="select"
+                                            style={{ ...styles.formControl, appearance: 'none', paddingRight: '2rem' }}
                                             readOnly={isSaved}
                                             value={manualDetails.title}
                                             onChange={handleInputChange}
                                             name="title"
+                                        >
+                                            <option value="">Select Title</option>
+                                            <option value="Mr.">Mr.</option>
+                                            <option value="Mrs.">Mrs.</option>
+                                            <option value="Ms.">Ms.</option>
+                                        </Form.Control>
+                                        <Image
+                                            src={icons.dropdown_Down}
+                                            alt="dropdown"
+                                            style={{
+                                                position: 'absolute',
+                                                right: '10px',
+                                                top: '60%',
+                                                pointerEvents: 'none',
+                                                height: '1rem',
+                                                width: '1rem'  
+                                            }}
                                         />
                                     </Form.Group>
+
 
                                     <Form.Group controlId="formNamaLengkapPenumpang" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Lengkap</Form.Label>
