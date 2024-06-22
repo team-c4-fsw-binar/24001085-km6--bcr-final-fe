@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotification, putNotification } from "../../redux/actions/notification";
 import * as icons from "../../assets/icons";
+import * as images from "../../assets/images";
 import { ToastContainer } from 'react-toastify';
 
 const NotificationPage = () => {
@@ -168,7 +169,9 @@ const NotificationPage = () => {
                         </Card>
                     ))
                 ) : (
-                    <p>Loading...</p>
+                    <center>
+                        <Image src={images.loadingPage} alt="loading" />
+                    </center>
                 )}
             </Container>
 
