@@ -1,22 +1,32 @@
+import React from "react"
 import DatePicker from "react-datepicker"
 import { Button, Modal } from "react-bootstrap"
-import { useState } from "react"
-import "react-datepicker/dist/react-datepicker.css"
+// import "react-datepicker/dist/react-datepicker.css"
+// import "../styles/history/datepickerHistory.css"
 
-import "../styles/history/datepicker.css"
-
-const datepicker = (modalShowDate, onHide) => {
-  const [startDate, setStartDate] = useState(new Date())
-  const [endDate, setEndDate] = useState(null)
+const DatepickerModalHistory = ({
+  show,
+  onHide,
+  startDate,
+  endDate,
+  setStartDate,
+  setEndDate,
+}) => {
   const onChange = (dates) => {
     const [start, end] = dates
     setStartDate(start)
     setEndDate(end)
   }
+
+  const handleClose = () => {
+    // Save startDate and endDate before closing
+    onHide(startDate, endDate)
+  }
+
   return (
     <Modal
-      show={modalShowDate}
-      onHide={onHide}
+      show={show}
+      onHide={handleClose}
       size="medium"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -37,9 +47,10 @@ const datepicker = (modalShowDate, onHide) => {
         />
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHide}>Close</Button>
+        <Button onClick={handleClose}>Simpan</Button>
       </Modal.Footer>
     </Modal>
   )
 }
-export default datepicker
+
+export default DatepickerModalHistory

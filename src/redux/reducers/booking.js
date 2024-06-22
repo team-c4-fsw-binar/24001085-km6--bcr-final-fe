@@ -3,13 +3,12 @@ import axios from "axios"
 
 export const fetchBookings = createAsyncThunk(
   "bookings/fetchBookings",
-  async (token, { rejectWithValue }) => {
-    const data = JSON.stringify({
-      code: "",
-      startDate: "",
-      endDate: "",
+  async ({ token, startDate, endDate, searchInput }, { rejectWithValue }) => {
+    let data = JSON.stringify({
+      code: `${searchInput}`,
+      startDate: `${startDate}`,
+      endDate: `${endDate}`,
     })
-
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_API}/api/bookingHistories`,

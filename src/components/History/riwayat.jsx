@@ -217,19 +217,10 @@ const DetailPemesanan = () => {
 
   return (
     <div>
-      <Row></Row>
       {bookingsData && bookingsData.length > 0 ? (
         bookingsData.map((booking, index) => {
           const payment = getPaymentForBooking(booking.id)
           const flight = getFlightForBooking(booking.departure_flight_id)
-          // const departureAirportCity = getAirportCityById(
-          //   flight?.departureAirport
-          // )
-          // const arrivalAirportCity = getAirportCityById(flight?.arrivalAirport)
-          // const departureAirportName = getAirportNameById(
-          //   flight?.departureAirport
-          // )
-          // const arrivalAirportName = getAirportNameById(flight?.arrivalAirport)
           let cardStyle = styles.riwayatCard
           if (clickedIndex === index || hoverIndex === index) {
             cardStyle = { ...cardStyle, ...styles.riwayatCardHover }
