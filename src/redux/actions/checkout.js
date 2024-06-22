@@ -1,37 +1,70 @@
-import axios from 'axios';
 import { toast } from 'react-toastify';
+import { setUser, setToken } from '../reducers/auth';
 
-export const postBooking = (bookingData, setUser, setToken) => {
+export const postBooking = (bookingData, token) => {
     return async (dispatch) => {
-        let data = new FormData();
-
-        data.append("passengers", JSON.stringify(bookingData.passengerDetails));
-        data.append("departureSeats", JSON.stringify(bookingData.departureSeats));
-        data.append("returnSeats", JSON.stringify(bookingData.returnSeats));
-
-        let config = {
-            method: "post",
-            url: `${import.meta.env.VITE_BACKEND_API}/api/bookings`,
-            data: data,
+        const postData = {
+            departure_flight_id: bookingData.departureFlightId,
+            return_flight_id: bookingData.returnFlightId,
+            price_amount: bookingData.priceAmount,
+            seats_id: bookingData.seatsId,
+            seat_class: bookingData.seatClass,
+            passengers: bookingData.passengerDetails,
+            adultCount: bookingData.adultCount,
+            childCount: bookingData.childCount,
+            babyCount: bookingData.babyCount
         };
 
         try {
-            const response = await axios(config);
-            if (response.status === 200 || response.status === 201) {
-                toast.success("Booking successful!");
-                dispatch({ type: "POST_BOOKING_SUCCESS", payload: response.data });
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/bookings`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(postData)
+            });
 
-                // Example usage of setUser and setToken
-                setUser(response.data.user); // Assuming response contains user info
-                setToken(response.data.token); // Assuming response contains token
+            const responseData = await response.json();
 
+            if (response.ok) {
+                toast.success('Booking successful!');
+                dispatch({ type: 'POST_BOOKING_SUCCESS', payload: responseData });
+
+                if (responseData.user) {
+                    setUser(responseData.user);
+                }
+                if (responseData.token) {
+                    setToken(responseData.token);
+                }
             } else {
-                toast.error("Booking failed!");
-                dispatch({ type: "POST_BOOKING_FAILURE", error: "Booking failed" });
+                toast.error('Booking failed!');
+                dispatch({ type: 'POST_BOOKING_FAILURE', error: 'Booking failed' });
             }
         } catch (error) {
-            toast.error("Booking failed!");
-            dispatch({ type: "POST_BOOKING_FAILURE", error: error.message }); // Dispatching only the error message
+            toast.error('Booking failed!');
+            dispatch({ type: 'POST_BOOKING_FAILURE', error: error.message });
         }
     };
+};
+
+export const getFilteredSeats = async (flightId, seatClass) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/seats/filter?flightId=${flightId}&seatClass=${seatClass}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch filtered seats');
+        }
+
+        const responseData = await response.json();
+        return responseData;
+    } catch (error) {
+        console.error('Failed to fetch filtered seats:', error.message);
+        throw error;
+    }
 };
