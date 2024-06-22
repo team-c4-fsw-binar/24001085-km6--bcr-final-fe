@@ -59,6 +59,24 @@ const CheckoutPage = () => {
         }
     }, [user]);
 
+    const [passengerDetails, setPassengerDetails] = useState({
+        title: "",
+        name: "",
+        born_date: "",
+        citizenship: "",
+        identity_number: "",
+        publisher_country: "",
+        valid_until: "",
+    });
+
+    const handlePassengerChange = (e) => {
+        const { name, value } = e.target;
+        setPassengerDetails({ ...passengerDetails, [name]: value });
+    };
+
+    const [selectedDepartureSeats, setSelectedDepartureSeats] = useState([]);
+    const [selectedReturnSeats, setSelectedReturnSeats] = useState([]);
+
     // Departure
     const [departureSeats, setDepartureSeats] = useState(
         Array.from({ length: 12 }, (_, rowIndex) =>
@@ -81,7 +99,15 @@ const CheckoutPage = () => {
                 )
             )
         );
+    
+        // Tambah atau hapus kursi yang dipilih dari state
+        const seatId = `${String.fromCharCode(65 + colIndex)}${rowIndex + 1}`;
+        setSelectedDepartureSeats((prevSelected) =>
+            seat.selected ? prevSelected.filter(id => id !== seatId) : [...prevSelected, seatId]
+        );
     };
+    
+    
 
     // Return
     const [returnSeats, setReturnSeats] = useState(
@@ -105,7 +131,14 @@ const CheckoutPage = () => {
                 )
             )
         );
+    
+        // Tambah atau hapus kursi yang dipilih dari state
+        const seatId = `${String.fromCharCode(65 + colIndex)}${rowIndex + 1}`;
+        setSelectedReturnSeats((prevSelected) =>
+            seat.selected ? prevSelected.filter(id => id !== seatId) : [...prevSelected, seatId]
+        );
     };
+    
 
     const simpan = () => {
         setIsSaved(true);
@@ -115,12 +148,16 @@ const CheckoutPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await dispatch(postPassengers(userDetails));
+            await dispatch(postBooking({
+                passengerDetails,
+                departureSeats: selectedDepartureSeats,
+                returnSeats: selectedReturnSeats,
+            }));
             simpan();
         } catch (err) {
             setError("Data gagal disimpan!");
         }
-    };
+    };    
 
     const styles = {
         fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
@@ -391,97 +428,98 @@ const CheckoutPage = () => {
                                 <p style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }}
                                     className="mb-3 d-flex justify-align-content-between align-items-center">
                                     <span className="flex-grow-1 text-start position-relative">
-                                        Data Diri Penumpang
+                                        Data Penumpang 1
                                     </span>
                                     {isSaved && (
-                                        <Image src={icons.checkIcon} alt="checklist" className="ms-2" />
+                                        <Image src={icons.checkIcon
+                                        } alt="checklist" className="ms-2" />
                                     )}
                                 </p>
                                 <Form onSubmit={handleSubmit}>
-                                    <Form.Group controlId="formTitle" className="mb-3" style={{ position: 'relative' }}>
+                                    <Form.Group controlId="formTitlePenumpang1" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Title</Form.Label>
-                                        <Form.Control
-                                            as="select"
-                                            style={{ ...styles.formControl, appearance: 'none', paddingRight: '2rem' }}
+                                        <Form.Select
+                                            style={styles.formControl}
                                             readOnly={isSaved}
+                                            value={passengerDetails.title}
                                             name="title"
+                                            onChange={handlePassengerChange}
                                         >
-                                            <option value="">Select Title</option>
                                             <option value="Mr.">Mr.</option>
                                             <option value="Mrs.">Mrs.</option>
                                             <option value="Ms.">Ms.</option>
-                                        </Form.Control>
-                                        <Image
-                                            src={icons.dropdown_Down}
-                                            alt="dropdown"
-                                            style={{
-                                                position: 'absolute',
-                                                right: '10px',
-                                                top: '60%',
-                                                pointerEvents: 'none',
-                                                height: '1rem',
-                                                width: '1rem'  
-                                            }}
-                                        />
+                                        </Form.Select>
                                     </Form.Group>
 
-
-                                    <Form.Group controlId="formNamaLengkapPenumpang" className="mb-3">
+                                    <Form.Group controlId="formNamaLengkapPenumpang1" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Lengkap</Form.Label>
                                         <Form.Control
                                             style={styles.formControl}
                                             type="text"
                                             readOnly={isSaved}
+                                            value={passengerDetails.name}
                                             name="name"
+                                            onChange={handlePassengerChange}
                                         />
                                     </Form.Group>
 
-                                    <Form.Group controlId="formTanggalLahir" className="mb-3">
+                                    <Form.Group controlId="formBornDatePenumpang1" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Tanggal Lahir</Form.Label>
                                         <Form.Control
                                             style={styles.formControl}
                                             type="date"
                                             readOnly={isSaved}
+                                            value={passengerDetails.born_date}
                                             name="born_date"
+                                            onChange={handlePassengerChange}
                                         />
                                     </Form.Group>
 
-                                    <Form.Group controlId="formKewarganegaraan" className="mb-3">
+                                    <Form.Group controlId="formCitizenshipPenumpang1" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Kewarganegaraan</Form.Label>
                                         <Form.Control
                                             style={styles.formControl}
                                             type="text"
                                             readOnly={isSaved}
+                                            value={passengerDetails.citizenship}
                                             name="citizenship"
+                                            onChange={handlePassengerChange}
                                         />
                                     </Form.Group>
 
-                                    <Form.Group controlId="formKtpPaspor" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>KTP/Paspor</Form.Label>
+                                    <Form.Group controlId="formIdentityNumberPenumpang1" className="mb-3">
+                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nomor Identitas</Form.Label>
                                         <Form.Control
                                             style={styles.formControl}
                                             type="text"
                                             readOnly={isSaved}
+                                            value={passengerDetails.identity_number}
                                             name="identity_number"
+                                            onChange={handlePassengerChange}
                                         />
                                     </Form.Group>
 
-                                    <Form.Group controlId="formNegaraPenerbit" className="mb-3">
+                                    <Form.Group controlId="formPublisherCountryPenumpang1" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Negara Penerbit</Form.Label>
                                         <Form.Control
                                             style={styles.formControl}
                                             type="text"
                                             readOnly={isSaved}
+                                            value={passengerDetails.publisher_country}
                                             name="publisher_country"
+                                            onChange={handlePassengerChange}
                                         />
                                     </Form.Group>
 
-                                    <Form.Group controlId="formBerlakuSampai" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Berlaku Sampai</Form.Label>
+                                    <Form.Group controlId="formValidUntilPenumpang1" className="mb-3">
+                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Berlaku Hingga</Form.Label>
                                         <Form.Control
                                             style={styles.formControl}
                                             type="date"
                                             readOnly={isSaved}
+                                            value={passengerDetails.valid_until}
+                                            name="valid_until"
+                                            onChange={handlePassengerChange}
                                         />
                                     </Form.Group>
                                 </Form>
@@ -601,7 +639,7 @@ const CheckoutPage = () => {
                                 </Card>
                             )}
                             <div className="text-center w-100">
-                                <Button onClick={simpan} disabled={isSaved ? true : false}
+                                <Button onClick={handleSubmit} disabled={isSaved ? true : false}
                                     style={{
                                         ...(isSaved ? styles.btnSimpanSelected : styles.btnSimpan),
                                         ...styles.fontHeadingMedium20,
