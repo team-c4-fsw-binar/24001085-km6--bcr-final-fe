@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import {
-  Container, Row, Col, Form, Button, Card, Modal, ListGroup, CloseButton
+  Container, Row, Col, Form, Button, Card, Modal, ListGroup, CloseButton, Spinner
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
-import { getAirports } from '../../redux/actions/home';
+import { ToastContainer, toast } from 'react-toastify';
+import { getAllCity, findTickets, getFlights } from '../../redux/actions/home';
 
+
+import 'react-toastify/dist/ReactToastify.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import "./homePage.css";
 import DatePickerModal from '../../components/Modal/DatepickerModal';
@@ -15,6 +18,8 @@ import * as icons from "../../assets/icons"
 
 
 const HomePage = () => {
+  const dispatch = useDispatch();
+
   const styles = {
     fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
     fontBodyRegular12: { fontWeight: 400, fontSize: '12px' },
@@ -59,74 +64,17 @@ const HomePage = () => {
 
   };
 
-
-
-
-  // togle switch for return
-  const [toggleSwitch, setToggleSwitch] = useState(false);
-
-  // modal destination
   const [fromModalOpen, setFromModalOpen] = useState(false);
   const [toModalOpen, setToModalOpen] = useState(false);
-  const [fromLocation, setFromLocation] = useState();
-  const [toLocation, setToLocation] = useState();
-
-  const [selectedFrom, setSelectedFrom] = useState();
-  const [selectedTo, setSelectedTo] = useState();
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const airports = await getAirports()
-        console.log(airports);
-        setFromLocation(airports.data.data.results.map((item) => ({ value: item.id, label: item.name })))
-        setToLocation(fromLocation);
-      }
-      catch (err) {
-        console.log(err);
-      }
-    }
-    fetch();
-  }, [])
-
-  const handleFromModalClose = () => setFromModalOpen(false);
-  const handleToModalClose = () => setToModalOpen(false);
-  const handleFromInputClick = () => setFromModalOpen(true);
-  const handleToInputClick = () => setToModalOpen(true);
-
-
-
-  // modal destination coba
-  const [searchHistory, setSearchHistory] = useState(['Jakarta', 'Bandung', 'Surabaya']);
-  const handleClearHistory = () => setSearchHistory([]);
-
-
-  // seat class
+  const [selectedFrom, setSelectedFrom] = useState(null);
+  const [selectedTo, setSelectedTo] = useState(null);
+  const [cities, setCities] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredCities, setFilteredCities] = useState([]);
+  const [toggleSwitch, setToggleSwitch] = useState(false);
   const [seatClassModalOpen, setSeatClassModalOpen] = useState(false);
   const [seatClass, setSeatClass] = useState("");
   const [tempSeatClass, setTempSeatClass] = useState("");
-  const handleSeatClassModalClose = () => setSeatClassModalOpen(false);
-  const handleCounterModalClose = () => setCounterModalOpen(false);
-  const handleSeatClassInputClick = () => {
-    setTempSeatClass(seatClass); // Set temp seat class to current seat class
-    setSeatClassModalOpen(true);
-  };
-  const handleSeatClassSelect = (seatClass) => {
-    setTempSeatClass(seatClass);
-  };
-
-
-  // handle save
-  const handleSeatClassSave = () => {
-    setSeatClass(tempSeatClass);
-    console.log(tempSeatClass);
-    setSeatClassModalOpen(false);
-  };
-
-
-
-
-  // total passenger 
   const [counterModalOpen, setCounterModalOpen] = useState(false);
   const [dewasa, setDewasa] = useState(0);
   const [anak, setAnak] = useState(0);
@@ -136,12 +84,88 @@ const HomePage = () => {
   const [tempDewasa, setTempDewasa] = useState(dewasa);
   const [tempAnak, setTempAnak] = useState(anak);
   const [tempBayi, setTempBayi] = useState(bayi);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [modalShow, setModalShow] = useState(false);
+  const [flights, setFlights] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+
+
+  // get destination
+  useEffect(() => {
+    const fetchFlights = async () => {
+      setLoading(true);
+      try {
+        const flightsData = await getFlights();
+        const limitedFlights = flightsData.data.data.results.slice(0, 5);
+        setFlights(limitedFlights);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFlights();
+  }, []);
+
+
+
+  // get all city
+  useEffect(() => {
+    const getCities = async () => {
+      try {
+        const data = await getAllCity();
+        const uniqueCities = Array.from(new Set(data.map(city => city.city))).map(cityName => {
+          return data.find(city => city.city === cityName);
+        });
+        setCities(uniqueCities);
+      } catch (error) {
+        console.error('Failed to fetch cities:', error);
+      }
+    };
+
+    getCities();
+  }, []);
+
+  const handleCitySelect = (city, type) => {
+    if (type === 'from') {
+      setSelectedFrom(city);
+      setFromModalOpen(false);
+    } else {
+      setSelectedTo(city);
+      setToModalOpen(false);
+    }
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    const searchQuery = e.target.value.toLowerCase();
+    const filtered = cities.filter(city => city.city.toLowerCase().includes(searchQuery));
+    setFilteredCities(filtered);
+  };
+
+  const handleSeatClassInputClick = () => {
+    setTempSeatClass(seatClass);
+    setSeatClassModalOpen(true);
+  };
+
+  const handleSeatClassSelect = (seatClass) => {
+    setTempSeatClass(seatClass);
+  };
+
+  const handleSeatClassSave = () => {
+    setSeatClass(tempSeatClass);
+    setSeatClassModalOpen(false);
+  };
+
   const handleCounterInputClick = () => {
     setTempDewasa(dewasa);
     setTempAnak(anak);
     setTempBayi(bayi);
     setCounterModalOpen(true);
   };
+
   const handleCounterSave = () => {
     setDewasa(tempDewasa);
     setAnak(tempAnak);
@@ -151,18 +175,30 @@ const HomePage = () => {
     setCounterModalOpen(false);
   };
 
-
-  //  date picker
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(null);
-  const [modalShow, setModalShow] = useState(false);
-
-
-  // swap destination
   const handleSwapLocations = () => {
-    const tempLocation = fromLocation;
-    setFromLocation(toLocation);
-    setToLocation(tempLocation);
+    const tempLocation = selectedFrom;
+    setSelectedFrom(selectedTo);
+    setSelectedTo(tempLocation);
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+
+    if (!selectedFrom || !selectedTo || !startDate || !total_passengers || !seatClass) {
+      toast.error('Please fill in all the fields.');
+      return;
+    }
+
+    const searchParams = {
+      from: selectedFrom.city,
+      to: selectedTo.city,
+      departureDate: startDate.toISOString().split('T')[0],
+      returnDate: toggleSwitch ? endDate?.toISOString().split('T')[0] : null,
+      passengers: total_passengers,
+      seatClass: seatClass,
+    };
+
+    dispatch(findTickets(searchParams));
   };
 
   return (
@@ -172,43 +208,92 @@ const HomePage = () => {
       </div>
       <Container className="sectionSortBooking shadow rounded">
         <Form>
-          <p style={styles.fontHeadingBold20}>Pilih Jadwal Penerbangan spesial di <span style={styles.titleBrand}>TerbangAja</span></p>
+          <p style={styles.fontHeadingBold20} className='mb-3'>Pilih Jadwal Penerbangan spesial di <span style={styles.titleBrand}>TerbangAja</span></p>
           <Row className='mb-md-0 mb-2'>
-            <Col md={5}>
-              <Form.Group className="mb-3" controlId="">
-                <div className='d-flex gap-2' onClick={handleFromInputClick}>
-                  <img src={icons.departureIcon} alt="" className="" />
-                  <p style={styles.fontBodyRegular14} className='mb-0 pe-2 align-self-center'>From</p>
-                  <input style={styles.inputDestination} className="form-control inputTextDecorationNone" type="text" value={selectedFrom?.label || ""} />
+            {/* untuk memilih from */}
+            <Col md={5} className="d-flex">
+              <Form.Group className="mb-3 w-100" controlId="from">
+                <div
+                  className='d-flex gap-2 w-100'
+                  onClick={() => {
+                    setFromModalOpen(true);
+                    setSearchTerm('');
+                    setFilteredCities(cities);
+                  }}
+                >
+                  <img src={icons.departureIcon} width={30} alt="departure icon" />
+                  <p style={styles.fontBodyRegular14} className='mb-0 me-md-5 me-2 pe-2 align-self-center'>
+                    From
+                  </p>
+                  <input
+                    style={{ ...styles.inputDestination, flexGrow: 1 }}
+                    className="form-control inputTextDecorationNone "
+                    type="text"
+                    value={selectedFrom ? selectedFrom.city : ''}
+                  />
                 </div>
               </Form.Group>
             </Col>
-            <Col md={2}>
+            <Col
+              md={2}
+              className="d-flex align-items-center swap-icon-container"
+            >
               <img
                 src={icons.swapIcon}
                 alt="Swap Locations"
-                className="cursor-pointer"
                 onClick={handleSwapLocations}
+                className="swap-icon"
                 style={{ cursor: 'pointer' }}
               />
             </Col>
-            <Col md={5}>
-              <Form.Group className="mb-3" controlId="">
-                <div className='d-flex gap-2' onClick={handleToInputClick}>
-                  <img src={icons.departureIcon} alt="" className="" />
-                  <p style={styles.fontBodyRegular14} className='mb-0 pe-2 align-self-center'>To</p>
-                  <input style={styles.inputDestination} className="form-control inputTextDecorationNone" type="text" id="to" value={selectedTo?.label || ""} />
+            {/* untuk memilih to */}
+            <Col md={5} className="d-flex">
+              <Form.Group className="mb-3 w-100" controlId="">
+                <div className='d-flex gap-2 w-100' onClick={() => {
+                  setToModalOpen(true);
+                  setSearchTerm('');
+                  setFilteredCities(cities);
+                }}
+                >
+                  <img src={icons.departureIcon} width={30} alt="" />
+                  <p style={styles.fontBodyRegular14} className='mb-0 me-md-2 me-3 pe-3 align-self-center'>To</p>
+                  <input style={{ ...styles.inputDestination, flexGrow: 1 }} // Tambahkan flexGrow
+                    className="form-control inputTextDecorationNone"
+                    type="text"
+                    id="to"
+                    value={selectedTo ? selectedTo.city : ''}
+                  />
                 </div>
               </Form.Group>
             </Col>
           </Row>
-          <Row className='mb-2'>
-            <Col md={1} className='mb-md-0 mb-2'>
-              <div className='d-flex gap-2'>
-                <img src={icons.dateIcon} alt="date" className="" />
+
+          <Row className='my-2 mb-3'>
+
+            <Col xs={12} className='d-md-none mb-3'>
+              <div className='d-flex justify-content-between align-items-center'>
+                <div className='d-flex align-items-center gap-1'>
+                  <p style={styles.fontTitleRegular16} className='mb-0 pe-2'>Pulang-Pergi?</p>
+                </div>
+                <Form.Check
+                  type="switch"
+                  id="custom-switch"
+                  className="customSwitchTogleDate "
+                  checked={toggleSwitch}
+                  onChange={(e) => setToggleSwitch(e.target.checked)}
+                />
+              </div>
+            </Col>
+
+
+
+            <Col md={1} className='mb-md-2 mb-2 d-flex align-items-center'>
+              <div className='d-flex gap-2 align-items-center'>
+                <img src={icons.dateIcon} width={25} alt="date" />
                 <p style={styles.fontBodyRegular14} className='mb-0 pe-2 align-self-center'>Date</p>
               </div>
             </Col>
+            {/* untuk memilih departure */}
             <Col md={2}>
               <div>
                 <p style={styles.fontTitleRegular16}>Departure</p>
@@ -218,14 +303,16 @@ const HomePage = () => {
                   type="text"
                   id="departureDate"
                   value={startDate ? startDate.toLocaleDateString() : ''}
-                  readOnly
                   onClick={() => setModalShow(true)}
                 />
               </div>
             </Col>
+            {/* untuk memilih return */}
             <Col md={2}>
-              <div>
-                <p style={styles.fontTitleRegular16}>Return</p>
+              <div className='my-md-0 my-2'>
+                {toggleSwitch && (
+                  <p style={styles.fontTitleRegular16}>Return</p>
+                )}
                 {toggleSwitch && (
                   <input
                     style={styles.inputDestination}
@@ -233,256 +320,201 @@ const HomePage = () => {
                     type="text"
                     id="returnDate"
                     value={endDate ? endDate.toLocaleDateString() : ''}
-                    readOnly
+
                     onClick={() => setModalShow(true)}
                   />
                 )}
               </div>
             </Col>
+            {/* togle switch */}
             <Col md={2}>
               <Form.Check
                 type="switch"
                 id="custom-switch"
-                className="align-self-center customSwitchTogleDate"
+                className=" d-none d-md-flex align-self-center customSwitchTogleDate"
                 checked={toggleSwitch}
                 onChange={(e) => setToggleSwitch(e.target.checked)}
               />
             </Col>
-            <Col md={5} className='mt-md-0 mt-3'>
-              <Form.Group className="mb-3" controlId="">
-                <div className='d-flex gap-2'>
-                  <img src={icons.seatIcon} alt="" className="" />
-                  <p style={styles.fontBodyRegular14} className='mb-0 pe-2 align-self-center'>To</p>
-                  <div>
-                    <p style={styles.fontTitleRegular16}>Passengers</p>
-                    <input
-                      style={styles.inputDestination}
-                      className="form-control inputTextDecorationNone"
-                      type="text"
-                      id="passengers"
-                      value={`${total_passengers} penumpang`}
-                      readOnly
-                      onClick={handleCounterInputClick}
-                    />
-                  </div>
-                  <div>
-                    <p style={styles.fontTitleRegular16}>Seat Class</p>
-                    <input
-                      style={styles.inputDestination}
-                      className="form-control inputTextDecorationNone"
-                      type="text"
-                      id="seatClass"
-                      value={seatClass}
-                      readOnly
-                      onClick={handleSeatClassInputClick}
-                    />
-                  </div>
-                </div>
-              </Form.Group>
+
+            <Col md={1} className='mt-md-0 mt-3'>
+              <div className='d-flex gap-2'>
+                <img src={icons.seatIcon} width={30} alt="" className="" />
+                <p style={styles.fontBodyRegular14} className='mb-0 pe-2 align-self-center'>To</p>
+              </div>
+            </Col>
+            <Col md={2} className='mt-md-0 mt-3'>
+              <div>
+                <p style={styles.fontTitleRegular16}>Passengers</p>
+                <input
+                  style={styles.inputDestination}
+                  className="form-control inputTextDecorationNone"
+                  type="text"
+                  id="passengers"
+                  value={`${total_passengers} penumpang`}
+
+                  onClick={handleCounterInputClick}
+                />
+              </div>
+            </Col>
+            <Col md={2} className='mt-md-0 mt-3'>
+              <div>
+                <p style={styles.fontTitleRegular16}>Seat Class</p>
+                <input
+                  style={styles.inputDestination}
+                  className="form-control inputTextDecorationNone"
+                  type="text"
+                  id="seatClass"
+                  value={seatClass}
+
+                  onClick={handleSeatClassInputClick}
+                />
+              </div>
             </Col>
           </Row>
           <Link to='/search'>
-            <Button style={{ ...styles.customButton, ...styles.fontTitleBold16 }} className='w-100' variant="primary" type="submit">
+            <Button style={{ ...styles.customButton, ...styles.fontTitleBold16 }} onClick={handleFormSubmit} className='w-100' variant="primary" type="submit">
               Cari Penerbangan
             </Button>
           </Link>
-        </Form >
-      </Container >
+        </Form>
+      </Container>
 
 
       <Container className='destinasiFavoritContainer'>
-        <div>
-          <p style={styles.fontHeadingBold20} className='my-3'>Destinasi Favorit</p>
-          <div className='d-flex flex-wrap my-3'>
-            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
-              <img src={icons.findIcon} alt="" className="me-2" />Semua
-            </Button>
-            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
-              <img src={icons.findIcon} alt="" className="me-2" />Asia</Button>
-            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
-              <img src={icons.findIcon} alt="" className="me-2" />Amerika</Button>
-            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
-              <img src={icons.findIcon} alt="" className="me-2" />Australia</Button>
-            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
-              <img src={icons.findIcon} alt="" className="me-2" />Eropa</Button>
-            <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
-              <img src={icons.findIcon} alt="" className="me-2" />Afrika</Button>
+        {loading ? (
+          <div className="text-center mt-5">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
           </div>
-        </div>
-
-        <Row xs={1} sm={2} md={3} lg={4} xl={5} className="mx-3 g-4">
-          <Col>
-            <div className='cardDestinasi rounded border'>
-              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
-                <Card.Body>
-                  <Card.Text>
-                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
-                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
-                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
-          <Col>
-            <div className='cardDestinasi rounded border'>
-              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
-                <Card.Body>
-                  <Card.Text>
-                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
-                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
-                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
-          <Col>
-            <div className='cardDestinasi rounded border'>
-              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
-                <Card.Body>
-                  <Card.Text>
-                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
-                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
-                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
-          <Col>
-            <div className='cardDestinasi rounded border'>
-              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
-                <Card.Body>
-                  <Card.Text>
-                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
-                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
-                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
-          <Col>
-            <div className='cardDestinasi rounded border'>
-              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
-                <Card.Body>
-                  <Card.Text>
-                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
-                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
-                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
-          <Col>
-            <div className='cardDestinasi rounded border'>
-              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
-                <Card.Body>
-                  <Card.Text>
-                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
-                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
-                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
-          <Col>
-            <div className='cardDestinasi rounded border'>
-              <Card> <Card.Img variant="top" className='p-2' style={{ borderRadius: '15px' }} src={images.bangkokDestination} />
-                <Card.Body>
-                  <Card.Text>
-                    <p style={styles.fontBodyMedium12} className='mb-0'>Jakarta <img src={icons.nextIcon} width={20} alt="date" className="" /> Bangkok</p>
-                    <p style={styles.fontBodyBold10} className='mb-0'>AirAsia</p>
-                    <p style={styles.fontBodyMedium10} className='mb-0'>20 - 30 Maret 2023</p>
-                    <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>IDR 950.000</span></p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          </Col>
-        </Row>
-      </Container >
-
-      {/* Modal for selecting From location */}
-      <Modal show={fromModalOpen} onHide={handleFromModalClose}>
-        <Modal.Header closeButton>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Control type="text" placeholder="Masukkan Kota atau Negara" />
-          <ListGroup className="mt-3">
-            {searchHistory.map((item, index) => (
-              <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
-                {item}
-                <Button variant="light" onClick={() => {
-                  const newHistory = searchHistory.filter((_, i) => i !== index);
-                  setSearchHistory(newHistory);
-                }}>
-                  &times;
+        ) : (
+          <>
+            <div>
+              <p style={styles.fontHeadingBold20} className='my-3'>Destinasi Favorit</p>
+              <div className='d-flex flex-wrap my-3'>
+                <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
+                  <img src={icons.findIcon} alt="" className="me-2" />Semua
                 </Button>
+                <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
+                  <img src={icons.findIcon} alt="" className="me-2" />Asia
+                </Button>
+                <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
+                  <img src={icons.findIcon} alt="" className="me-2" />Amerika
+                </Button>
+                <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
+                  <img src={icons.findIcon} alt="" className="me-2" />Australia
+                </Button>
+                <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
+                  <img src={icons.findIcon} alt="" className="me-2" />Eropa
+                </Button>
+                <Button style={{ ...styles.fontBodyRegular14 }} className='btnDestinasi d-flex align-items-center me-2 mb-2' variant="primary">
+                  <img src={icons.findIcon} alt="" className="me-2" />Afrika
+                </Button>
+              </div>
+            </div>
+
+            <Row xs={1} sm={2} md={3} lg={4} xl={5} className="mx-3 g-4">
+              {flights.map((flight, index) => (
+                <Col key={index}>
+                  <div className='cardDestinasi rounded border'>
+                    <Card>
+                      <Card.Img
+                        variant="top"
+                        className='p-2'
+                        style={{ borderRadius: '15px' }}
+                        src={flight.arrivalAirport_respon.imgUrl}
+                      />
+                      <Card.Body>
+                        <Card.Text>
+                          <p style={styles.fontBodyMedium12} className='mb-0'>
+                            {flight.departureAirport_respon.city}{' '}
+                            <img src={icons.nextIcon} width={20} alt="date" className="" />{' '}
+                            {flight.arrivalAirport_respon.city}
+                          </p>
+                          <p style={styles.fontBodyBold10} className='mb-0'>{flight.Airline.name}</p>
+                          <p style={styles.fontBodyMedium10} className='mb-0'>{flight.departureTime} - {flight.arrivalTime}</p>
+                          <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className=''>{flight.economyPrice}</span></p>
+                        </Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </div>
+                </Col>
+              ))}
+            </Row>
+          </>
+        )}
+      </Container>
+
+      {/* Modal for selecting from city */}
+      <Modal show={fromModalOpen} onHide={() => setFromModalOpen(false)} scrollable centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Pilih kota keberangkatan</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ paddingTop: '20px', paddingBottom: '20px' }}>
+          <Form.Control
+            type="text"
+            placeholder="Masukkan Nama Kota"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+          <ListGroup style={{ maxHeight: '200px', overflowY: 'auto', marginTop: '20px' }}>
+            {filteredCities.map((city) => (
+              <ListGroup.Item
+                key={city.id}
+                action
+                onClick={() => handleCitySelect(city, 'from')}
+              >
+                {city.city}
               </ListGroup.Item>
             ))}
           </ListGroup>
-          <Button variant="link" onClick={handleClearHistory} className="text-danger mt-2">
-            Hapus
-          </Button>
+        </Modal.Body>
+      </Modal>
+
+      {/* Modal for selecting to city */}
+      <Modal show={toModalOpen} onHide={() => setToModalOpen(false)} scrollable centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Pilih kota tujuan</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control
+            type="text"
+            placeholder="Masukkan Nama Kota"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+          <ListGroup className='px-2' style={{ maxHeight: '200px', overflowY: 'auto', marginTop: '20px' }}>
+            {filteredCities.map((city) => (
+              <ListGroup.Item
+                key={city.id}
+                action
+                onClick={() => handleCitySelect(city, 'to')}
+              >
+                {city.city}
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
         </Modal.Body>
       </Modal>
 
 
-      {/* Modal for selecting From location */}
-      <Modal show={toModalOpen} onHide={handleToModalClose} centered size='md'>
-        <Modal.Body className='overflow-auto' >
-          <div className='row justify-content-center align-items-center'>
-            <select onChange={(e) => {
-              const value = e.target.value
-              setSelectedTo({
-                value: value.split("-")[0],
-                label: value.split("-")[1],
-              })
-              console.log(value)
-            }} value={`${selectedTo?.value}-${selectedTo?.label}`} className='col-md-10' name='to' id='to'>
-              {toLocation && toLocation.map((item) => {
-                return (<option value={`${item.value}-${item.label}`}>{item.label}</option>)
-              })}
-            </select>
-            <CloseButton
-              onClick={handleToModalClose}
-              className="close-button col-2"
-            />
-          </div>
-        </Modal.Body>
-      </Modal >
-
-      {/* Modal Seat Class */}
-      <Modal show={seatClassModalOpen} onHide={handleSeatClassModalClose} centered >
-        <Modal.Header closeButton>
-        </Modal.Header>
+      {/* Modal for selecting seat class */}
+      <Modal show={seatClassModalOpen} onHide={() => setSeatClassModalOpen(false)} centered >
+        <Modal.Header closeButton />
         <Modal.Body>
           <ListGroup>
-            <ListGroup.Item action active={tempSeatClass === "economy"} onClick={() => handleSeatClassSelect("economy")}>
+            <ListGroup.Item action active={tempSeatClass === "economy"} onClick={() => handleSeatClassSelect("economy")} readonly>
               <div className='d-flex justify-content-between'> Economy {tempSeatClass === "economy" && <img src={icons.checkIcon} alt="Check" />}</div>
-              harga
             </ListGroup.Item>
-            <ListGroup.Item action active={tempSeatClass === "premium"} onClick={() => handleSeatClassSelect("premium")}>
+            <ListGroup.Item action active={tempSeatClass === "premium"} onClick={() => handleSeatClassSelect("premium")} readonly>
               <div className='d-flex justify-content-between'> Premium Economy {tempSeatClass === "premium" && <img src={icons.checkIcon} alt="Check" />}</div>
-              harga
             </ListGroup.Item>
-            <ListGroup.Item action active={tempSeatClass === "business"} onClick={() => handleSeatClassSelect("business")}>
+            <ListGroup.Item action active={tempSeatClass === "business"} onClick={() => handleSeatClassSelect("business")} readonly>
               <div className='d-flex justify-content-between'>Business {tempSeatClass === "business" && <img src={icons.checkIcon} alt="Check" />}</div>
-              harga
             </ListGroup.Item>
-            <ListGroup.Item action active={tempSeatClass === "first_class"} onClick={() => handleSeatClassSelect("first_class")}>
+            <ListGroup.Item action active={tempSeatClass === "first_class"} onClick={() => handleSeatClassSelect("first_class")} readonly>
               <div className='d-flex justify-content-between'>First Class {tempSeatClass === "first_class" && <img src={icons.checkIcon} alt="Check" />}</div>
-              harga
             </ListGroup.Item>
           </ListGroup>
         </Modal.Body>
@@ -491,11 +523,11 @@ const HomePage = () => {
             Simpan
           </Button>
         </Modal.Footer>
-      </Modal >
+      </Modal>
 
-      {/* Modal Counter for Passengers */}
-      <Modal show={counterModalOpen} onHide={handleCounterModalClose} centered >
-        <Modal.Header closeButton></Modal.Header>
+      {/* Modal for selecting passengers */}
+      <Modal show={counterModalOpen} onHide={() => setCounterModalOpen(false)} centered >
+        <Modal.Header closeButton />
         <Modal.Body>
           <div className="counter-section">
             <div className="my-2">
@@ -544,7 +576,7 @@ const HomePage = () => {
             Simpan
           </Button>
         </Modal.Footer>
-      </Modal >
+      </Modal>
 
       {/* datepicker  modal */}
       < DatePickerModal
@@ -556,7 +588,13 @@ const HomePage = () => {
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
+
+      < ToastContainer
+        theme="colored"
+      />
+
     </>
+
   )
 }
 
