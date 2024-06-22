@@ -447,19 +447,18 @@ const HomePage = () => {
       </Container>
 
       {/* Modal for selecting from city */}
-      <Modal show={fromModalOpen} onHide={() => setFromModalOpen(false)}>
-        <Modal.Header>
+      <Modal show={fromModalOpen} onHide={() => setFromModalOpen(false)} scrollable centered>
+        <Modal.Header closeButton>
           <Modal.Title>Pilih kota keberangkatan</Modal.Title>
-          <CloseButton onClick={() => setFromModalOpen(false)} />
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ paddingTop: '20px', paddingBottom: '20px' }}>
           <Form.Control
             type="text"
             placeholder="Masukkan Nama Kota"
             value={searchTerm}
             onChange={handleSearch}
           />
-          <ListGroup>
+          <ListGroup style={{ maxHeight: '200px', overflowY: 'auto', marginTop: '20px' }}>
             {filteredCities.map((city) => (
               <ListGroup.Item
                 key={city.id}
@@ -473,12 +472,10 @@ const HomePage = () => {
         </Modal.Body>
       </Modal>
 
-
       {/* Modal for selecting to city */}
-      <Modal show={toModalOpen} onHide={() => setToModalOpen(false)}>
-        <Modal.Header>
+      <Modal show={toModalOpen} onHide={() => setToModalOpen(false)} scrollable centered>
+        <Modal.Header closeButton>
           <Modal.Title>Pilih kota tujuan</Modal.Title>
-          <CloseButton onClick={() => setToModalOpen(false)} />
         </Modal.Header>
         <Modal.Body>
           <Form.Control
@@ -487,7 +484,7 @@ const HomePage = () => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <ListGroup>
+          <ListGroup className='px-2' style={{ maxHeight: '200px', overflowY: 'auto', marginTop: '20px' }}>
             {filteredCities.map((city) => (
               <ListGroup.Item
                 key={city.id}
@@ -500,6 +497,7 @@ const HomePage = () => {
           </ListGroup>
         </Modal.Body>
       </Modal>
+
 
       {/* Modal for selecting seat class */}
       <Modal show={seatClassModalOpen} onHide={() => setSeatClassModalOpen(false)} centered >
