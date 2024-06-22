@@ -18,23 +18,19 @@ import * as images from "../../assets/images"
 
 import { BiSortAlt2 } from "react-icons/bi"
 import { FaArrowLeft } from "react-icons/fa"
-import { FiBox, FiDollarSign, FiHeart } from "react-icons/fi"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchFlights } from "../../redux/actions/flights"
-
-import logoGaruda from "../../assets/images/logo-garuda.png"
 
 const SearchingPage = () => {
   const [showMyModal, setShowMyModal] = useState(false)
 
-  const dispatch = useDispatch()
-  const flights = useSelector((state) => state)
+  // const dispatch = useDispatch()
+  // const flights = useSelector((state) => state)
 
-  console.log("FLIGHTS NEW", flights)
 
-  useEffect(() => {
-    dispatch(fetchFlights())
-  }, [dispatch])
+  // useEffect(() => {
+  //   dispatch(fetchFlights())
+  // }, [dispatch])
 
   const handleOnClose = () => setShowMyModal(false)
 
@@ -44,53 +40,32 @@ const SearchingPage = () => {
 
   const [isTiketHabis, setIsTiketHabis] = useState(false)
 
-  // const dummyData = [
-  //   {
-  //     id: 1,
-  //     airline: "Garuda Indonesia",
-  //     arrival_date: "2024-03-01T11:00",
-  //     destination: { code: "MLB" },
-  //     departure_date: "2024-03-01T07:00",
-  //     source: { code: "JKT" },
-  //     economy_class_price: "1,000,000",
-  //     logo: images.garudaIndonesia,
-  //     kode: "GA-822",
-  //   },
-  //   {
-  //     id: 2,
-  //     airline: "Lion Air",
-  //     arrival_date: "2024-03-01T16:00",
-  //     destination: { code: "MLB" },
-  //     departure_date: "2024-03-01T12:00",
-  //     source: { code: "JKT" },
-  //     economy_class_price: "1,200,000",
-  //     logo: images.garudaIndonesia,
-  //     kode: "GA-822",
-  //   },
-  //   {
-  //     id: 3,
-  //     airline: "Batik Air",
-  //     arrival_date: "2024-03-01T16:00",
-  //     destination: { code: "MLB" },
-  //     departure_date: "2024-03-01T14:00",
-  //     source: { code: "JKT" },
-  //     economy_class_price: "1,300,000",
-  //     logo: images.garudaIndonesia,
-  //     kode: "GA-822",
-  //   },
-  //   {
-  //     id: 4,
-  //     airline: "Citilink",
-  //     arrival_date: "2024-03-01T21:00",
-  //     destination: { code: "MLB" },
-  //     departure_date: "2024-03-01T16:00",
-  //     source: { code: "JKT" },
-  //     economy_class_price: "1,400,000",
-  //     logo: images.garudaIndonesia,
-  //     kode: "GA-822",
-  //   },
-  // ]
+  const dispatch = useDispatch();
+  const flightStatus = useSelector((state) => state.flights.status);
+  const error = useSelector((state) => state.flights.error);
+  const flights = useSelector((state) => state.flights.data)
 
+  console.log("FLIGHTS NEW", flights)
+  console.log("FLIGHTS NEW", flightStatus)
+  
+  const [searchParams, setSearchParams] = useState({
+    from: "Batam",
+    to: "Tangerang",
+    departure_date: "2024-07-01",
+    total_passengers: "1",
+    seat_class: "economy",
+    return_date: ""
+  });
+
+  useEffect(() => {
+    if (flightStatus === "idle") {
+      dispatch(fetchFlights(searchParams));
+    }
+  }, [flightStatus, dispatch, searchParams]);
+
+  const departureFlights = flights.departure_flight || []
+  const returnFlights = flights.return_flight || []
+  
   const styles = {
     customButton: {
       backgroundColor: "#7126B5",
@@ -350,7 +325,7 @@ const SearchingPage = () => {
                       </>
                     ) : (
                       <>
-                        {flights.map((flight) => (
+                        {departureFlights.map((flight) => (
                           <Accordion
                             className="mb-2 accordion"
                             style={{ borderColor: "#7126b5" }}
@@ -367,14 +342,18 @@ const SearchingPage = () => {
                               >
                                 <div className="d-flex justify-content-between w-100">
                                   <div className="w-100">
-                                    <h5 className="d-flex align-items-center">
-                                      <Image
-                                        src={logoGaruda}
-                                        height="20"
-                                        className="mr-2"
-                                      />
-                                      {flight.airline_id.name}
-                                    </h5>
+                                    <div className="d-flex align-items-center">
+                                      <div className="mx-2">
+                                        <Image
+                                          src={flight.Airline.imgUrl}
+                                          height="20"
+                                          className="mr-2"
+                                        />
+                                      </div>
+                                      <h5 className="ml-2">
+                                        {flight.Airline.name}
+                                      </h5>
+                                    </div>
                                     <Row className="d-flex justify-content-between mt-3 mx-0">
                                       <Col
                                         md="1"
@@ -383,7 +362,9 @@ const SearchingPage = () => {
                                         <h6>
                                           {flight.departureTime.slice(11, 16)}
                                         </h6>
-                                        <p>{flight.departureAirport.city}</p>
+                                        <p>
+                                          {flight.departureAirport_respon.city}
+                                        </p>
                                       </Col>
                                       <Col
                                         md="5"
@@ -402,7 +383,9 @@ const SearchingPage = () => {
                                         <h6>
                                           {flight.arrivalTime.slice(11, 16)}
                                         </h6>
-                                        <p>{flight.arrivalAirport.city}</p>
+                                        <p>
+                                          {flight.arrivalAirport_respon.city}
+                                        </p>
                                       </Col>
                                       <Col
                                         md="1"
@@ -441,9 +424,11 @@ const SearchingPage = () => {
                                           {flight.departureTime.slice(11, 16)}
                                         </h5>
                                         <h6>
-                                          {flight.departureTime.slice(1, 10)}
+                                          {flight.departureTime.slice(0, 10)}
                                         </h6>
-                                        <h5>{flight.departureAirport.name}</h5>
+                                        <h5>
+                                          {flight.departureAirport_respon.name}
+                                        </h5>
                                       </Col>
                                       <Col>
                                         <h6 style={styles.unguMuda}>
@@ -461,17 +446,17 @@ const SearchingPage = () => {
                                       </Col>
                                       <Col>
                                         <p className="fw-bold">
-                                          {flight.airline_id.name} - Economy
+                                          {flight.Airline.name} - Economy
                                         </p>
                                         <p className="fw-bold">JT - 203</p>
                                         <br />
                                         <h6>Informasi:</h6>
                                         <p>
-                                          Baggage {flight.airline_id.baggage} kg
+                                          Baggage {flight.Airline.baggage} kg
                                         </p>
                                         <p>
                                           Cabin baggage{" "}
-                                          {flight.airline_id.cabinBaggage} kg
+                                          {flight.Airline.cabinBaggage} kg
                                         </p>
                                         <p>In Flight Entertainment</p>
                                       </Col>
@@ -483,9 +468,11 @@ const SearchingPage = () => {
                                           {flight.arrivalTime.slice(11, 16)}
                                         </h5>
                                         <h6>
-                                          {flight.arrivalTime.slice(1, 10)}
+                                          {flight.arrivalTime.slice(0, 10)}
                                         </h6>
-                                        <h5>{flight.arrivalAirport.name}</h5>
+                                        <h5>
+                                          {flight.arrivalAirport_respon.name}
+                                        </h5>
                                       </Col>
                                       <Col>
                                         <h6 style={styles.unguMuda}>
