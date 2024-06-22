@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { postBooking } from "../../redux/actions/checkout";
 import * as icons from "../../assets/icons";
 
 const CheckoutPage = () => {
@@ -47,14 +48,6 @@ const CheckoutPage = () => {
         email: "",
     });
 
-    const [manualDetails, setManualDetails] = useState({
-        name: "",
-        born_date: "",
-        citizenship: "",
-        identity_number: "",
-        publisher_country: "",
-    });
-
     // Mengisi profile details dari Redux state saat komponen dimuat
     useEffect(() => {
         if (user) {
@@ -65,18 +58,6 @@ const CheckoutPage = () => {
             });
         }
     }, [user]);
-
-    // Mengisi manual details sesuai input pengguna
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setManualDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
-    };
-
-    // Menggabungkan profileDetails dan manualDetails menjadi satu objek userDetails untuk pengiriman
-    const userDetails = {
-        ...manualDetails,
-        // ...profileDetails,
-    };
 
     // Departure
     const [departureSeats, setDepartureSeats] = useState(
@@ -423,8 +404,6 @@ const CheckoutPage = () => {
                                             as="select"
                                             style={{ ...styles.formControl, appearance: 'none', paddingRight: '2rem' }}
                                             readOnly={isSaved}
-                                            value={manualDetails.title}
-                                            onChange={handleInputChange}
                                             name="title"
                                         >
                                             <option value="">Select Title</option>
@@ -453,8 +432,6 @@ const CheckoutPage = () => {
                                             style={styles.formControl}
                                             type="text"
                                             readOnly={isSaved}
-                                            value={manualDetails.name}
-                                            onChange={handleInputChange}
                                             name="name"
                                         />
                                     </Form.Group>
@@ -465,8 +442,6 @@ const CheckoutPage = () => {
                                             style={styles.formControl}
                                             type="date"
                                             readOnly={isSaved}
-                                            value={manualDetails.born_date}
-                                            onChange={handleInputChange}
                                             name="born_date"
                                         />
                                     </Form.Group>
@@ -477,8 +452,6 @@ const CheckoutPage = () => {
                                             style={styles.formControl}
                                             type="text"
                                             readOnly={isSaved}
-                                            value={manualDetails.citizenship}
-                                            onChange={handleInputChange}
                                             name="citizenship"
                                         />
                                     </Form.Group>
@@ -489,8 +462,6 @@ const CheckoutPage = () => {
                                             style={styles.formControl}
                                             type="text"
                                             readOnly={isSaved}
-                                            value={manualDetails.identity_number}
-                                            onChange={handleInputChange}
                                             name="identity_number"
                                         />
                                     </Form.Group>
@@ -501,8 +472,6 @@ const CheckoutPage = () => {
                                             style={styles.formControl}
                                             type="text"
                                             readOnly={isSaved}
-                                            value={manualDetails.publisher_country}
-                                            onChange={handleInputChange}
                                             name="publisher_country"
                                         />
                                     </Form.Group>
