@@ -90,24 +90,30 @@ const CheckoutPage = () => {
     );
 
     const handleDepartureSeatClick = (colIndex, rowIndex) => {
-        setDepartureSeats((prevSeats) =>
-            prevSeats.map((row, rIndex) =>
+        setDepartureSeats((prevSeats) => {
+            const updatedSeats = prevSeats.map((row, rIndex) =>
                 row.map((seat, cIndex) =>
                     rIndex === rowIndex && cIndex === colIndex
                         ? { ...seat, selected: !seat.selected }
                         : seat
                 )
-            )
-        );
-    
-        // Tambah atau hapus kursi yang dipilih dari state
-        const seatId = `${String.fromCharCode(65 + colIndex)}${rowIndex + 1}`;
-        setSelectedDepartureSeats((prevSelected) =>
-            seat.selected ? prevSelected.filter(id => id !== seatId) : [...prevSelected, seatId]
-        );
+            );
+
+            // Retrieve the specific seat after updating the selection
+            const seat = updatedSeats[rowIndex][colIndex];
+            const seatId = `${String.fromCharCode(65 + colIndex)}${rowIndex + 1}`;
+
+            setSelectedDepartureSeats((prevSelected) =>
+                seat.selected
+                    ? [...prevSelected, seatId]
+                    : prevSelected.filter((id) => id !== seatId)
+            );
+
+            return updatedSeats;
+        });
     };
-    
-    
+
+
 
     // Return
     const [returnSeats, setReturnSeats] = useState(
@@ -122,23 +128,29 @@ const CheckoutPage = () => {
     );
 
     const handleReturnSeatClick = (colIndex, rowIndex) => {
-        setReturnSeats((prevSeats) =>
-            prevSeats.map((row, rIndex) =>
+        setReturnSeats((prevSeats) => {
+            const updatedSeats = prevSeats.map((row, rIndex) =>
                 row.map((seat, cIndex) =>
                     rIndex === rowIndex && cIndex === colIndex
                         ? { ...seat, selected: !seat.selected }
                         : seat
                 )
-            )
-        );
-    
-        // Tambah atau hapus kursi yang dipilih dari state
-        const seatId = `${String.fromCharCode(65 + colIndex)}${rowIndex + 1}`;
-        setSelectedReturnSeats((prevSelected) =>
-            seat.selected ? prevSelected.filter(id => id !== seatId) : [...prevSelected, seatId]
-        );
+            );
+
+            // Retrieve the specific seat after updating the selection
+            const seat = updatedSeats[rowIndex][colIndex];
+            const seatId = `${String.fromCharCode(65 + colIndex)}${rowIndex + 1}`;
+
+            setSelectedReturnSeats((prevSelected) =>
+                seat.selected
+                    ? [...prevSelected, seatId]
+                    : prevSelected.filter((id) => id !== seatId)
+            );
+
+            return updatedSeats;
+        });
     };
-    
+
 
     const simpan = () => {
         setIsSaved(true);
@@ -157,7 +169,7 @@ const CheckoutPage = () => {
         } catch (err) {
             setError("Data gagal disimpan!");
         }
-    };    
+    };
 
     const styles = {
         fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
