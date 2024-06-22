@@ -16,6 +16,8 @@ import Navbar from "../../components/Navigation/Navbar"
 import * as icons from "../../assets/icons"
 import * as images from "../../assets/images"
 
+import { format } from "date-fns"
+import { id } from "date-fns/locale"
 import { BiSortAlt2 } from "react-icons/bi"
 import { FaArrowLeft } from "react-icons/fa"
 import { useDispatch, useSelector } from "react-redux"
@@ -23,14 +25,6 @@ import { fetchFlights } from "../../redux/actions/flights"
 
 const SearchingPage = () => {
   const [showMyModal, setShowMyModal] = useState(false)
-
-  // const dispatch = useDispatch()
-  // const flights = useSelector((state) => state)
-
-
-  // useEffect(() => {
-  //   dispatch(fetchFlights())
-  // }, [dispatch])
 
   const handleOnClose = () => setShowMyModal(false)
 
@@ -61,7 +55,14 @@ const SearchingPage = () => {
     if (flightStatus === "idle") {
       dispatch(fetchFlights(searchParams));
     }
+    else if (flightStatus === "loading") {
+      setIsLoading(true);
+    }
+    else {
+      setIsLoading(false);
+    }
   }, [flightStatus, dispatch, searchParams]);
+
 
   const departureFlights = flights.departure_flight || []
   const returnFlights = flights.return_flight || []
@@ -71,6 +72,7 @@ const SearchingPage = () => {
       backgroundColor: "#7126B5",
       borderColor: "#7126B5",
       color: "white",
+      radius: "10px",
     },
     outlineButton: {
       backgroundColor: "white",
@@ -106,6 +108,7 @@ const SearchingPage = () => {
       backgroundColor: "#73CA5C",
       borderColor: "#73CA5C",
       outline: "#73CA5C",
+      width: "100%",
     },
     buttonUbahHover: {
       backgroundColor: "#458a32",
@@ -139,6 +142,11 @@ const SearchingPage = () => {
     modalItem: {
       backgroundColor: "white",
       border: "transparent",
+      "&:hover": {
+        backgroundColor: "#7126B5",
+        border: "transparent",
+        color: "white",
+      },
     },
     modalItemHover: {
       backgroundColor: "#7126B5",
@@ -157,12 +165,23 @@ const SearchingPage = () => {
     },
     buttonKembali: {
       textAlign: "left",
+      width: "100%",
     },
     divider: {
       width: "1px",
       backgroundColor: "#ccc",
       margin: "0 1px",
     },
+  }
+
+  const formatDate = (inputDate) => {
+    // Ubah format input tanggal dari yyyy-mm-dd menjadi Date object
+    const date = new Date(inputDate)
+
+    // Format tanggal menjadi 'd MMMM yyyy' menggunakan date-fns
+    const formattedDate = format(date, "d MMMM yyyy", { locale: id })
+
+    return formattedDate
   }
 
   return (
@@ -177,7 +196,9 @@ const SearchingPage = () => {
                 style={{ ...styles.customButton, ...styles.buttonKembali }}
               >
                 <FaArrowLeft style={{ marginRight: "10px" }} />
-                JKT &gt; MLB - 2 Penumpang - Economy
+                {searchParams.from} to {searchParams.to} -{" "}
+                {searchParams.total_passengers} Penumpang -{" "}
+                {searchParams.seat_class}
               </Button>
             </Link>
           </Col>
@@ -288,7 +309,7 @@ const SearchingPage = () => {
             </Col>
           ) : (
             <>
-              <Col md={3}>
+              <Col md={3} className="my-2">
                 <Card>
                   <Card.Body>
                     <Card.Title>FLIGHT SELECTION</Card.Title>
@@ -350,7 +371,7 @@ const SearchingPage = () => {
                                           className="mr-2"
                                         />
                                       </div>
-                                      <h5 className="ml-2">
+                                      <h5 className="ml-2 fw-bold">
                                         {flight.Airline.name}
                                       </h5>
                                     </div>
@@ -359,7 +380,7 @@ const SearchingPage = () => {
                                         md="1"
                                         className="d-flex flex-column align-items-center"
                                       >
-                                        <h6>
+                                        <h6 className="fw-bold">
                                           {flight.departureTime.slice(11, 16)}
                                         </h6>
                                         <p>
@@ -378,9 +399,9 @@ const SearchingPage = () => {
                                       </Col>
                                       <Col
                                         md="1"
-                                        className="d-flex flex-column align-items-center"
+                                        className="d-flex flex-column align-items-center p-0"
                                       >
-                                        <h6>
+                                        <h6 className="fw-bold">
                                           {flight.arrivalTime.slice(11, 16)}
                                         </h6>
                                         <p>
@@ -398,7 +419,12 @@ const SearchingPage = () => {
                                         className="d-flex flex-column px-0"
                                         style={styles.ungu}
                                       >
-                                        <h6>IDR {flight.economyPrice}</h6>
+                                        <h6 className="fw-bold">
+                                          IDR{" "}
+                                          {flight.economyPrice.toLocaleString(
+                                            "id-ID"
+                                          )}
+                                        </h6>
                                         <Button
                                           style={styles.customButton}
                                           className="custom-button button-pilih mt-2"
@@ -415,18 +441,20 @@ const SearchingPage = () => {
                               >
                                 <Card style={styles.cardAccor}>
                                   <Card.Body style={styles.cardAccor}>
-                                    <h5 style={styles.ungu}>
+                                    <h5 style={styles.ungu} className="fw-bold">
                                       Detail Penerbangan
                                     </h5>
                                     <Row>
                                       <Col md="9">
-                                        <h5>
+                                        <h5 className="fw-bold">
                                           {flight.departureTime.slice(11, 16)}
                                         </h5>
-                                        <h6>
-                                          {flight.departureTime.slice(0, 10)}
+                                        <h6 className="fw-bold">
+                                          {formatDate(
+                                            flight.departureTime.slice(0, 10)
+                                          )}
                                         </h6>
-                                        <h5>
+                                        <h5 className="fw-bold">
                                           {flight.departureAirport_respon.name}
                                         </h5>
                                       </Col>
@@ -440,21 +468,24 @@ const SearchingPage = () => {
                                     <Row>
                                       <Col md="1" className="mx-0 m-auto">
                                         <Image
-                                          src={images.garudaIndonesia}
+                                          src={flight.Airline.imgUrl}
                                           fluid
                                         />
                                       </Col>
                                       <Col>
-                                        <p className="fw-bold">
-                                          {flight.Airline.name} - Economy
+                                        <p className="fw-bold mb-0">
+                                          {flight.Airline.name} -{" "}
+                                          {searchParams.seat_class}
                                         </p>
-                                        <p className="fw-bold">JT - 203</p>
+                                        <p className="fw-bold mb-0">
+                                          {flight.Airline.code}
+                                        </p>
                                         <br />
-                                        <h6>Informasi:</h6>
-                                        <p>
+                                        <h6 className="fw-bold">Informasi:</h6>
+                                        <p className="mb-0">
                                           Baggage {flight.Airline.baggage} kg
                                         </p>
-                                        <p>
+                                        <p className="mb-0">
                                           Cabin baggage{" "}
                                           {flight.Airline.cabinBaggage} kg
                                         </p>
@@ -464,13 +495,15 @@ const SearchingPage = () => {
                                     <hr />
                                     <Row>
                                       <Col md="9">
-                                        <h5>
+                                        <h5 className="fw-bold">
                                           {flight.arrivalTime.slice(11, 16)}
                                         </h5>
-                                        <h6>
-                                          {flight.arrivalTime.slice(0, 10)}
+                                        <h6 className="fw-bold">
+                                          {formatDate(
+                                            flight.arrivalTime.slice(0, 10)
+                                          )}
                                         </h6>
-                                        <h5>
+                                        <h5 className="fw-bold">
                                           {flight.arrivalAirport_respon.name}
                                         </h5>
                                       </Col>

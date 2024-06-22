@@ -5,7 +5,7 @@ import { toast } from "react-toastify"
 export const fetchFlights = createAsyncThunk(
   "flights/fetchFlights",
   async (
-    { from, to, departure_date, total_passengers, seat_class, return_date },
+    { from, to, departure_date, total_passengers, seat_class, return_date, filter},
     { rejectWithValue }
   ) => {
     try {
@@ -18,10 +18,12 @@ export const fetchFlights = createAsyncThunk(
           total_passengers,
           seat_class,
           return_date,
+          filter,
         },
         {
           headers: {
-            Authorization: "Bearer your_token_here",
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzE3MzMxNDQxLCJleHAiOjE3MTczMzg2NDF9.zowQ-u1HgkeVEynSA5Dvb-1iNqi8r7a9FKBaFaiPeXs",
             "Content-Type": "application/json",
           },
         }
