@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import ButtonGoogleLogin from "./GoogleLogin"
-import { login, resetPassword } from "../../redux/actions/auth"
+import { login } from "../../redux/actions/auth"
 
 import { Form, Row, Col, Container, Button, Alert } from "react-bootstrap"
 
@@ -57,12 +57,13 @@ const Login = () => {
       width: "100%",
     },
     input: {
-      borderRadius: "16px",
-      height: "50px",
+      borderRadius: "10px",
+      height: "3rem",
     },
     forgot: {
       color: "#7126b5",
       cursor: "pointer",
+      textDecoration: "none",
     },
     eyeIcon: {
       position: "absolute",
@@ -98,18 +99,19 @@ const Login = () => {
     },
     label: {
       color: "black",
+      marginBottom: "0.2rem",
     },
   }
 
   return (
     <div style={styles.container}>
       <Container style={styles.form}>
-        <h5 className="fw-bold">Masuk</h5>
+        <h5 className="fw-bold text-center">Masuk Akun</h5>
         <Form onSubmit={onSubmit} className="mt-4">
-          <Form.Group className="mb-3" controlId="Email">
-            <Form.Label className="fw-medium" style={styles.label}>
-              Email address
-            </Form.Label>
+          <Form.Group className="mb-4" controlId="Email">
+            <h6 className="fw-medium" style={styles.label}>
+              Email Address
+            </h6>
             <Form.Control
               type="email"
               placeholder="name@example.com"
@@ -127,20 +129,20 @@ const Login = () => {
           <Form.Group className="mb-3" controlId="Password">
             <Row>
               <Col className="col-md-6">
-                <Form.Label className="fw-medium" style={styles.label}>
+                <h6 className="fw-medium" style={styles.label}>
                   Password
-                </Form.Label>
+                </h6>
               </Col>
               <Col className="col-md-6 text-end">
-                <Link to="/forgot-password">
-                  <Form.Label style={styles.forgot}>Lupa Kata Sandi</Form.Label>
+                <Link style={styles.forgot} to="/forgot-password">
+                  <h6 style={{fontSize:"small"}}>Lupa Kata Sandi</h6>
                 </Link>
               </Col>
             </Row>
             <div style={styles.inputWrapper}>
               <Form.Control
                 type={passwordVisible ? "text" : "password"}
-                placeholder="***************"
+                placeholder="Masukkan Password"
                 style={{
                   ...styles.input,
                   ...(passwordError ? { border: "1px solid red" } : {}),

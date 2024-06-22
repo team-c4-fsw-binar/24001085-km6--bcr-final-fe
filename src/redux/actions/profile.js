@@ -97,7 +97,41 @@ async (dispatch, getState) => {
 };
     
 
-export const logout = () => (dispatch) => {
-    dispatch(setToken(null));
-    dispatch(setUser(null));
-};
+export const changePassword = (navigate, successRedirect, errorRedirect, formData) => 
+    async (dispatch, getState) => {
+        const { token } = getState().auth;
+
+        if (!token) {
+            dispatch(logout());
+            if (navigate && errorRedirect) {
+                navigate(errorRedirect);
+            }
+            return;
+        }
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/change-password`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Password change failed');
+            }
+
+            toast.success('Password changed successfully');
+
+            if (navigate && successRedirect) {
+                navigate(successRedirect);
+            }
+        } catch (error) {
+            toast.error(error.message || 'Password change failed');
+            if (navigate && errorRedirect) {
+                navigate(errorRedirect);
+            }
+        }
+    };

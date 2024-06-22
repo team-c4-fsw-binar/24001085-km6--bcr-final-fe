@@ -1,16 +1,16 @@
 import { Row, Col } from "react-bootstrap"
-import Register from "../../components/Auth/Register"
+import RegisterComponent from "../../components/Auth/Register"
 import AuthLogo from "../../components/Auth/AuthLogo"
 
 const RegisterPage = () => {
   return (
-    <div>
+    <div className="noScroll">
       <Row>
-        <Col sm={6} className="d-none d-sm-block">
+        <Col className="d-none d-md-block">
           <AuthLogo />
         </Col>
-        <Col sm>
-          <Register />
+        <Col>
+          <RegisterComponent />
         </Col>
       </Row>
     </div>
