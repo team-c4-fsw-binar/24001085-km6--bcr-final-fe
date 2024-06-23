@@ -4,14 +4,10 @@ import axios from "axios"
 export const fetchFlights = createAsyncThunk(
   "flights/fetchFlights",
   async () => {
-    const token = localStorage.getItem("token")
-
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_API}/api/findTIckets`,
+      `${import.meta.env.VITE_BACKEND_API}/api/flights/`,
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: {},
       }
     )
     return response.data

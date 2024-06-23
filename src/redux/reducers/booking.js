@@ -1,20 +1,29 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import { useSelector } from "react-redux"
 import axios from "axios"
 
 export const fetchBookings = createAsyncThunk(
   "bookings/fetchBookings",
-  async () => {
-    const token = localStorage.getItem("token")
-    const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_API}/api/bookings`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-    return response.data
+  async ({ token, startDate, endDate, searchInput }, { rejectWithValue }) => {
+    let data = JSON.stringify({
+      code: `${searchInput}`,
+      startDate: `${startDate}`,
+      endDate: `${endDate}`,
+    })
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_API}/api/bookingHistories`,
+        data, // Include data here
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json", // Set the content type to application/json
+          },
+        }
+      )
+      return response.data
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message)
+    }
   }
 )
 

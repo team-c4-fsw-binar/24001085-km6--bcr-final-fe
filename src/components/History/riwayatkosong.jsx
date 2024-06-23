@@ -1,13 +1,16 @@
-import {
-  Button,
-  Image,
-  Container,
-  Modal,
-} from "react-bootstrap"
+import { Button, Image, Container, Modal } from "react-bootstrap"
+
+import { useNavigate } from "react-router-dom"
 
 import * as images from "../../assets/images"
 
 const Riwayatkosong = ({ show, onClick }) => {
+  const navigate = useNavigate()
+
+  const CariPenerbangan = () => {
+    // Mengarahkan ke halaman beranda
+    navigate("/")
+  }
   return (
     <Container>
       <div className="text-center m-5 p-3">
@@ -25,7 +28,7 @@ const Riwayatkosong = ({ show, onClick }) => {
           size="lg"
           style={{ backgroundColor: " #A06ECE" }}
           className="m-3"
-          onClick={onClick}
+          onClick={CariPenerbangan}
         >
           Cari Penerbangan
         </Button>

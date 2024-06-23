@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { fetchBookings } from "../../redux/reducers/booking"
 import { fetchPayments } from "../../redux/reducers/payment"
 import { fetchFlights } from "../../redux/reducers/flight"
-import { fetchAirports } from "../../redux/reducers/airport"
+import { fetchPassengers } from "../../redux/reducers/airport"
+import { useNavigate } from "react-router-dom"
 import dummyBookings from "./dummybooking.json"
 import dummyPayments from "./dummypayment.json"
 
@@ -26,6 +27,7 @@ import "../styles/history/riwayat.css"
 
 const DetailPemesanan = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const [bookings, setBookings] = useState([])
   const [payments, setPayments] = useState([])
   const bookingData = useSelector((state) => state.bookings.data)
@@ -34,24 +36,28 @@ const DetailPemesanan = () => {
   const paymentStatus = useSelector((state) => state.payments.status)
   const flightData = useSelector((state) => state.flights.data)
   const flightStatus = useSelector((state) => state.flights.status)
-  const airportData = useSelector((state) => state.airports.data)
-  const airportStatus = useSelector((state) => state.airports.status)
-  const [errorMessage, setErrorMessage] = useState("")
+  const passengerData = useSelector((state) => state.passengers?.data)
+  const passengerStatus = useSelector((state) => state.passengers?.status)
   const [hoverIndex, setHoverIndex] = useState(null)
   const [clickedIndex, setClickedIndex] = useState(null)
   const [isCardClicked, setIsCardClicked] = React.useState(false)
   const [selectedCardIndex, setSelectedCardIndex] = React.useState(null)
   const bookingsData = bookingData.data
-  // const userId = useSelector((state) => state.auth.user?.id)
-
+  const userId = useSelector((state) => state.auth.user?.id)
+  const token = useSelector((state) => state.auth.token)
   useEffect(() => {
-    // if (bookingStatus === "idle") dispatch(fetchBookings())
-    setBookings(dummyBookings)
-    setPayments(dummyPayments)
-    // if (paymentStatus === "idle") dispatch(fetchPayments())
+    if (paymentStatus === "idle") dispatch(fetchPayments())
     if (flightStatus === "idle") dispatch(fetchFlights())
-    if (airportStatus === "idle") dispatch(fetchAirports())
-  }, [dispatch, paymentStatus, flightStatus, airportStatus])
+    if (passengerStatus === "idle") dispatch(fetchPassengers(token))
+    if (bookingStatus === "idle") dispatch(fetchBookings(token))
+  }, [
+    dispatch,
+    token,
+    paymentStatus,
+    flightStatus,
+    passengerStatus,
+    bookingStatus,
+  ])
   const handleMouseEnter = (index) => {
     setHoverIndex(index)
   }
@@ -63,38 +69,46 @@ const DetailPemesanan = () => {
     setSelectedCardIndex(index)
     setClickedIndex(index)
   }
+  const handlePaymentRedirect = (url) => {
+    if (url) {
+      window.open(url, "_blank")
+    } else {
+      console.error("Invalid URL")
+    }
+  }
 
-  const getBookingsByUserId = (bookings, userId) => {
-    return bookings.filter((booking) => booking.user_id === userId)
-  }
-  const getPaymentForBooking = (bookingId) => {
-    return dummyPayments.find((payment) => payment.booking_id === bookingId)
-  }
-  // const getPaymentForBooking = (bookingId) => {
-  //   return paymentData.data.find((payment) => payment.booking_id === bookingId)
+  // const getBookingsByUserId = (userId) => {
+  //   return bookingData.data.find((booking) => booking.user_id === userId)
   // }
+  // const bookingnih = getBookingsByUserId(userId)
+  // const getPaymentForBooking = (bookingId) => {
+  //   return dummyPayments.find((payment) => payment.booking_id === bookingId)
+  // }
+  const getPaymentForBooking = (bookingId) => {
+    return paymentData.data.find((payment) => payment.Booking.id === bookingId)
+  }
   const getFlightForBooking = (flightId) => {
     return flightData.data.results.find((flight) => flight.id === flightId)
   }
 
-  const getAirportCityById = (airportId) => {
-    const airport = airportData.data.results.find(
-      (airport) => airport.id === airportId
-    )
-    return airport ? airport.city : "Unknown Airport"
-  }
-  const getAirportNameById = (airportId) => {
-    const airport = airportData.data.results.find(
-      (airport) => airport.id === airportId
-    )
-    return airport ? airport.name : "Unknown Airport"
-  }
+  // const getAirportCityById = (airportId) => {
+  //   const airport = passengerData.data.results.find(
+  //     (airport) => airport.id === airportId
+  //   )
+  //   return airport ? airport.city : "Unknown Airport"
+  // }
+  // const getAirportNameById = (airportId) => {
+  //   const airport = passengerData.data.results.find(
+  //     (airport) => airport.id === airportId
+  //   )
+  //   return airport ? airport.name : "Unknown Airport"
+  // }
 
   if (
     bookingStatus === "loading" ||
     paymentStatus === "loading" ||
     flightStatus === "loading" ||
-    airportStatus === "loading"
+    passengerStatus === "loading"
   ) {
     return (
       <div className="row col-12 d-flex justify-content-center">
@@ -103,51 +117,45 @@ const DetailPemesanan = () => {
     )
   }
 
-  // if (
-  //   bookingStatus === "failed" ||
-  //   paymentStatus === "failed" ||
-  //   flightStatus === "failed" ||
-  //   airportStatus === "failed"
-  // ) {
-  //   return <p>Error Fetch data</p>
-  // }
+  if (
+    bookingStatus === "failed" ||
+    paymentStatus === "failed" ||
+    flightStatus === "failed" ||
+    passengerStatus === "failed"
+  ) {
+    return <p>Error Fetch data</p>
+  }
   const getPaymentStatus = (payment) => {
     if (!payment) return ""
-    switch (payment.status) {
-      case "true":
-        return (
-          <Badge
-            bg="success"
-            className="rounded-5"
-            style={{ width: "100px" }}
-            size="lg"
-          >
-            Issued
-          </Badge>
-        )
-      case "false":
-        return (
-          <Badge
-            bg="danger"
-            className="rounded-5"
-            style={{ width: "100px" }}
-            size="lg"
-          >
-            Unpaid
-          </Badge>
-        )
-      default:
-        return (
-          <Badge
-            bg="secondary"
-            className="rounded-5"
-            style={{ width: "100px" }}
-            size="lg"
-          >
-            Cancelled
-          </Badge>
-        )
-    }
+
+    return payment.status === "Success" ? (
+      <Badge
+        bg="success"
+        className="rounded-5"
+        style={{ width: "100px" }}
+        size="lg"
+      >
+        Issued
+      </Badge>
+    ) : payment.status === "Pending" || payment.status === "Need Method" ? (
+      <Badge
+        bg="danger"
+        className="rounded-5"
+        style={{ width: "100px" }}
+        size="lg"
+      >
+        Unpaid
+      </Badge>
+    ) : (
+      <Badge
+        bg="secondary"
+        className="rounded-5"
+        style={{ width: "100px" }}
+        size="lg"
+      >
+        Cancelled
+      </Badge>
+    )
   }
 
   const styles = {
@@ -186,21 +194,33 @@ const DetailPemesanan = () => {
       .toLocaleTimeString("id-ID", options)
       .replace(".", ":")
   }
+  const formatDuration = (departureTime, arrivalTime) => {
+    const departure = new Date(departureTime)
+    const arrival = new Date(arrivalTime)
+    const durationMs = arrival - departure
+
+    const hours = Math.floor(durationMs / (1000 * 60 * 60))
+    const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60))
+
+    return `${hours}h ${minutes}m`
+  }
+
+  const formatCurrency = (number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    })
+      .format(number)
+      .replace("Rp", "IDR")
+  }
 
   return (
     <div>
-      {bookings && bookings.length > 0 ? (
-        bookings.map((booking, index) => {
+      {bookingsData && bookingsData.length > 0 ? (
+        bookingsData.map((booking, index) => {
           const payment = getPaymentForBooking(booking.id)
-          const flight = getFlightForBooking(booking.flight_id)
-          const departureAirportCity = getAirportCityById(
-            flight?.departureAirport
-          )
-          const arrivalAirportCity = getAirportCityById(flight?.arrivalAirport)
-          const departureAirportName = getAirportNameById(
-            flight?.departureAirport
-          )
-          const arrivalAirportName = getAirportNameById(flight?.arrivalAirport)
+          const flight = getFlightForBooking(booking.departure_flight_id)
           let cardStyle = styles.riwayatCard
           if (clickedIndex === index || hoverIndex === index) {
             cardStyle = { ...cardStyle, ...styles.riwayatCardHover }
@@ -208,13 +228,29 @@ const DetailPemesanan = () => {
           if (clickedIndex === index) {
             cardStyle = { ...cardStyle, ...styles.riwayatCardClicked }
           }
+          const seatClasses = booking.BookingSeats.map(
+            (bookingSeat) => bookingSeat.Seat.seat_class
+          )
+          let priceAdult = 0
+          if (seatClasses[0] == "economy") {
+            priceAdult = booking.departureFlight_respon.economyPrice
+          }
+          if (seatClasses[0] == "premium") {
+            priceAdult = booking.departureFlight_respon.premiumPrice
+          }
+          if (seatClasses[0] == "business") {
+            priceAdult = booking.departureFlight_respon.businessPrice
+          }
+          if (seatClasses[0] == "firstclass") {
+            priceAdult = booking.departureFlight_respon.firstClassPrice
+          }
 
           return (
-            <Container>
-              <Row>
-                <Col md={7} className="mt-4" id="booking-card">
+            <div className="container">
+              <div className="row">
+                <Col md={6} xs={12} className="mt-4" id="booking-card">
                   <Container>
-                    <h5>{formatDateHead(booking.orderDate)}</h5>
+                    <h5>{formatDateHead(booking.order_date)}</h5>
                     <Card
                       key={booking.id}
                       id="riwayat-card"
@@ -234,7 +270,10 @@ const DetailPemesanan = () => {
                             </Col>
                             <Col md={10}>
                               <p className="fw-bold col-7 m-0">
-                                {departureAirportCity}
+                                {
+                                  booking?.departureFlight_respon
+                                    ?.departureAirport_respon?.city
+                                }
                               </p>
                               <p className="m-0">
                                 {formatDate(flight?.departureTime)}
@@ -250,7 +289,12 @@ const DetailPemesanan = () => {
                           sm={4}
                           className="d-flex flex-column justify-content-center align-items-center mx-0"
                         >
-                          <p>Duration</p>
+                          <p>
+                            {formatDuration(
+                              flight.departureTime,
+                              flight.arrivalTime
+                            )}
+                          </p>
                           <Image src={icons.longArrow} width="100%" />
                         </Col>
                         <Col md={4} sm={4}>
@@ -260,7 +304,10 @@ const DetailPemesanan = () => {
                             </Col>
                             <Col md={10}>
                               <p className="fw-bold col-6 mb-0">
-                                {arrivalAirportCity}
+                                {
+                                  booking?.departureFlight_respon
+                                    ?.arrivalAirport_respon?.city
+                                }
                               </p>
                               <p className="m-0">
                                 {formatDate(flight?.arrivalTime)}
@@ -276,18 +323,18 @@ const DetailPemesanan = () => {
                       <Row>
                         <Col>
                           <p className="m-0 fw-bold">Booking Code : </p>
-                          <p className="m-0">{booking.code}</p>
+                          <p className="ellipsis m-0">{booking.code}</p>
                         </Col>
                         <Col>
                           <p className="m-0 fw-bold">Class :</p>
-                          <p className="m-0">{booking.class} Economy</p>
+                          <p className="m-0">{seatClasses[0]}</p>
                         </Col>
                         <Col>
                           <p
                             className="col-md-6 d-flex justify-content-end fw-bold align-center m-0"
                             style={{ color: "#A06ECE", fontSize: "15px" }}
                           >
-                            IDR {booking.priceAmount}
+                            {formatCurrency(booking.price_amount)}
                           </p>
                         </Col>
                       </Row>
@@ -296,7 +343,19 @@ const DetailPemesanan = () => {
                 </Col>
 
                 {isCardClicked && index === selectedCardIndex && (
-                  <Col md={5} className="mt-4 p-3" id="detail-pesanan">
+                  <Col
+                    md={5}
+                    className="mt-4 p-3"
+                    id="detail-pesanan"
+                    style={{
+                      position: "absolute",
+                      top: "75%",
+                      left: "75%",
+                      transform: "translate(-50%, -50%)",
+                      margin: "20px",
+                      padding: "10px",
+                    }}
+                  >
                     <div
                       className=""
                       style={{
@@ -322,7 +381,7 @@ const DetailPemesanan = () => {
                           Booking Code:
                         </p>
                         <p
-                          className="mx-2 fw-bold"
+                          className="ellipsis mx-2 fw-bold"
                           style={{ color: " #A06ECE", fontSize: "20px" }}
                         >
                           {booking.code}
@@ -344,13 +403,21 @@ const DetailPemesanan = () => {
                         {" "}
                         {formatDate(flight?.departureTime)}
                       </p>
-                      <p className="m-0">{departureAirportName}</p>
+                      <p className="m-0">
+                        {
+                          booking?.departureFlight_respon
+                            ?.departureAirport_respon?.name
+                        }
+                      </p>
                       <div className="border my-2"></div>
                       <Row className="fw-bold">
                         <div className="col-1"></div>
                         <Col md={2}>
-                          <p className="my-0 mx-1">JetAir{/*Airline*/} </p>
-                          <p>JT302</p>
+                          <p className="my-0 mx-1">
+                            {flight?.Airline?.name}
+                            {/*Airline*/}{" "}
+                          </p>
+                          <p>{flight?.Airline?.code}</p>
                         </Col>
                         <Col>
                           <p className="col-sm-9 mx-1">- Economy</p>
@@ -358,14 +425,29 @@ const DetailPemesanan = () => {
                       </Row>
                       <Row>
                         <Col md={1} className="mt-3">
-                          <Image src={icons.informationIcon} />
+                          <Image
+                            src={flight?.Airline?.imgUrl}
+                            style={{ weight: "20px", height: "20px" }}
+                          />
                         </Col>
                         <Col className="">
                           <p className="fw-bold m-0">Informasi :</p>
-                          <p className="m-0">Penumpang 1: ...</p>
-                          <p className="m-0">ID : ....</p>
-                          <p className="m-0">Penumpang 2: ...</p>
-                          <p>ID : ....</p>
+                          {booking.BookingPassengers?.map((passenger, idx) => (
+                            <div key={idx}>
+                              <p
+                                className="m-0"
+                                style={{
+                                  color: " #A06ECE",
+                                  fontWeight: "500",
+                                }}
+                              >
+                                {`Penumpang ${idx + 1}: ${
+                                  passenger.Passenger.name
+                                }`}
+                              </p>
+                              <p className="m-0">{`ID: ${passenger.Passenger.identity_number}`}</p>
+                            </div>
+                          ))}
                         </Col>
                         <div className="border my-2"></div>
                       </Row>
@@ -383,29 +465,37 @@ const DetailPemesanan = () => {
                       </Row>
                       {/* tanggal */}
                       <p className="m-0"> {formatDate(flight?.arrivalTime)}</p>
-                      <p className="m-0 fw-medium">{arrivalAirportName}</p>
+                      <p className="m-0 fw-medium">
+                        {
+                          booking?.departureFlight_respon?.arrivalAirport_respon
+                            ?.name
+                        }
+                      </p>
                       <div className="border my-2"></div>
                       <div>
                         <p className="fw-bold col-6 mb-0">Rincian Harga</p>
                       </div>
                       <Row>
-                        <p className="col-md-6">2 Adults</p>
+                        <p className="col-md-6">
+                          {booking.adultCount + booking.childCount} Adults
+                        </p>
                         <p className="col-md-6 d-flex justify-content-end">
-                          IDR .........
+                          {formatCurrency(
+                            priceAdult *
+                              (booking.adultCount + booking.childCount)
+                          )}
                         </p>
                       </Row>
-                      <Row>
-                        <p className="col-md-6">1 Adults</p>
-                        <p className="col-md-6 d-flex justify-content-end">
-                          IDR .........
-                        </p>
-                      </Row>
-                      <Row>
-                        <p className="col-md-6">Tax</p>
-                        <p className="col-md-6 d-flex justify-content-end">
-                          IDR .........
-                        </p>
-                      </Row>
+                      {booking.babyCount.length > 0 ? (
+                        <Row>
+                          <p className="col-md-6">{booking.babyCount} Baby</p>
+                          <p className="col-md-6 d-flex justify-content-end">
+                            IDR 0
+                          </p>
+                        </Row>
+                      ) : (
+                        ""
+                      )}
                       <div className="border my-2 "></div>
                       <Row className="my-4">
                         <p
@@ -418,23 +508,41 @@ const DetailPemesanan = () => {
                           className="col-md-6 d-flex justify-content-end fw-bold"
                           style={{ color: " #A06ECE", fontSize: "20px" }}
                         >
-                          IDR .........
+                          {formatCurrency(booking.price_amount)}
                         </p>
-                        {payment?.status === "true" ? (
+                        {payment?.status === "Success" ? (
                           <Button className="custom-button" size="lg">
                             Cetak Tiket
                           </Button>
-                        ) : (
-                          <Button className="custom-button-bayar" size="lg">
+                        ) : payment?.status === "Pending" ? (
+                          <Button
+                            className="custom-button-bayar"
+                            size="lg"
+                            onClick={() =>
+                              handlePaymentRedirect(payment.redirect_url)
+                            }
+                          >
                             Lanjut Bayar
                           </Button>
+                        ) : payment?.status === "Need Method" ? (
+                          <Button
+                            className="custom-button-bayar"
+                            size="lg"
+                            onClick={() =>
+                              handlePaymentRedirect(payment.redirect_url)
+                            }
+                          >
+                            Lanjut Bayar
+                          </Button>
+                        ) : (
+                          ""
                         )}
                       </Row>
                     </div>
                   </Col>
                 )}
-              </Row>
-            </Container>
+              </div>
+            </div>
           )
         })
       ) : (

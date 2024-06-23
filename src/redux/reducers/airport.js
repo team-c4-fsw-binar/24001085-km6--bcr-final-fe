@@ -1,13 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios"
 
-export const fetchAirports = createAsyncThunk(
-  "airports/fetchAirports",
+export const fetchPassengers = createAsyncThunk(
+  "passengers/fetchPassengers",
   async () => {
-    const token = localStorage.getItem("token")
-
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_API}/api/airports`,
+      `${import.meta.env.VITE_BACKEND_API}/api/passengers`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -18,8 +16,8 @@ export const fetchAirports = createAsyncThunk(
   }
 )
 
-const airportsSlice = createSlice({
-  name: "airports",
+const passengersSlice = createSlice({
+  name: "passengers",
   initialState: {
     data: [],
     status: "idle",
@@ -28,18 +26,18 @@ const airportsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAirports.pending, (state) => {
+      .addCase(fetchPassengers.pending, (state) => {
         state.status = "loading"
       })
-      .addCase(fetchAirports.fulfilled, (state, action) => {
+      .addCase(fetchPassengers.fulfilled, (state, action) => {
         state.status = "succeeded"
         state.data = action.payload
       })
-      .addCase(fetchAirports.rejected, (state, action) => {
+      .addCase(fetchPassengers.rejected, (state, action) => {
         state.status = "failed"
         state.error = action.error.message
       })
   },
 })
 
-export default airportsSlice.reducer
+export default passengersSlice.reducer

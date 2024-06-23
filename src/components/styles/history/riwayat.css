@@ -38,3 +38,13 @@
   background-color: #960202;
   border-color: #851414;
 }
+
+.ellipsis {
+  /* dot dot dot */
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+
+  overflow: hidden;
+}
