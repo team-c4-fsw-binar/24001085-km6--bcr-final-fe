@@ -13,7 +13,6 @@ function Register() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const [passwordVisible, setPasswordVisible] = useState(false)
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -81,8 +80,8 @@ function Register() {
       width: "100%",
     },
     input: {
-      borderRadius: "16px",
-      height: "50px",
+      borderRadius: "10px",
+      height: "3rem",
     },
     fieldIcon: {
       position: "absolute",
@@ -114,6 +113,7 @@ function Register() {
     },
     label: {
       color: "black",
+      marginBottom: "0.2rem",
     },
     wrongIcon: {
       position: "absolute",
@@ -130,7 +130,6 @@ function Register() {
       backgroundColor: "red",
       color: "white",
       bottom: "0",
-      marginBottom: "10px",
       width: "fit-content",
       padding: "10px",
       borderRadius: "15px",
@@ -142,7 +141,6 @@ function Register() {
       backgroundColor: "#73ca5c",
       color: "white",
       bottom: "0",
-      marginBottom: "5px",
       width: "fit-content",
       padding: "10px",
       borderRadius: "15px",
@@ -159,12 +157,12 @@ function Register() {
   return (
     <div style={styles.registerPage}>
       <Container style={styles.centeredContainer}>
-        <h4 className="fw-bold pb-2">Daftar</h4>
-        <Form onSubmit={onSubmit}>
-          <Form.Group className="mb-2" controlId="Name">
-            <Form.Label className="fw-medium" style={styles.label}>
+        <h5 className="fw-bold text-center">Daftar Akun</h5>
+        <Form onSubmit={onSubmit} className="mt-4">
+          <Form.Group className="mb-3" controlId="Name">
+            <h6 className="fw-medium" style={styles.label}>
               Nama
-            </Form.Label>
+            </h6>
             <Form.Control
               type="text"
               placeholder="Nama Lengkap"
@@ -175,10 +173,10 @@ function Register() {
               required
             />
           </Form.Group>
-          <Form.Group className="mb-2" controlId="Email">
-            <Form.Label className="fw-medium" style={styles.label}>
-              Email address
-            </Form.Label>
+          <Form.Group className="mb-3" controlId="Email">
+            <h6 className="fw-medium" style={styles.label}>
+              Email Address
+            </h6>
             <div className="input-wrapper" style={styles.inputWrapper}>
               <Form.Control
                 type="email"
@@ -206,10 +204,10 @@ function Register() {
               )}
             </div>
           </Form.Group>
-          <Form.Group className="mb-2" controlId="Phone">
-            <Form.Label className="fw-medium" style={styles.label}>
+          <Form.Group className="mb-3" controlId="Phone">
+            <h6 className="fw-medium" style={styles.label}>
               Nomor Telepon
-            </Form.Label>
+            </h6>
             <div className="input-wrapper" style={styles.inputWrapper}>
               <Form.Control
                 type="text"
@@ -237,11 +235,10 @@ function Register() {
               )}
             </div>
           </Form.Group>
-          <Form.Group className="mb-2" controlId="Password">
-            <Form.Label className="fw-medium" style={styles.label}>
-              {" "}
+          <Form.Group className="mb-3" controlId="Password">
+            <h6 className="fw-medium" style={styles.label}>
               Buat Password
-            </Form.Label>
+            </h6>
             <div className="input-wrapper" style={styles.inputWrapper}>
               <Form.Control
                 type="password"
@@ -255,8 +252,8 @@ function Register() {
                   setIsPasswordValid(isValid)
                   if (!isValid) {
                     setErrorMessage("Password min 8 karakter!")
-                  } else {
-                    setErrorMessage("")
+                  }else {
+                    setErrorMessage(""); // Pastikan pesan kesalahan dihapus jika password valid
                   }
                 }}
                 required
@@ -298,7 +295,7 @@ function Register() {
       )}
       {successMessage && (
         <Alert style={styles.alertSuccessRegis} className="text-center">
-          Tautan Verifikasi telah dikirim!
+          Tautan Verifikasi Telah Dikirim!
         </Alert>
       )}
     </div>

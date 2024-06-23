@@ -114,8 +114,8 @@ export const register =
       const { token, user } = data
       const { email } = data.user
 
-      localStorage.setItem("email", email)
       localStorage.setItem("token", token)
+      localStorage.setItem("email", email)
 
       dispatch(setToken(token))
       dispatch(setUser(user))
@@ -153,13 +153,12 @@ export const verifyOTP =
 
       // get and save the token to local storage
       const { data } = response.data
-      const { token, user } = data
+      const { email } = data
 
-      localStorage.setItem("token", token)
+      localStorage.setItem("email", email)
 
       // Change the token value in the reducer
-      dispatch(setToken(token))
-      dispatch(setUser(user))
+      dispatch(setUser(email))
 
       // redirect to home
       navigate("/")
@@ -203,59 +202,53 @@ export const resendOTP = () => async (dispatch, getState) => {
     },
   }
 
-  try {
-    const response = await axios.request(config)
-    const { data } = response.data
-    const { token } = data
-
-    localStorage.setItem("token", token)
-
-    dispatch(setToken(token))
-  } catch (error) {
-    dispatch(logout())
-  }
+  await axios.request(config)
+  dispatch(setToken(token))
 }
 
-export const ForgotPassword =
-  (email, setIsLoading) => async (dispatch, getState) => {
-    // make loading
-    setIsLoading(true)
+export const ForgotPassword = (email, setIsLoading, showErrorAlert) => async (dispatch) => {
+  setIsLoading(true);
 
-    let data = JSON.stringify({
-      email,
-    })
+  let data = JSON.stringify({
+    email: email,
+  });
 
-    let config = {
-      method: "post",
-      url: `${import.meta.env.VITE_BACKEND_API}/api/auth/forgot-password`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
+  let config = {
+    method: "post",
+    url: `${import.meta.env.VITE_BACKEND_API}/api/auth/forgot-password`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: data,
+  };
+
+  try {
+    await axios.request(config);
+    setIsLoading(false);
+  } catch (error) {
+    if (error.response && error.response.status) {
+      showErrorAlert("Email Tidak Terdaftar");
+    } else {
+      dispatch(logout());
     }
-
-    try {
-      const response = await axios.request(config)
-    } catch (error) {
-      dispatch(logout())
-    }
-
-    setIsLoading(false)
+    
+    setIsLoading(false);
   }
+};
 
 export const resetPassword =
-  (navigate, password, setIsLoading, showErrorAlert) =>
-  async (dispatch, getState) => {
+  (navigate, id, token, password, setIsLoading, showErrorAlert) =>
+  async () => {
     // make loading
     setIsLoading(true)
 
     let data = JSON.stringify({
-      password,
-    })
+      password: password
+    });
 
     let config = {
-      method: "post",
-      url: `${import.meta.env.VITE_BACKEND_API}/api/auth/reset-password`,
+      method: "patch",
+      url: `${import.meta.env.VITE_BACKEND_API}/api/auth/reset-password/${id}/${token}`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -264,18 +257,17 @@ export const resetPassword =
 
     try {
       const response = await axios.request(config)
-
-      // get and save the token to local storage
-      const { data } = response.data
-      const { user } = data
-
-      dispatch(setUser(user))
-
-      // redirect to login
-      navigate("/login")
+  
+      // Check if the response data is null and the message is "User Not Exists!!"
+      if (response.data.data === null && response.data.message === "User Not Exists!!") {
+        showErrorAlert("User Tidak Ditemukan!")
+      } else {
+        // redirect to login
+        navigate("/login")
+      }
     } catch (error) {
       // Tampilkan pesan kesalahan melalui alert
-      showErrorAlert("Gagal mereset password. Silakan coba lagi.")
+      showErrorAlert("Gagal Mereset Password. Silakan Coba Lagi.")
     }
 
     setIsLoading(false)

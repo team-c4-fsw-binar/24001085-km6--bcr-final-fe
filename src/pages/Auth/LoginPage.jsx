@@ -1,15 +1,15 @@
 import { Col, Row } from "react-bootstrap"
 import LoginComponent from "../../components/Auth/Login"
-import AuthLogo from "../../components/Auth/AuthLogo"
+import AuthLogoComponent from "../../components/Auth/AuthLogo"
 
 const LoginPage = () => {
   return (
-    <div>
+    <div className="noScroll">
       <Row>
-        <Col sm={6} className="d-none d-sm-block">
-          <AuthLogo />
+        <Col className="d-none d-md-block">
+          <AuthLogoComponent />
         </Col>
-        <Col sm>
+        <Col>
           <LoginComponent />
         </Col>
       </Row>
