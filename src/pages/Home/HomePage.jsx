@@ -195,8 +195,8 @@ const HomePage = () => {
       const searchParams = {
         from: selectedFrom.city,
         to: selectedTo.city,
-        departure_date: startDate.toISOString().split('T')[0],
-        return_date: toggleSwitch ? endDate?.toISOString().split('T')[0] : null,
+        departure_date: startDate.toLocaleDateString('en-CA'),
+        return_date: toggleSwitch ? endDate?.toLocaleDateString('en-CA') : null,
         total_passengers,
         seat_class: seatClass,
         filter
@@ -317,8 +317,6 @@ const HomePage = () => {
                 />
               </div>
             </Col>
-
-
 
             <Col md={1} className='mb-md-2 mb-2 d-flex align-items-center'>
               <div className='d-flex gap-2 align-items-center'>
