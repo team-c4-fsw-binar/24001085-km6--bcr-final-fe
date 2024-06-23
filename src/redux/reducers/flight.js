@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import axios from "axios"
 
 export const fetchFlights = createAsyncThunk(
@@ -7,7 +7,7 @@ export const fetchFlights = createAsyncThunk(
     const token = localStorage.getItem("token")
 
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_API}/api/flights`,
+      `${import.meta.env.VITE_BACKEND_API}/api/findTIckets`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -25,7 +25,11 @@ const flightsSlice = createSlice({
     status: "idle",
     error: null,
   },
-  reducers: {},
+  reducers: {
+    setFlights: (state, action) => {
+      state.flights = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchFlights.pending, (state) => {
@@ -42,4 +46,5 @@ const flightsSlice = createSlice({
   },
 })
 
+export const { setFlights } = flightsSlice.actions;
 export default flightsSlice.reducer
