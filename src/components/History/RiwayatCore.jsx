@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchBookings } from "../../redux/reducers/booking"
-import { fetchPayments } from "../../redux/reducers/payment"
-import { fetchFlights } from "../../redux/reducers/flight"
-import { fetchPassengers } from "../../redux/reducers/airport"
 import { useNavigate } from "react-router-dom"
 import DetailPesanan from "./DetailPesanan"
 import {
@@ -28,16 +25,11 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
   const navigate = useNavigate()
   const bookingData = useSelector((state) => state.bookings.data)
   const bookingStatus = useSelector((state) => state.bookings.status)
-
-  const flightData = useSelector((state) => state.flights.data)
-  const flightStatus = useSelector((state) => state.flights.status)
-  const passengerData = useSelector((state) => state.passengers?.data)
-  const passengerStatus = useSelector((state) => state.passengers?.status)
   const [hoverIndex, setHoverIndex] = useState(null)
   const [clickedIndex, setClickedIndex] = useState(null)
   const [isCardClicked, setIsCardClicked] = React.useState(false)
   const [selectedCardIndex, setSelectedCardIndex] = React.useState(null)
-  const bookingsData = bookingData.data
+  const bookingsData = bookingData?.data?.results
 
   const token = useSelector((state) => state.auth.token)
   const handleMouseEnter = (index) => setHoverIndex(index)
@@ -49,21 +41,10 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
   }
 
   useEffect(() => {
-    if (flightStatus === "idle") dispatch(fetchFlights())
-    if (passengerStatus === "idle") dispatch(fetchPassengers(token))
     if (bookingStatus === "idle")
       dispatch(fetchBookings({ token, startDate, endDate, searchInput }))
-  }, [
-    dispatch,
-    token,
-    flightStatus,
-    passengerStatus,
-    bookingStatus,
-    startDate,
-    endDate,
-    searchInput,
-  ])
-  console.log(searchInput)
+  }, [dispatch, token, bookingStatus, startDate, endDate, searchInput])
+
   const handlePaymentRedirect = (url) => {
     if (url) {
       window.open(url, "_blank")
@@ -71,17 +52,8 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       console.error("Invalid URL")
     }
   }
-  //   const getPaymentForBooking = (bookingId) => {
-  //     return paymentData.data.find((payment) => payment.Booking.id === bookingId)
-  //   }
-  //   const getFlightForBooking = (flightId) => {
-  //     return flightData.data.results.find((flight) => flight.id === flightId)
-  //   }
-  if (
-    bookingStatus === "loading" ||
-    flightStatus === "loading" ||
-    passengerStatus === "loading"
-  ) {
+
+  if (bookingStatus === "loading") {
     return (
       <div className="row col-12 d-flex justify-content-center">
         <Spinner animation="border" className="d-flex justify-content-center" />
@@ -89,13 +61,10 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
     )
   }
 
-  if (
-    bookingStatus === "failed" ||
-    flightStatus === "failed" ||
-    passengerStatus === "failed"
-  ) {
-    return <p>Error Fetch data</p>
+  if (bookingStatus === "failed") {
+    return <Riwayatkosong />
   }
+
   const getPaymentStatus = (payment) => {
     if (!payment) return ""
 
@@ -133,6 +102,23 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
           Unpaid
         </p>
       </div>
+    ) : payment.status === "Expire" ? (
+      <div
+        className=" rounded-4 "
+        style={{
+          backgroundColor: "grey",
+          color: "white",
+          width: "80px",
+          height: "28px",
+        }}
+      >
+        <p
+          className="d-flex justify-content-center align-center mt-1"
+          style={{ fontSize: "14px" }}
+        >
+          Expired
+        </p>
+      </div>
     ) : (
       <div
         className=" rounded-4 "
@@ -147,7 +133,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
           className="d-flex justify-content-center align-center mt-1"
           style={{ fontSize: "14px" }}
         >
-          Cancelled
+          Failed
         </p>
       </div>
     )
@@ -452,6 +438,10 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
                   selectedCardIndex={selectedCardIndex}
                   index={index}
                   seatClasses={seatClasses}
+                  getPaymentStatus={getPaymentStatus}
+                  formatDate={formatDate}
+                  formatTime={formatTime}
+                  formatCurrency={formatCurrency}
                 />
               </div>
             </div>

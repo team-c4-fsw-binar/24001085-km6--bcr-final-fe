@@ -12,110 +12,15 @@ const DetailPesanan = ({
   selectedCardIndex,
   index,
   seatClasses,
+  getPaymentStatus,
+  formatDate,
+  formatTime,
+  formatCurrency,
 }) => {
-  const getPaymentStatus = (payment) => {
-    if (!payment) return ""
-
-    return payment.status === "Success" ? (
-      <div
-        className=" rounded-4 "
-        style={{
-          backgroundColor: "green",
-          color: "white",
-          width: "68px",
-          height: "28px",
-        }}
-      >
-        <p
-          className="d-flex justify-content-center align-center mt-1"
-          style={{ fontSize: "14px" }}
-        >
-          Issued
-        </p>
-      </div>
-    ) : payment.status === "Pending" || payment.status === "Need Method" ? (
-      <div
-        className=" rounded-4 "
-        style={{
-          backgroundColor: "red",
-          color: "white",
-          width: "68px",
-          height: "28px",
-        }}
-      >
-        <p
-          className="d-flex justify-content-center align-center mt-1"
-          style={{ fontSize: "14px" }}
-        >
-          Unpaid
-        </p>
-      </div>
-    ) : (
-      //   <Badge
-      //     bg="danger"
-      //     className="rounded-5"
-      //     style={{ width: "100px" }}
-      //     size="lg"
-      //   >
-      //     Unpaid
-      //   </Badge>
-      <div
-        className=" rounded-4 "
-        style={{
-          backgroundColor: "grey",
-          color: "white",
-          width: "80px",
-          height: "28px",
-        }}
-      >
-        <p
-          className="d-flex justify-content-center align-center mt-1"
-          style={{ fontSize: "14px" }}
-        >
-          Cancelled
-        </p>
-      </div>
-    )
-  }
-  const formatDate = (dateString) => {
-    const options = { day: "numeric", month: "long", year: "numeric" }
-    return new Date(dateString).toLocaleDateString("id-ID", options)
-  }
-  const formatDateHead = (dateString) => {
-    const options = { month: "long", year: "numeric" }
-    return new Date(dateString).toLocaleDateString("id-ID", options)
-  }
-
-  const formatTime = (timeString) => {
-    const options = { hour: "2-digit", minute: "2-digit", hour12: false }
-    return new Date(timeString)
-      .toLocaleTimeString("id-ID", options)
-      .replace(".", ":")
-  }
-  const formatDuration = (departureTime, arrivalTime) => {
-    const departure = new Date(departureTime)
-    const arrival = new Date(arrivalTime)
-    const durationMs = arrival - departure
-
-    const hours = Math.floor(durationMs / (1000 * 60 * 60))
-    const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60))
-
-    return `${hours}h ${minutes}m`
-  }
-
-  const formatCurrency = (number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    })
-      .format(number)
-      .replace("Rp", "IDR")
-  }
   const styles = {
     detailMDnoReturn: {
       position: "absolute",
-      top: "75%",
+      top: "78%",
       left: "75%",
       transform: "translate(-50%, -50%)",
       margin: "20px",
@@ -123,7 +28,7 @@ const DetailPesanan = ({
     },
     detailMDReturn: {
       position: "absolute",
-      top: "95%",
+      top: "98%",
       left: "75%",
       transform: "translate(-50%, -50%)",
       margin: "20px",
@@ -271,7 +176,7 @@ const DetailPesanan = ({
                   className="fw-bold col-6 d-flex justify-content-end mb-0"
                   style={{ color: " #A06ECE" }}
                 >
-                  Keberangkatan
+                  Kepulangan
                 </p>
               </Row>
               {/* tanggal */}
@@ -293,7 +198,7 @@ const DetailPesanan = ({
                   <p>{booking.returnFlight_respon?.Airline?.code}</p>
                 </Col>
                 <Col md={7}>
-                  <p className=" mx-1">Economy</p>
+                  <p className=" mx-1">{seatClasses[0]}</p>
                 </Col>
               </Row>
               <Row>
@@ -350,20 +255,20 @@ const DetailPesanan = ({
             <p className="fw-bold col-6 mb-0">Rincian Harga</p>
           </div>
           <Row>
-            <p className="col-md-6">
+            <p className="col">
               {booking.adultCount} {booking.adultCount > 1 ? "Adults" : "Adult"}
             </p>
-            <p className="col-md-6 d-flex justify-content-end">
+            <p className="col d-flex justify-content-end">
               {formatCurrency(priceAdult)}
             </p>
           </Row>
           {booking.childCount > 0 ? (
             <Row>
-              <p className="col-md-6">
+              <p className="col">
                 {booking.childCount}{" "}
                 {booking.childCount > 1 ? "Childs" : "Child"}
               </p>
-              <p className="col-md-6 d-flex justify-content-end">
+              <p className="col d-flex justify-content-end">
                 {formatCurrency(priceAdult)}
               </p>
             </Row>
@@ -372,11 +277,11 @@ const DetailPesanan = ({
           )}
           {booking.babyCount != 0 ? (
             <Row>
-              <p className="col-md-6">
+              <p className="col">
                 {" "}
                 {booking.babyCount} {booking.babyCount > 1 ? "Babies" : "Baby"}
               </p>
-              <p className="col-md-6 d-flex justify-content-end">IDR 0</p>
+              <p className="col d-flex justify-content-end">IDR 0</p>
             </Row>
           ) : (
             ""
