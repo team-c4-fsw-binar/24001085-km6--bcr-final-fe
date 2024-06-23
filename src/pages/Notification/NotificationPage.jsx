@@ -1,11 +1,19 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Button, Image } from "react-bootstrap";
-import { Link } from "react-router-dom";
-
+import { Container, Row, Col, Card, Image, Modal, Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getNotification, putNotification } from "../../redux/actions/notification";
 import * as icons from "../../assets/icons";
+import { ToastContainer } from 'react-toastify';
 
 const NotificationPage = () => {
-    const [isRead, setIsRead] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [currentNotification, setCurrentNotification] = useState(null);
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const token = useSelector((state) => state.auth.token);
 
     const styles = {
         fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
@@ -33,6 +41,7 @@ const NotificationPage = () => {
         // card
         card: {
             border: 'none',
+            cursor: 'pointer',
         },
 
         cardBody: {
@@ -56,13 +65,48 @@ const NotificationPage = () => {
         },
     };
 
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            const response = await dispatch(getNotification());
+            if (response) {
+                setNotifications(response);
+            }
+        };
+
+        fetchNotifications();
+    }, [dispatch]);
+
+    const handleMarkAsRead = async (id) => {
+        const notification = notifications.find((notif) => notif.id === id);
+        if (notification && !notification.isRead) {
+            const formData = new FormData();
+            formData.append("isRead", true);
+
+            const response = await dispatch(putNotification(id, formData));
+            if (response) {
+                setNotifications((prev) =>
+                    prev.map((notif) =>
+                        notif.id === id ? { ...notif, isRead: true } : notif
+                    )
+                );
+            }
+        }
+        setCurrentNotification(notification);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setCurrentNotification(null);
+    };
+
     return (
         <>
             <div className="shadow">
                 <Container className="py-4">
                     <h4 style={styles.fontHeadingBold20}>Notifikasi</h4>
-                    <div className="d-flex gap-3 mx-3 mt-4 align-items-center">
-                        <div className="w-75" style={{ ...styles.bgBeranda, padding: '10px 5px' }}>
+                    <div className="d-flex gap-2 mx-3 mt-4 align-items-center">
+                        <div className="w-100" style={{ ...styles.bgBeranda, padding: '10px 5px' }}>
                             <div className="d-flex">
                                 <Link to="/">
                                     <Image src={icons.whiteLeftIcon} alt="arrow-left" className="px-3" />
@@ -72,59 +116,81 @@ const NotificationPage = () => {
                                 </Link>
                             </div>
                         </div>
-                        <Link to="/filter">
-                            <Image src={icons.filterButton} alt="filter" />
-                        </Link>
-                        <Link to="/search">
-                            <Image src={icons.searchIcon} alt="search" />
-                        </Link>
                     </div>
                 </Container>
-
             </div>
             <Container className="py-5">
-                <Card className="mb-2 w-75" style={styles.card}>
-                    <Card.Body style={styles.cardBody}>
-                        <Row>
-                            <Col md={10}>
-                                <div className="d-flex align-items-start">
-                                    <Image src={icons.notifIcon} alt="notif" className="me-3" />
-                                    <div>
-                                        <Card.Title style={styles.fontBodyRegular14} className="text-muted">Promosi</Card.Title>
-                                        <Card.Text style={styles.fontTitleRegular16}>
-                                            Dapatkan Potongan 50% Tiket!<br />
-                                            <span style={styles.fontBodyRegular14} className="text-muted">Syarat dan Ketentuan berlaku!</span>
-                                        </Card.Text>
-                                    </div>
-                                </div>
-                            </Col>
-                            <Col md={2} className="text-end">
-                                <small style={styles.fontBodyRegular14} className="text-muted">20 Maret, 14:04</small>
-                                <span className="ml-2"><i className="bi bi-dot text-success"></i></span>
-                            </Col>
-                        </Row>
-                    </Card.Body>
-                    <Card.Body style={{ ...styles.cardBody, ...(isRead ? {} : styles.bgNoread) }}>
-                        <Row>
-                            <Col md={10}>
-                                <div className="d-flex align-items-start">
-                                    <Image src={icons.notifIcon} alt="notif" className="me-3" />
-                                    <div>
-                                        <Card.Title style={styles.fontBodyRegular14} className="text-muted">Notifikasi</Card.Title>
-                                        <Card.Text style={styles.fontTitleRegular16}>
-                                            Terdapat perubahan pada jadwal penerbangan kode booking 45GT6. Cek jadwal perjalanan Anda disini!
-                                        </Card.Text>
-                                    </div>
-                                </div>
-                            </Col>
-                            <Col md={2} className="text-end">
-                                <small style={styles.fontBodyRegular14} className="text-muted">5 Maret, 14:04</small>
-                                <span className="ml-2"><i className="bi bi-dot text-danger"></i></span>
-                            </Col>
-                        </Row>
-                    </Card.Body>
-                </Card>
+                {notifications && notifications.length > 0 ? (
+                    notifications.map((notification) => (
+                        <Card
+                            key={notification.id}
+                            className="mb-2"
+                            style={styles.card}
+                            onClick={() => handleMarkAsRead(notification.id)} // Call handleMarkAsRead onClick
+                        >
+                            <Card.Body
+                                style={{
+                                    ...styles.cardBody,
+                                    ...(notification.isRead ? {} : styles.bgNoread), // Apply bgNoread style conditionally
+                                }}
+                            >
+                                <Row>
+                                    <Col md={10}>
+                                        <div className="d-flex align-items-start">
+                                            <Image src={icons.notifIcon} alt="notif" className="me-3" />
+                                            <div>
+                                                <Card.Title style={styles.fontBodyRegular14} className="text-muted">
+                                                    {notification.type}
+                                                </Card.Title>
+                                                <Card.Text style={styles.fontTitleRegular16}>
+                                                    {notification.title}
+                                                    <br />
+                                                    <span style={styles.fontBodyRegular14} className="text-muted">
+                                                        {notification.content}
+                                                    </span>
+                                                </Card.Text>
+                                            </div>
+                                        </div>
+                                    </Col>
+                                    <Col md={2} className="text-end">
+                                        <small style={styles.fontBodyRegular14} className="text-muted">
+                                            {new Date(notification.updatedAt).toLocaleString()}
+                                        </small>
+                                        <span className="ml-2">
+                                            <i
+                                                className={`bi bi-dot ${notification.isRead ? "text-success" : "text-danger"
+                                                    }`}
+                                            ></i>
+                                        </span>
+                                    </Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    ))
+                ) : (
+                    <p>Loading...</p>
+                )}
             </Container>
+
+            {currentNotification && (
+                <Modal
+                    show={showModal}
+                    onHide={handleCloseModal}
+                    centered
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title className="h6">Notification Details</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <h5>{currentNotification.title}</h5>
+                        <p>{currentNotification.content}</p>
+                        <small>{new Date(currentNotification.updatedAt).toLocaleString()}</small>
+                    </Modal.Body>
+                </Modal>
+            )}
+            <ToastContainer
+                theme="colored"
+            />
         </>
     );
 };
