@@ -11,7 +11,7 @@
 }
 
 .destinasiFavoritContainer {
-  transform: translateY(-10%);
+  transform: translateY(-20%);
 }
 
 .custom-button:hover {
@@ -90,6 +90,10 @@
   box-shadow: none;
 }
 
+.swap-icon-container {
+  justify-content: center;
+}
+
 /* mobile */
 @media (max-width: 768px) {
   .homepageContainerBanner {
@@ -107,6 +111,14 @@
   .btnDestinasi {
     padding: 10px 20px;
     font-size: 12px;
+  }
+
+  .swap-icon-container {
+    justify-content: flex-start;
+  }
+
+  .swap-icon {
+    margin-left: auto;
   }
 
   .cardDestinasi {
