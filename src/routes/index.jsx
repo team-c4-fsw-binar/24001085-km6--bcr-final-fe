@@ -13,19 +13,12 @@ import {
   ForgotPasswordPage,
   ResetPasswordPage,
   HistoryPage,
-<<<<<<< HEAD
 } from "../pages"
 
 // components
 import UserProtected from "../components/Protected/Protected"
 import NonProtected from "../components/Protected/NonProtected"
 import NavbarComponent from "../components/Navigation/Navbar"
-=======
-} from "../pages";
-import UserProtected from "../components/Protected/Protected";
-import NonProtected from "../components/Protected/NonProtected";
-import NavbarComponent from "../components/Navigation/Navbar";
->>>>>>> 70ae3078330a6a8a148fa202605b9790b6a78bcc
 
 const router = createBrowserRouter([
   {
@@ -52,19 +45,11 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: (
-<<<<<<< HEAD
       <>
         <NonProtected>
           <LoginPage />,
         </NonProtected>
       </>
-=======
-      <div>
-        <NonProtected>
-          <LoginPage />
-        </NonProtected>
-      </div>
->>>>>>> 70ae3078330a6a8a148fa202605b9790b6a78bcc
     ),
   },
   {
@@ -173,8 +158,4 @@ const router = createBrowserRouter([
   },
 ])
 
-<<<<<<< HEAD
 export default router
-=======
-export default router;
->>>>>>> 70ae3078330a6a8a148fa202605b9790b6a78bcc
