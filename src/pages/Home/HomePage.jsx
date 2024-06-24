@@ -5,7 +5,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import { getAllCity, fetchFlights, getFlights } from '../../redux/actions/home';
+import { getAllCity, findticket, getFlights } from '../../redux/actions/home';
 
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -103,7 +103,7 @@ const HomePage = () => {
 
 
   useEffect(() => {
-    const fetchFlightsData = async () => {
+    const findticketData = async () => {
       setLoading(true);
       try {
         const flightsData = await getFlights();
@@ -115,7 +115,7 @@ const HomePage = () => {
         setLoading(false);
       }
     };
-    fetchFlightsData();
+    findticketData();
   }, []);
 
   useEffect(() => {
@@ -212,7 +212,7 @@ const HomePage = () => {
         filter: searchParams.filter
       };
 
-      const actionResult = await dispatch(fetchFlights(actionPayload));
+      const actionResult = await dispatch(findticket(actionPayload));
       console.log('Flight search successful!', actionResult);
 
       const queryString = new URLSearchParams({
