@@ -580,14 +580,14 @@ const CheckoutPage = () => {
                                 </h4>
                                 {!isSaved && (
                                     <p style={{ ...styles.cardSeat, ...styles.fontBodyMedium14 }} className="mb-3 text-center">
-                                        Economy - 64 Seats Available
+                                        {checkout.seatClass} - 64 Seats Available
                                     </p>
                                 )}
                                 {isSaved && (
                                     <p style={{ ...styles.cardSeatChosen, ...styles.fontBodyMedium14 }}
                                         className="mb-3 d-flex justify-align-content-between align-items-center">
                                         <span className="flex-grow-1 text-start position-relative">
-                                            Economy - 2 Seats Chosen
+                                            {checkout.seatClass} - 2 Seats Chosen
                                         </span>
                                         <Image src={icons.checkIcon} alt="checklist" className="ms-2" />
                                     </p>
@@ -637,14 +637,14 @@ const CheckoutPage = () => {
                                     </h4>
                                     {!isSaved && (
                                         <p style={{ ...styles.cardSeat, ...styles.fontBodyMedium14 }} className="mb-3 text-center">
-                                            Business - 64 Seats Available
+                                            {checkout.seatClass} - 64 Seats Available
                                         </p>
                                     )}
                                     {isSaved && (
                                         <p style={{ ...styles.cardSeatChosen, ...styles.fontBodyMedium14 }}
                                             className="mb-3 d-flex justify-align-content-between align-items-center">
                                             <span className="flex-grow-1 text-start position-relative">
-                                                Business - 2 Seats Chosen
+                                                {checkout.seatClass} - 2 Seats Chosen
                                             </span>
                                             <Image src={icons.checkIcon} alt="checklist" className="ms-2" />
                                         </p>
@@ -782,7 +782,7 @@ const CheckoutPage = () => {
                                     {checkout.adultCount > 0 && (
                                         <div className="d-flex">
                                             <p style={styles.fontBodyRegular14} className="me-auto my-0">
-                                                {checkout.adultCount} Adults
+                                                {checkout.adultCount} Adult
                                             </p>
                                             <p style={styles.fontBodyRegular14} className="my-0">
                                                 IDR 9.550.000
@@ -792,7 +792,7 @@ const CheckoutPage = () => {
                                     {checkout.childCount > 0 && (
                                         <div className="d-flex">
                                             <p style={styles.fontBodyRegular14} className="me-auto my-0">
-                                                {checkout.childCount} Childs
+                                                {checkout.childCount} Child
                                             </p>
                                             <p style={styles.fontBodyRegular14} className="my-0">
                                                 IDR 9.550.000

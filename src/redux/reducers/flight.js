@@ -17,12 +17,16 @@ export const fetchFlights = createAsyncThunk(
 const flightsSlice = createSlice({
   name: "flights",
   initialState: {
+    homeData: null,
     data: [],
     status: "idle",
     error: null,
     selectedFlight: null,
   },
   reducers: {
+    setHomeData: (state, action) => {
+      state.homeData = action.payload;
+    },
     setFlights: (state, action) => {
       state.data = action.payload;
     },
@@ -46,5 +50,5 @@ const flightsSlice = createSlice({
   },
 })
 
-export const { setFlights, selectFlight } = flightsSlice.actions;
+export const { setHomeData, setFlights, selectFlight } = flightsSlice.actions;
 export default flightsSlice.reducer
