@@ -8,6 +8,8 @@ import * as icons from "../../assets/icons";
 const CheckoutPage = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
+    const flights = useSelector((state) => state.flights.data);
+
 
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
