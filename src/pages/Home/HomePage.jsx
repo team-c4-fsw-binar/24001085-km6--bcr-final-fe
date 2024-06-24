@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import {
-  Container, Row, Col, Form, Button, Card, Modal, ListGroup, CloseButton, Spinner
+  Container, Row, Col, Form, Button, Card, Modal, ListGroup, Spinner
 } from 'react-bootstrap';
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import { getAllCity, findTickets, getFlights } from '../../redux/actions/home';
+import { useDispatch } from "react-redux";
+import { useNavigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import { getFlights } from '../../redux/actions/home';
+import { getAllCity } from '../../redux/actions/airport';
 
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,11 +15,13 @@ import "./homePage.css";
 import DatePickerModal from '../../components/Modal/DatepickerModal';
 import * as images from "../../assets/images"
 import * as icons from "../../assets/icons"
+import { findTicket } from '../../redux/actions/ticket';
 
 
 
 const HomePage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const styles = {
     fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
@@ -80,7 +83,7 @@ const HomePage = () => {
   const [anak, setAnak] = useState(0);
   const [bayi, setBayi] = useState(0);
   const [totalSeat, setTotalSeat] = useState(0);
-  const [total_passengers, setTotalPassenger] = useState(0);
+  const [totalPassengers, setTotalPassenger] = useState(0);
   const [tempDewasa, setTempDewasa] = useState(dewasa);
   const [tempAnak, setTempAnak] = useState(anak);
   const [tempBayi, setTempBayi] = useState(bayi);
@@ -108,8 +111,6 @@ const HomePage = () => {
     };
     fetchFlights();
   }, []);
-
-
 
   // get all city
   useEffect(() => {
@@ -183,22 +184,23 @@ const HomePage = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-
-    if (!selectedFrom || !selectedTo || !startDate || !total_passengers || !seatClass) {
-      toast.error('Please fill in all the fields.');
-      return;
+    
+    const departureDate = startDate.toLocaleDateString('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  
+    let returnDate = null;
+    if (endDate) {
+      returnDate = endDate.toLocaleDateString('en-CA', { 
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      });
     }
-
-    const searchParams = {
-      from: selectedFrom.city,
-      to: selectedTo.city,
-      departureDate: startDate.toISOString().split('T')[0],
-      returnDate: toggleSwitch ? endDate?.toISOString().split('T')[0] : null,
-      passengers: total_passengers,
-      seatClass: seatClass,
-    };
-
-    dispatch(findTickets(searchParams));
+  
+    dispatch(findTicket(navigate, selectedFrom.city, selectedTo.city, departureDate, totalPassengers, seatClass, returnDate));
   };
 
   return (
@@ -208,7 +210,7 @@ const HomePage = () => {
       </div>
       <Container className="sectionSortBooking shadow rounded">
         <Form>
-          <p style={styles.fontHeadingBold20} className='mb-3'>Pilih Jadwal Penerbangan spesial di <span style={styles.titleBrand}>TerbangAja</span></p>
+          <p style={styles.fontHeadingBold20} className='mb-3'>Pilih Jadwal Penerbangan Spesial di <span style={styles.titleBrand}>TerbangAja</span></p>
           <Row className='mb-md-0 mb-2'>
             {/* untuk memilih from */}
             <Col md={5} className="d-flex">
@@ -351,7 +353,7 @@ const HomePage = () => {
                   className="form-control inputTextDecorationNone"
                   type="text"
                   id="passengers"
-                  value={`${total_passengers} penumpang`}
+                  value={`${totalPassengers} penumpang`}
 
                   onClick={handleCounterInputClick}
                 />
@@ -372,14 +374,11 @@ const HomePage = () => {
               </div>
             </Col>
           </Row>
-          <Link to='/search'>
-            <Button style={{ ...styles.customButton, ...styles.fontTitleBold16 }} onClick={handleFormSubmit} className='w-100' variant="primary" type="submit">
-              Cari Penerbangan
-            </Button>
-          </Link>
+          <Button style={{ ...styles.customButton, ...styles.fontTitleBold16 }} onClick={handleFormSubmit} className='w-100' variant="primary" type="submit">
+            Cari Penerbangan
+          </Button>
         </Form>
       </Container>
-
 
       <Container className='destinasiFavoritContainer'>
         {loading ? (

@@ -3,23 +3,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-export const getAllCity = async () => {
-    let config = {
-        method: 'get',
-        maxBodyLength: Infinity,
-        url: `${import.meta.env.VITE_BACKEND_API}/api/airports/cities`,
-        headers: {}
-    };
-
-    try {
-        const response = await axios.request(config);
-        return response.data.data.results;
-    } catch (error) {
-        console.error('Error get cities:', error);
-        throw error;
-    }
-};
-
 export const getFlights =
     async () => {
         try {
