@@ -72,13 +72,12 @@ const HomePage = () => {
   const [seatClassModalOpen, setSeatClassModalOpen] = useState(false);
   const [tempSeatClass, setTempSeatClass] = useState('');
   const [counterModalOpen, setCounterModalOpen] = useState(false);
-  const [dewasa, setDewasa] = useState(0);
-  const [anak, setAnak] = useState(0);
-  const [bayi, setBayi] = useState(0);
-  const [totalSeat, setTotalSeat] = useState(0);
-  const [tempDewasa, setTempDewasa] = useState(dewasa);
-  const [tempAnak, setTempAnak] = useState(anak);
-  const [tempBayi, setTempBayi] = useState(bayi);
+  const [adultCount, setAdultCount] = useState(0);
+  const [childCount, setChildCount] = useState(0);
+  const [babyCount, setBabyCount] = useState(0);
+  const [tempAdultCount, setTempAdultCount] = useState(adultCount);
+  const [tempChildCount, setTempChildCount] = useState(childCount);
+  const [tempBabyCount, setTempBabyCount] = useState(babyCount);
   const [modalShow, setModalShow] = useState(false);
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -163,17 +162,17 @@ const HomePage = () => {
   };
 
   const handleCounterInputClick = () => {
-    setTempDewasa(dewasa);
-    setTempAnak(anak);
-    setTempBayi(bayi);
+    setTempAdultCount(adultCount);
+    setTempChildCount(childCount);
+    setTempBabyCount(babyCount);
     setCounterModalOpen(true);
   };
 
   const handleCounterSave = () => {
-    setDewasa(tempDewasa);
-    setAnak(tempAnak);
-    setBayi(tempBayi);
-    setTotalPassenger(tempDewasa + tempAnak + tempBayi);
+    setAdultCount(tempAdultCount);
+    setChildCount(tempChildCount);
+    setBabyCount(tempBabyCount);
+    setTotalPassenger(tempAdultCount + tempChildCount + tempBabyCount);
     setCounterModalOpen(false);
   };
 
@@ -182,6 +181,7 @@ const HomePage = () => {
     setSelectedFrom(selectedTo);
     setSelectedTo(tempLocation);
   };
+
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -197,6 +197,9 @@ const HomePage = () => {
         to: selectedTo.city,
         departure_date: startDate.toLocaleDateString('en-CA'),
         return_date: toggleSwitch ? endDate?.toLocaleDateString('en-CA') : null,
+        adultCount,
+        childCount,
+        babyCount,
         total_passengers,
         seat_class: seatClass,
         filter
@@ -207,6 +210,9 @@ const HomePage = () => {
         to: searchParams.to,
         departure_date: searchParams.departure_date,
         return_date: searchParams.return_date,
+        adultCount: searchParams.adultCount,
+        childCount: searchParams.childCount,
+        babyCount: searchParams.babyCount,
         total_passengers: searchParams.total_passengers,
         seat_class: searchParams.seat_class,
         filter: searchParams.filter
@@ -220,6 +226,9 @@ const HomePage = () => {
         to: searchParams.to,
         departure_date: searchParams.departure_date,
         return_date: searchParams.return_date,
+        adultCount: searchParams.adultCount,
+        childCount: searchParams.childCount,
+        babyCount: searchParams.babyCount,
         total_passengers: searchParams.total_passengers,
         seat_class: searchParams.seat_class,
         filter: JSON.stringify(searchParams.filter)
@@ -554,9 +563,9 @@ const HomePage = () => {
                   <p style={styles.fontBodyRegular12} className="mb-0">(12 tahun ke atas)</p>
                 </div>
                 <div className="d-flex align-items-center">
-                  <Button className='btnPassengersCounter' onClick={() => setTempDewasa(Math.max(tempDewasa - 1, 0))}>-</Button>
-                  <p style={styles.fontBodyRegular14} className="mx-3 mb-0">{tempDewasa}</p>
-                  <Button className='btnPassengersCounter' onClick={() => setTempDewasa(tempDewasa + 1)}>+</Button>
+                  <Button className='btnPassengersCounter' onClick={() => setTempAdultCount(Math.max(tempAdultCount - 1, 0))}>-</Button>
+                  <p style={styles.fontBodyRegular14} className="mx-3 mb-0">{tempAdultCount}</p>
+                  <Button className='btnPassengersCounter' onClick={() => setTempAdultCount(tempAdultCount + 1)}>+</Button>
                 </div>
               </div>
             </div>
@@ -567,9 +576,9 @@ const HomePage = () => {
                   <p style={styles.fontBodyRegular12} className="mb-0">(2 - 11 tahun)</p>
                 </div>
                 <div className="d-flex align-items-center">
-                  <Button className='btnPassengersCounter' onClick={() => setTempAnak(Math.max(tempAnak - 1, 0))}>-</Button>
-                  <p style={styles.fontBodyRegular14} className="mx-3 mb-0">{tempAnak}</p>
-                  <Button className='btnPassengersCounter' onClick={() => setTempAnak(tempAnak + 1)}>+</Button>
+                  <Button className='btnPassengersCounter' onClick={() => setTempChildCount(Math.max(tempChildCount - 1, 0))}>-</Button>
+                  <p style={styles.fontBodyRegular14} className="mx-3 mb-0">{tempChildCount}</p>
+                  <Button className='btnPassengersCounter' onClick={() => setTempChildCount(tempChildCount + 1)}>+</Button>
                 </div>
               </div>
             </div>
@@ -580,9 +589,9 @@ const HomePage = () => {
                   <p style={styles.fontBodyRegular12} className="mb-0">(Dibawah 2 tahun)</p>
                 </div>
                 <div className="d-flex align-items-center">
-                  <Button className='btnPassengersCounter' onClick={() => setTempBayi(Math.max(tempBayi - 1, 0))}>-</Button>
-                  <p style={styles.fontBodyRegular14} className="mx-3 mb-0">{tempBayi}</p>
-                  <Button className='btnPassengersCounter' onClick={() => setTempBayi(tempBayi + 1)}>+</Button>
+                  <Button className='btnPassengersCounter' onClick={() => setTempBabyCount(Math.max(tempBabyCount - 1, 0))}>-</Button>
+                  <p style={styles.fontBodyRegular14} className="mx-3 mb-0">{tempBabyCount}</p>
+                  <Button className='btnPassengersCounter' onClick={() => setTempBabyCount(tempBabyCount + 1)}>+</Button>
                 </div>
               </div>
             </div>
