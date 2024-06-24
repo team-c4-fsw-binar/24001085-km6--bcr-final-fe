@@ -42,13 +42,36 @@ const CheckoutPage = () => {
         }
     }, [time, expired]);
 
-    // Format remaining time in HH:mm:ss
+    // HH:mm:ss
     const formatTime = (remainingTime) => {
         const hours = Math.floor(remainingTime / (1000 * 60 * 60));
         const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     };
+
+    // HH:MM
+    const formatTimeFlight = (isoString) => {
+        const date = new Date(isoString);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    };
+
+    // format Tanggal
+    const formatDate = (isoString) => {
+        const date = new Date(isoString);
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        return new Intl.DateTimeFormat('id-ID', options).format(date);
+    };
+
+    const selectedFlightFormat = selectedFlight ? {
+        ...selectedFlight,
+        departureTime: formatTimeFlight(selectedFlight.departureTime),
+        departureDate: formatDate(selectedFlight.departureTime),
+        arrivalTime: formatTimeFlight(selectedFlight.arrivalTime),
+        arrivalDate: formatDate(selectedFlight.arrivalTime)
+    } : {};
 
     const [profileDetails, setProfileDetails] = useState({
         name: "",
@@ -680,37 +703,37 @@ const CheckoutPage = () => {
                                 <div className="border-bottom pb-2">
                                     <p style={styles.fontTitleBold18}>Detail Penerbangan</p>
                                     <div className="d-flex align-items-center">
-                                        <p style={styles.fontTitleBold16} className="my-0 me-auto">{selectedFlight.departureTime}</p>
+                                        <p style={styles.fontTitleBold16} className="my-0 me-auto">{selectedFlightFormat.departureTime}</p>
                                         <p style={{ ...styles.fontBodyBold12, ...styles.textKeberangkatan }} className="my-0">Keberangkatan</p>
                                     </div>
-                                    <p style={styles.fontBodyRegular14} className="my-0">{selectedFlight.departure_date}</p>
-                                    <p style={styles.fontBodyMedium14} className="me-auto my-0">{selectedFlight.departureAirport_respon.name} - Terminal {selectedFlight.departureAirport}</p>
+                                    <p style={styles.fontBodyRegular14} className="my-0">{selectedFlightFormat.departureDate}</p>
+                                    <p style={styles.fontBodyMedium14} className="me-auto my-0">{selectedFlight.departureAirport_respon?.name} - Terminal {selectedFlight.departureAirport}</p>
                                 </div>
 
                                 <div className="border-bottom py-2">
-                                    <p style={styles.fontBodyBold14} className="my-0 ">{selectedFlight.Airline.name} - {selectedFlight.class}</p>
-                                    <p style={styles.fontBodyBold14} className=" mb-3">{selectedFlight.Airline.code}</p>
+                                    <p style={styles.fontBodyBold14} className="my-0 ">{selectedFlight.Airline?.name} - {selectedFlight.class}</p>
+                                    <p style={styles.fontBodyBold14} className=" mb-3">{selectedFlight.Airline?.code}</p>
                                     <div className="d-flex align-items-start">
                                         <div>
-                                        <Image src={selectedFlight.Airline.imgUrl} alt="information" className="me-1" style={{width: '100px'}} />
+                                            <Image src={selectedFlight.Airline.imgUrl} alt="information" className="me-1" style={{ width: '100px' }} />
                                             <p style={styles.fontBodyBold14} className="my-0">Informasi:</p>
-                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi {selectedFlight.Airline.baggage} kg</p>
-                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin {selectedFlight.Airline.cabinBaggage} kg</p>
-                                            <p style={styles.fontBodyRegular14} className="my-0">{selectedFlight.Airline.entertainment ? "In-Flight Entertainment" : "No In-Flight Entertainment"}</p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi {selectedFlight.Airline?.baggage} kg</p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin {selectedFlight.Airline?.cabinBaggage} kg</p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">{selectedFlight.Airline?.entertainment ? "In-Flight Entertainment" : "No In-Flight Entertainment"}</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="py-2">
                                     <div className="d-flex align-items-center">
-                                        <p style={styles.fontBodyBold14} className="my-0 me-auto">{selectedFlight.arrivalTime}</p>
+                                        <p style={styles.fontBodyBold14} className="my-0 me-auto">{selectedFlightFormat.arrivalTime}</p>
                                         <p style={{ ...styles.fontBodyBold12, ...styles.textKedatangan }} className="my-0">Kedatangan</p>
                                     </div>
-                                    <p style={styles.fontBodyRegular14} className="my-0">{selectedFlight.arrival_date}</p>
-                                    <p style={styles.fontBodyMedium14} className="my-0">{selectedFlight.arrivalAirport_respon.name}</p>
+                                    <p style={styles.fontBodyRegular14} className="my-0">{selectedFlightFormat.arrivalDate}</p>
+                                    <p style={styles.fontBodyMedium14} className="my-0">{selectedFlight.arrivalAirport_respon?.name}</p>
                                 </div>
 
-                                {isReturn && (
+                                {/* {isReturn && (
                                     <>
                                         <hr />
                                         <div className="border-bottom pb-2">
@@ -746,9 +769,9 @@ const CheckoutPage = () => {
                                         </div>
                                         <hr />
                                     </>
-                                )}
+                                )} */}
 
-                                <div className="border-bottom py-2 ms-2">
+                                <div className="border-bottom py-2">
                                     <p style={styles.fontBodyBold14} className="my-0">Rincian Harga</p>
                                     <div className="d-flex">
                                         <p style={styles.fontBodyRegular14} className="me-auto my-0">2 Dewasa</p>
@@ -760,7 +783,7 @@ const CheckoutPage = () => {
                                     </div>
                                 </div>
 
-                                <div className="d-flex pt-2 ms-2">
+                                <div className="d-flex pt-2">
                                     <p style={styles.fontTitleBold16} className="me-auto">Total</p>
                                     <h4 style={{ ...styles.fontTitleBold18, ...styles.textTotal }} className="font-title-bold-18 text-total">IDR 9.850.000</h4>
                                 </div>
