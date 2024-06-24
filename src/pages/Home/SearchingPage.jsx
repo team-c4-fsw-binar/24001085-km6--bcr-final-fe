@@ -255,7 +255,7 @@ const SearchingPage = () => {
           </Col>
         </Row>
         <Row>
-          <Col className="d-flex justify-content-between px-5">
+          <Col className="d-flex justify-content-between px-5" style={{cursor: 'pointer'}}>
             {[
               "SENIN",
               "SELASA",
@@ -313,7 +313,7 @@ const SearchingPage = () => {
         <Modal show={showMyModal} onHide={handleOnClose}>
           <Modal.Header closeButton></Modal.Header>
           <Modal.Body className="p-0">
-            <ListGroup className="m-0">
+            <ListGroup className="m-0" style={{cursor: 'pointer'}}>
               {[
                 "Harga - Termurah",
                 "Durasi - Terpendek",
@@ -362,7 +362,7 @@ const SearchingPage = () => {
                 <Card>
                   <Card.Body>
                     <Card.Title>FLIGHT SELECTION</Card.Title>
-                    <ListGroup variant="flush">
+                    <ListGroup variant="flush" style={{cursor: 'pointer'}}>
                       <ListGroup.Item>Departure</ListGroup.Item>
                       <ListGroup.Item>Return</ListGroup.Item>
                       <ListGroup.Item>
