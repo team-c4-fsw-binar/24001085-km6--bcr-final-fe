@@ -20,6 +20,14 @@ export const fetchCheckout = createAsyncThunk(
 const checkoutsSlice = createSlice({
     name: "checkout",
     initialState: {
+        departure_flight_id: null,
+        return_flight_id: null,
+        price_amount: null,
+        seats_id: [],
+        passengers:{
+            title: '', name: '', born_date: '', citizenship: '', identity_number: '', 
+            publisher_country: '', identity_expire_date: ''
+        },
         seatClass: '',
         adultCount: null,
         childCount: null,
