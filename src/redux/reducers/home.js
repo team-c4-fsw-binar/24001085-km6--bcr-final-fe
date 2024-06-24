@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 
-export const findticket = createAsyncThunk(
-    "flights/findticket",
+export const fetchFlights = createAsyncThunk(
+    "flights/fetchFlights",
     async () => {
         const token = localStorage.getItem("token")
 
@@ -28,14 +28,14 @@ const homeSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(findticket.pending, (state) => {
+            .addCase(fetchFlights.pending, (state) => {
                 state.status = "loading"
             })
-            .addCase(findticket.fulfilled, (state, action) => {
+            .addCase(fetchFlights.fulfilled, (state, action) => {
                 state.status = "succeeded"
                 state.data = action.payload
             })
-            .addCase(findticket.rejected, (state, action) => {
+            .addCase(fetchFlights.rejected, (state, action) => {
                 state.status = "failed"
                 state.error = action.error.message
             })

@@ -73,7 +73,7 @@ export const getFlights =
 
 
 
-export const findticket = createAsyncThunk(
+export const fetchFlights = createAsyncThunk(
     "flights/fetchFlights",
     async (
         { from, to, departure_date, return_date, total_passengers, seat_class, filter },
