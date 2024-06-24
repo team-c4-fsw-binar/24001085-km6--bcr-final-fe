@@ -45,9 +45,9 @@ const NotificationPage = () => {
             cursor: 'pointer',
         },
 
-        cardBody: {
-            borderBottom: '1px solid #E5E5E5',
-        },
+        // cardBody: {
+        //     borderBottom: '1px solid #E5E5E5',
+        // },
 
         // button beranda
         bgBeranda: {
@@ -117,6 +117,12 @@ const NotificationPage = () => {
                                 </Link>
                             </div>
                         </div>
+                        {/* <Link to="/filter">
+                            <Image src={icons.filterButton} alt="filter" />
+                        </Link>
+                        <Link to="/search">
+                            <Image src={icons.searchIcon} alt="search" />
+                        </Link> */}
                     </div>
                 </Container>
             </div>

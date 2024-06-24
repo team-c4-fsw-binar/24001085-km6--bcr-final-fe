@@ -183,7 +183,7 @@ const ProfilePage = () => {
             color: '#000000',
             display: 'flex',
             alignItems: 'center',
-            margin: '10px 0 10px 0'
+            margin: '10px 0 0 0',
         },
         cardHeader: {
             backgroundColor: '#A06ECE',
@@ -245,7 +245,7 @@ const ProfilePage = () => {
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.profileIcon} alt="profil" className="me-3" />
-                                    <p>Profil</p>
+                                    <p className="pt-3">Profil</p>
                                 </Button>
                             </div>
                             <div style={styles.sidebar}>
@@ -254,7 +254,7 @@ const ProfilePage = () => {
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.editIcon} alt="edit" className="me-3" />
-                                    <p>Ubah Profil</p>
+                                    <p className="pt-3">Ubah Profil</p>
                                 </Button>
                             </div>
                             <div style={styles.sidebar}>
@@ -263,7 +263,7 @@ const ProfilePage = () => {
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.settingIcon} alt="settings" className="me-3" />
-                                    <p>Pengaturan Akun</p>
+                                    <p className="pt-3">Pengaturan Akun</p>
                                 </Button>
                             </div>
                             <div style={styles.sidebar}>
@@ -275,7 +275,7 @@ const ProfilePage = () => {
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.logoutIcon} alt="logout" className="me-3" />
-                                    <p>Keluar</p>
+                                    <p className="pt-3">Keluar</p>
                                 </Button>
                             </div>
                             <div style={styles.textVersion}>Version 1.1.0</div>
