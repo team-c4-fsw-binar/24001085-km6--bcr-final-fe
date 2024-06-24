@@ -20,29 +20,32 @@ export const fetchCheckout = createAsyncThunk(
 const checkoutsSlice = createSlice({
     name: "checkout",
     initialState: {
-        data: [],
-        status: "idle",
-        error: null,
+        seatClass: '',
+        adultCount: null,
+        childCount: null,
+        babyCount: null,
     },
     reducers: {
-        setCheckouts: (state, action) => {
-            state.data = action.payload;
+        setSeatClass: (state, action) => {
+            state.seatClass = action.payload
+        },
+        setAdultCount: (state, action) => {
+            state.adultCount = action.payload
+        },
+        setChildCount: (state, action) => {
+            state.childCount = action.payload
+        },
+        setBabyCount: (state, action) => {
+            state.babyCount = action.payload
         },
     },
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchCheckout.pending, (state) => {
-                state.status = "loading"
-            })
-            .addCase(fetchCheckout.fulfilled, (state, action) => {
-                state.status = "succeeded"
-                state.data = action.payload
-            })
-            .addCase(fetchCheckout.rejected, (state, action) => {
-                state.status = "failed"
-                state.error = action.error.message
-            })
-    },
-})
+});
+
+export const {
+    setSeatClass,
+    setAdultCount,
+    setChildCount,
+    setBabyCount,
+} = checkoutsSlice.actions
 
 export default checkoutsSlice.reducer

@@ -719,7 +719,6 @@ const CheckoutPage = () => {
                                             <p style={styles.fontBodyBold14} className="my-0">Informasi:</p>
                                             <p style={styles.fontBodyRegular14} className="my-0">Bagasi {selectedFlight.Airline?.baggage} kg</p>
                                             <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin {selectedFlight.Airline?.cabinBaggage} kg</p>
-                                            <p style={styles.fontBodyRegular14} className="my-0">{selectedFlight.Airline?.entertainment ? "In-Flight Entertainment" : "No In-Flight Entertainment"}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -774,11 +773,11 @@ const CheckoutPage = () => {
                                 <div className="border-bottom py-2">
                                     <p style={styles.fontBodyBold14} className="my-0">Rincian Harga</p>
                                     <div className="d-flex">
-                                        <p style={styles.fontBodyRegular14} className="me-auto my-0">2 Dewasa</p>
+                                        <p style={styles.fontBodyRegular14} className="me-auto my-0">2 Adults</p>
                                         <p style={styles.fontBodyRegular14} className="my-0">IDR 9.550.000</p>
                                     </div>
                                     <div className="d-flex">
-                                        <p style={styles.fontBodyRegular14} className="me-auto my-0">1 Bayi</p>
+                                        <p style={styles.fontBodyRegular14} className="me-auto my-0">1 Baby</p>
                                         <p style={styles.fontBodyRegular14} className="my-0">IDR 0</p>
                                     </div>
                                 </div>

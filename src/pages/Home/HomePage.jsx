@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { getAllCity, fetchFlights, getFlights } from '../../redux/actions/home';
+import { setSeatClass, setAdultCount, setChildCount, setBabyCount, fetchCheckout } from '../../redux/reducers/checkout';
 
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,6 +19,7 @@ import * as icons from "../../assets/icons"
 const HomePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { seatClass, adultCount, childCount, babyCount } = useSelector((state) => state.checkout);
 
   const styles = {
     fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
@@ -70,11 +72,8 @@ const HomePage = () => {
   const [fromModalOpen, setFromModalOpen] = useState(false);
   const [toModalOpen, setToModalOpen] = useState(false);
   const [seatClassModalOpen, setSeatClassModalOpen] = useState(false);
-  const [tempSeatClass, setTempSeatClass] = useState('');
   const [counterModalOpen, setCounterModalOpen] = useState(false);
-  const [adultCount, setAdultCount] = useState(0);
-  const [childCount, setChildCount] = useState(0);
-  const [babyCount, setBabyCount] = useState(0);
+  const [tempSeatClass, setTempSeatClass] = useState(seatClass);
   const [tempAdultCount, setTempAdultCount] = useState(adultCount);
   const [tempChildCount, setTempChildCount] = useState(childCount);
   const [tempBabyCount, setTempBabyCount] = useState(babyCount);
@@ -88,8 +87,7 @@ const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCities, setFilteredCities] = useState([]);
   const [toggleSwitch, setToggleSwitch] = useState(false);
-  const [seatClass, setSeatClass] = useState('');
-  const [total_passengers, setTotalPassenger] = useState(0);
+  const [total_passengers, setTotalPassenger] = useState(adultCount + childCount + babyCount);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [filter, setFilter] = useState("harga_termurah");
@@ -130,6 +128,7 @@ const HomePage = () => {
     fetchCities();
   }, []);
 
+
   const handleCitySelect = (city, type) => {
     if (type === 'from') {
       setSelectedFrom(city);
@@ -157,9 +156,18 @@ const HomePage = () => {
   };
 
   const handleSeatClassSave = () => {
-    setSeatClass(tempSeatClass);
+    dispatch(setSeatClass(tempSeatClass));
     setSeatClassModalOpen(false);
   };
+
+  const handleCounterSave = () => {
+    dispatch(setAdultCount(tempAdultCount));
+    dispatch(setChildCount(tempChildCount));
+    dispatch(setBabyCount(tempBabyCount));
+    setTotalPassenger(tempAdultCount + tempChildCount + tempBabyCount);
+    setCounterModalOpen(false);
+  };
+
 
   const handleCounterInputClick = () => {
     setTempAdultCount(adultCount);
@@ -168,13 +176,6 @@ const HomePage = () => {
     setCounterModalOpen(true);
   };
 
-  const handleCounterSave = () => {
-    setAdultCount(tempAdultCount);
-    setChildCount(tempChildCount);
-    setBabyCount(tempBabyCount);
-    setTotalPassenger(tempAdultCount + tempChildCount + tempBabyCount);
-    setCounterModalOpen(false);
-  };
 
   const handleSwapLocations = () => {
     const tempLocation = selectedFrom;
@@ -205,21 +206,9 @@ const HomePage = () => {
         filter
       };
 
-      const actionPayload = {
-        from: searchParams.from,
-        to: searchParams.to,
-        departure_date: searchParams.departure_date,
-        return_date: searchParams.return_date,
-        adultCount: searchParams.adultCount,
-        childCount: searchParams.childCount,
-        babyCount: searchParams.babyCount,
-        total_passengers: searchParams.total_passengers,
-        seat_class: searchParams.seat_class,
-        filter: searchParams.filter
-      };
+      const actionResult = await dispatch(fetchCheckout());
 
-      const actionResult = await dispatch(fetchFlights(actionPayload));
-      console.log('Flight search successful!', actionResult);
+      console.log('Checkout successful!', actionResult);
 
       const queryString = new URLSearchParams({
         from: searchParams.from,
@@ -236,10 +225,11 @@ const HomePage = () => {
 
       navigate(`/search?${queryString}`);
     } catch (error) {
-      console.error('Flight search error:', error);
-      toast.error(error.message || 'Failed to search for flights.');
+      console.error('Checkout error:', error);
+      toast.error(error.message || 'Failed to checkout.');
     }
   };
+
 
 
   return (
