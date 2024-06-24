@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { getAllCity, fetchFlights, getFlights } from '../../redux/actions/home';
 import { setSeatClass, setAdultCount, setChildCount, setBabyCount, fetchCheckout } from '../../redux/reducers/checkout';
-
+import { setHomeData } from '../../redux/reducers/flight';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -205,6 +205,9 @@ const HomePage = () => {
         seat_class: seatClass,
         filter
       };
+
+      // Dispatch action to save homeData
+      dispatch(setHomeData(searchParams));
 
       const actionResult = await dispatch(fetchCheckout());
 
