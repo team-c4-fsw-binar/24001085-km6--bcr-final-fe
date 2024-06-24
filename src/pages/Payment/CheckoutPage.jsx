@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { postBooking } from "../../redux/actions/checkout";
 import { selectFlight } from "../../redux/reducers/flight";
+import { fetchCheckout } from "../../redux/reducers/checkout";
 import * as icons from "../../assets/icons";
 
 const CheckoutPage = () => {
@@ -12,6 +13,7 @@ const CheckoutPage = () => {
     const { user } = useSelector((state) => state.auth);
     const flights = useSelector((state) => state.flights.data);
     const selectedFlight = useSelector((state) => state.flights.selectedFlight);
+    const checkout = useSelector((state) => state.checkout);
 
     // const departureAirport = flights?.departureAirport_respon|| []
     // const arrivalAirport = flights?.arrivalAirport_respon || []
@@ -24,6 +26,11 @@ const CheckoutPage = () => {
     const [isExpired, setIsExpired] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [isReturn, setIsReturn] = useState(true);
+
+
+    useEffect(() => {
+        dispatch(fetchCheckout());
+    }, [dispatch]);
 
     // Update time every second
     useEffect(() => {
@@ -711,7 +718,7 @@ const CheckoutPage = () => {
                                 </div>
 
                                 <div className="border-bottom py-2">
-                                    <p style={styles.fontBodyBold14} className="my-0 ">{selectedFlight.Airline?.name} - {selectedFlight.class}</p>
+                                    <p style={styles.fontBodyBold14} className="my-0 ">{selectedFlight.Airline?.name} - {checkout.seatClass}</p>
                                     <p style={styles.fontBodyBold14} className=" mb-3">{selectedFlight.Airline?.code}</p>
                                     <div className="d-flex align-items-start">
                                         <div>
@@ -772,14 +779,36 @@ const CheckoutPage = () => {
 
                                 <div className="border-bottom py-2">
                                     <p style={styles.fontBodyBold14} className="my-0">Rincian Harga</p>
-                                    <div className="d-flex">
-                                        <p style={styles.fontBodyRegular14} className="me-auto my-0">2 Adults</p>
-                                        <p style={styles.fontBodyRegular14} className="my-0">IDR 9.550.000</p>
-                                    </div>
-                                    <div className="d-flex">
-                                        <p style={styles.fontBodyRegular14} className="me-auto my-0">1 Baby</p>
-                                        <p style={styles.fontBodyRegular14} className="my-0">IDR 0</p>
-                                    </div>
+                                    {checkout.adultCount > 0 && (
+                                        <div className="d-flex">
+                                            <p style={styles.fontBodyRegular14} className="me-auto my-0">
+                                                {checkout.adultCount} Adults
+                                            </p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">
+                                                IDR 9.550.000
+                                            </p>
+                                        </div>
+                                    )}
+                                    {checkout.childCount > 0 && (
+                                        <div className="d-flex">
+                                            <p style={styles.fontBodyRegular14} className="me-auto my-0">
+                                                {checkout.childCount} Childs
+                                            </p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">
+                                                IDR 9.550.000
+                                            </p>
+                                        </div>
+                                    )}
+                                    {checkout.babyCount > 0 && (
+                                        <div className="d-flex">
+                                            <p style={styles.fontBodyRegular14} className="me-auto my-0">
+                                                {checkout.babyCount} Baby
+                                            </p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">
+                                                IDR 0
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="d-flex pt-2">
