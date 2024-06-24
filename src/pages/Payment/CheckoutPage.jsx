@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { postBooking } from "../../redux/actions/checkout";
+import { selectFlight } from "../../redux/reducers/flight";
 import * as icons from "../../assets/icons";
 
 const CheckoutPage = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
     const flights = useSelector((state) => state.flights.data);
+    const selectedFlight = useSelector((state) => state.flights.selectedFlight);
 
+    // const departureAirport = flights?.departureAirport_respon|| []
+    // const arrivalAirport = flights?.arrivalAirport_respon || []
+    // const airline = flights?.Airline || []
 
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -674,34 +680,34 @@ const CheckoutPage = () => {
                                 <div className="border-bottom pb-2">
                                     <p style={styles.fontTitleBold18}>Detail Penerbangan</p>
                                     <div className="d-flex align-items-center">
-                                        <p style={styles.fontTitleBold16} className="my-0 me-auto">07:00</p>
+                                        <p style={styles.fontTitleBold16} className="my-0 me-auto">{selectedFlight.departureTime}</p>
                                         <p style={{ ...styles.fontBodyBold12, ...styles.textKeberangkatan }} className="my-0">Keberangkatan</p>
                                     </div>
-                                    <p style={styles.fontBodyRegular14} className="my-0">3 Maret 2023</p>
-                                    <p style={styles.fontBodyMedium14} className="me-auto my-0">Soekarno Hatta - Terminal 1A Domestik</p>
+                                    <p style={styles.fontBodyRegular14} className="my-0">{selectedFlight.departure_date}</p>
+                                    <p style={styles.fontBodyMedium14} className="me-auto my-0">{selectedFlight.departureAirport_respon.name} - Terminal {selectedFlight.departureAirport}</p>
                                 </div>
 
                                 <div className="border-bottom py-2">
-                                    <p style={styles.fontBodyBold14} className="my-0 ms-4">Jet Air - Economy</p>
-                                    <p style={styles.fontBodyBold14} className="ms-4 mb-3">JT - 203</p>
+                                    <p style={styles.fontBodyBold14} className="my-0 ">{selectedFlight.Airline.name} - {selectedFlight.class}</p>
+                                    <p style={styles.fontBodyBold14} className=" mb-3">{selectedFlight.Airline.code}</p>
                                     <div className="d-flex align-items-start">
-                                        <Image src={icons.informationIcon} alt="information" className="me-1" />
                                         <div>
+                                        <Image src={selectedFlight.Airline.imgUrl} alt="information" className="me-1" style={{width: '100px'}} />
                                             <p style={styles.fontBodyBold14} className="my-0">Informasi:</p>
-                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi 20 kg</p>
-                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin 7 kg</p>
-                                            <p style={styles.fontBodyRegular14} className="my-0">In-Flight Entertainment</p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi {selectedFlight.Airline.baggage} kg</p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin {selectedFlight.Airline.cabinBaggage} kg</p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">{selectedFlight.Airline.entertainment ? "In-Flight Entertainment" : "No In-Flight Entertainment"}</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="py-2">
                                     <div className="d-flex align-items-center">
-                                        <p style={styles.fontBodyBold14} className="my-0 me-auto">11:00</p>
+                                        <p style={styles.fontBodyBold14} className="my-0 me-auto">{selectedFlight.arrivalTime}</p>
                                         <p style={{ ...styles.fontBodyBold12, ...styles.textKedatangan }} className="my-0">Kedatangan</p>
                                     </div>
-                                    <p style={styles.fontBodyRegular14} className="my-0">3 Maret 2023</p>
-                                    <p style={styles.fontBodyMedium14} className="my-0">Melbourne International Airport</p>
+                                    <p style={styles.fontBodyRegular14} className="my-0">{selectedFlight.arrival_date}</p>
+                                    <p style={styles.fontBodyMedium14} className="my-0">{selectedFlight.arrivalAirport_respon.name}</p>
                                 </div>
 
                                 {isReturn && (

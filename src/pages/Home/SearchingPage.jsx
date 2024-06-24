@@ -22,6 +22,7 @@ import { BiSortAlt2 } from "react-icons/bi"
 import { FaArrowLeft } from "react-icons/fa"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchFlights } from "../../redux/actions/flights"
+import { selectFlight } from "../../redux/reducers/flight"
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 const useQuery = () => {
@@ -223,12 +224,19 @@ const SearchingPage = () => {
     return formattedDate
   }
 
-  const handleFlightSelect = (flight) => {
+  const handleSelectFlight = (flight) => {
+    // Dispatch the selectFlight action
+    dispatch(selectFlight(flight));
+    
+    // Create the flight parameters
     const flightParams = {
       departure_flight_id: flight.id,
     };
 
+    // Convert the parameters to a query string
     const searchParams = new URLSearchParams(flightParams);
+
+    // Navigate to the checkout page with the query string
     navigate(`/checkout?${searchParams.toString()}`);
   };
 
@@ -255,7 +263,7 @@ const SearchingPage = () => {
           </Col>
         </Row>
         <Row>
-          <Col className="d-flex justify-content-between px-5" style={{cursor: 'pointer'}}>
+          <Col className="d-flex justify-content-between px-5" style={{ cursor: 'pointer' }}>
             {[
               "SENIN",
               "SELASA",
@@ -313,7 +321,7 @@ const SearchingPage = () => {
         <Modal show={showMyModal} onHide={handleOnClose}>
           <Modal.Header closeButton></Modal.Header>
           <Modal.Body className="p-0">
-            <ListGroup className="m-0" style={{cursor: 'pointer'}}>
+            <ListGroup className="m-0" style={{ cursor: 'pointer' }}>
               {[
                 "Harga - Termurah",
                 "Durasi - Terpendek",
@@ -362,7 +370,7 @@ const SearchingPage = () => {
                 <Card>
                   <Card.Body>
                     <Card.Title>FLIGHT SELECTION</Card.Title>
-                    <ListGroup variant="flush" style={{cursor: 'pointer'}}>
+                    <ListGroup variant="flush" style={{ cursor: 'pointer' }}>
                       <ListGroup.Item>Departure</ListGroup.Item>
                       <ListGroup.Item>Return</ListGroup.Item>
                       <ListGroup.Item>
@@ -477,7 +485,7 @@ const SearchingPage = () => {
                                         <Button
                                           style={styles.customButton}
                                           className="custom-button button-pilih mt-2"
-                                          onClick={() => handleFlightSelect(flight)}
+                                          onClick={() => handleSelectFlight(flight)}
                                         >
                                           Pilih
                                         </Button>
@@ -651,6 +659,7 @@ const SearchingPage = () => {
                                         <Button
                                           style={styles.customButton}
                                           className="custom-button button-pilih mt-2"
+                                          onClick={() => handleSelectFlight(flight)}
                                         >
                                           Pilih
                                         </Button>

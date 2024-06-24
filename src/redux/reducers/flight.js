@@ -20,10 +20,14 @@ const flightsSlice = createSlice({
     data: [],
     status: "idle",
     error: null,
+    selectedFlight: null,
   },
   reducers: {
     setFlights: (state, action) => {
-      state.flights = action.payload;
+      state.data = action.payload;
+    },
+    selectFlight: (state, action) => {
+      state.selectedFlight = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -42,5 +46,5 @@ const flightsSlice = createSlice({
   },
 })
 
-export const { setFlights } = flightsSlice.actions;
+export const { setFlights, selectFlight } = flightsSlice.actions;
 export default flightsSlice.reducer
