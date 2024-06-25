@@ -2,7 +2,9 @@ import { toast } from 'react-toastify';
 import { setUser, setToken } from '../reducers/auth';
 
 export const postBooking = (bookingData, token) => {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
+        const { token } = getState().auth;
+
         const postData = {
             departure_flight_id: bookingData.departureFlightId,
             return_flight_id: bookingData.returnFlightId,
@@ -14,17 +16,22 @@ export const postBooking = (bookingData, token) => {
             babyCount: bookingData.babyCount
         };
 
+        console.log('Booking Data:', postData);
+        console.log('Token:', token);
+
         try {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/bookings`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(postData)
             });
 
             const responseData = await response.json();
+
+            console.log('Response Data:', responseData);
 
             if (response.ok) {
                 toast.success('Booking successful!');
@@ -37,15 +44,18 @@ export const postBooking = (bookingData, token) => {
                     setToken(responseData.token);
                 }
             } else {
+                console.error('Error Response:', responseData);
                 toast.error('Booking failed!');
                 dispatch({ type: 'POST_BOOKING_FAILURE', error: 'Booking failed' });
             }
         } catch (error) {
+            console.error('Fetch Error:', error);
             toast.error('Booking failed!');
             dispatch({ type: 'POST_BOOKING_FAILURE', error: error.message });
         }
     };
 };
+
 
 export const getFilteredSeats = async (flightId, seatClass) => {
     try {
@@ -70,10 +80,10 @@ export const getFilteredSeats = async (flightId, seatClass) => {
 
 export const findTicketsDetail =
     async (departure_flight_id,
-            return_flight_id,
-            seat_class,
-            adultCount,
-            childCount
+        return_flight_id,
+        seat_class,
+        adultCount,
+        childCount
     ) => {
         try {
             const response = await axios.post(

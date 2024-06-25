@@ -23,9 +23,9 @@ const checkoutsSlice = createSlice({
         departure_flight_id: null,
         return_flight_id: null,
         seats_id: [],
-        passengers:{
-            title: '', name: '', born_date: '', citizenship: '', identity_number: '', 
-            publisher_country: '', identity_expire_date: ''
+        passengers: {
+            title: 'Mr.', name: 'Taro', born_date: '2000-05-13', citizenship: 'Indonesia', identity_number: '123123',
+            publisher_country: 'Indonesia', identity_expire_date: '2030-01-01'
         },
         seatClass: '',
         adultCount: 0,
@@ -35,6 +35,15 @@ const checkoutsSlice = createSlice({
     reducers: {
         setDepartureFlightId: (state, action) => {
             state.departure_flight_id = action.payload
+        },
+        setReturnFlightId: (state, action) => {
+            state.return_flight_id = action.payload
+        },
+        setSeatsId: (state, action) => {
+            state.seats_id = action.payload;
+        },
+        setPassengerDetails: (state, action) => {
+            state.passengers = { ...state.passengers, ...action.payload };
         },
         setSeatClass: (state, action) => {
             state.seatClass = action.payload
@@ -53,6 +62,9 @@ const checkoutsSlice = createSlice({
 
 export const {
     setDepartureFlightId,
+    setReturnFlightId,
+    setSeatsId,
+    setPassengerDetails,
     setSeatClass,
     setAdultCount,
     setChildCount,

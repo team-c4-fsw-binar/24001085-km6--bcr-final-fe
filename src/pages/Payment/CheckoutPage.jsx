@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { postBooking, getFilteredSeats } from "../../redux/actions/checkout";
 import { selectFlight } from "../../redux/reducers/flight";
 import { fetchCheckout } from "../../redux/reducers/checkout";
+import { setPassengerDetails, setSeatsId, setReturnFlightId } from "../../redux/reducers/checkout";
 import Seat from '../../components/seat/seats';
 import * as icons from "../../assets/icons";
 
@@ -28,11 +29,38 @@ const CheckoutPage = () => {
     const [isExpired, setIsExpired] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [isReturn, setIsReturn] = useState(true);
-
+    const [passengerDetails, setPassengerDetailsState] = useState({
+        title: "",
+        name: "",
+        born_date: "",
+        citizenship: "",
+        identity_number: "",
+        publisher_country: "",
+        identity_expire_date: "",
+    });
 
     useEffect(() => {
         dispatch(fetchCheckout());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (checkout) {
+            setPassengerDetailsState({
+                title: checkout.passengers.title || "",
+                name: checkout.passengers.name || "",
+                born_date: checkout.passengers.born_date || "",
+                citizenship: checkout.passengers.citizenship || "",
+                identity_number: checkout.passengers.identity_number || "",
+                publisher_country: checkout.passengers.publisher_country || "",
+                identity_expire_date: checkout.passengers.identity_expire_date || "",
+            });
+        }
+    }, [checkout]);
+
+
+    // useEffect(() => {
+    //     dispatch(fetchCheckout());
+    // }, [dispatch]);
 
     // Update time every second
     useEffect(() => {
@@ -99,19 +127,31 @@ const CheckoutPage = () => {
         }
     }, [user]);
 
-    const [passengerDetails, setPassengerDetails] = useState({
-        title: "",
-        name: "",
-        born_date: "",
-        citizenship: "",
-        identity_number: "",
-        publisher_country: "",
-        valid_until: "",
-    });
+    // const [passengerDetails, setPassengerDetails] = useState({
+    //     title: "",
+    //     name: "",
+    //     born_date: "",
+    //     citizenship: "",
+    //     identity_number: "",
+    //     publisher_country: "",
+    //     identity_expire_date: "",
+    // });
 
     const handlePassengerChange = (e) => {
         const { name, value } = e.target;
-        setPassengerDetails({ ...passengerDetails, [name]: value });
+        setPassengerDetailsState({ ...passengerDetails, [name]: value });
+        dispatch(setPassengerDetails({ [name]: value }));
+    };
+
+    const handleSeatSelect = (seat, isDeparture) => {
+        const selectedSeats = isDeparture ? selectedDepartureSeats : selectedReturnSeats;
+        const updatedSelectedSeats = [...selectedSeats, seat];
+        if (isDeparture) {
+            setSelectedDepartureSeats(updatedSelectedSeats);
+        } else {
+            setSelectedReturnSeats(updatedSelectedSeats);
+        }
+        dispatch(setSeatsId(updatedSelectedSeats.map(s => s.id)));
     };
 
     const seatClass = useSelector((state) => state.checkout.seatClass);
@@ -137,13 +177,16 @@ const CheckoutPage = () => {
         fetchSeats();
     }, [checkout.departure_flight_id, seatClass, checkout.return_flight_id]);
 
-    const handleSeatSelect = (seat, isDeparture) => {
-        if (isDeparture) {
-            setSelectedDepartureSeats(prev => [...prev, seat]);
-        } else {
-            setSelectedReturnSeats(prev => [...prev, seat]);
-        }
-    };
+    // const handleSeatSelect = (seat, isDeparture) => {
+    //     if (isDeparture) {
+    //         setSelectedDepartureSeats(prev => [...prev, seat]);
+    //         dispatch(setSeatsId([...selectedDepartureSeats, seat].map(s => s.id)));
+    //     } else {
+    //         setSelectedReturnSeats(prev => [...prev, seat]);
+    //         dispatch(setSeatsId([...selectedReturnSeats, seat].map(s => s.id)));
+    //     }
+    // };
+    
 
     const renderSeats = (seats = [], selectedSeats, isDeparture) => {
         const rows = 12;
@@ -211,11 +254,17 @@ const CheckoutPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await dispatch(postBooking({
-                passengerDetails,
-                departureSeats: selectedDepartureSeats,
-                returnSeats: selectedReturnSeats,
-            }));
+            const bookingData = {
+                departureFlightId: checkout.departure_flight_id,
+                returnFlightId: checkout.return_flight_id,
+                seatsId: checkout.seats_id,
+                seatClass: checkout.seatClass,
+                passengerDetails: passengerDetails,
+                adultCount: checkout.adultCount,
+                childCount: checkout.childCount,
+                babyCount: checkout.babyCount,
+            };
+            await dispatch(postBooking(bookingData));
             simpan();
         } catch (err) {
             setError("Data gagal disimpan!");
@@ -558,8 +607,8 @@ const CheckoutPage = () => {
                                             style={styles.formControl}
                                             type="date"
                                             readOnly={isSaved}
-                                            value={passengerDetails.valid_until}
-                                            name="valid_until"
+                                            value={passengerDetails.identity_expire_date}
+                                            name="identity_expire_date"
                                             onChange={handlePassengerChange}
                                         />
                                     </Form.Group>

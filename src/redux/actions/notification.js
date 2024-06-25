@@ -6,10 +6,6 @@ export const getNotification = () =>
     async (dispatch, getState) => {
         const { token } = getState().auth;
 
-        if (!token) {
-            return; // No token, so return early
-        }
-
         const config = {
             method: "get",
             url: `${import.meta.env.VITE_BACKEND_API}/api/notifications`,
@@ -31,10 +27,6 @@ export const getNotification = () =>
 export const putNotification = (id, formData) => 
     async (dispatch, getState) => {
         const { token } = getState().auth;
-
-        if (!token) {
-            return; // No token, so return early
-        }
 
         const config = {
             method: 'put',
