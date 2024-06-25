@@ -6,7 +6,6 @@ export const postBooking = (bookingData, token) => {
         const postData = {
             departure_flight_id: bookingData.departureFlightId,
             return_flight_id: bookingData.returnFlightId,
-            price_amount: bookingData.priceAmount,
             seats_id: bookingData.seatsId,
             seat_class: bookingData.seatClass,
             passengers: bookingData.passengerDetails,

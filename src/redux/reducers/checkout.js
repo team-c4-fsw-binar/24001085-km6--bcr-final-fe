@@ -22,7 +22,6 @@ const checkoutsSlice = createSlice({
     initialState: {
         departure_flight_id: null,
         return_flight_id: null,
-        price_amount: null,
         seats_id: [],
         passengers:{
             title: '', name: '', born_date: '', citizenship: '', identity_number: '', 
