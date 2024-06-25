@@ -139,9 +139,13 @@ const CheckoutPage = () => {
 
     const handlePassengerChange = (e) => {
         const { name, value } = e.target;
-        setPassengerDetailsState({ ...passengerDetails, [name]: value });
+        setPassengerDetailsState((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
         dispatch(setPassengerDetails({ [name]: value }));
     };
+    
 
     const handleSeatSelect = (seat, isDeparture) => {
         const selectedSeats = isDeparture ? selectedDepartureSeats : selectedReturnSeats;
@@ -591,14 +595,19 @@ const CheckoutPage = () => {
 
                                     <Form.Group controlId="formPublisherCountryPenumpang1" className="mb-3">
                                         <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Negara Penerbit</Form.Label>
-                                        <Form.Control
+                                        <Form.Select
                                             style={styles.formControl}
-                                            type="text"
                                             readOnly={isSaved}
                                             value={passengerDetails.publisher_country}
                                             name="publisher_country"
                                             onChange={handlePassengerChange}
-                                        />
+                                        >
+                                            <option value="Indonesia">Indonesia</option>
+                                            <option value="Amerika Serikat">Amerika Serikat</option>
+                                            <option value="China">China</option>
+                                            <option value="Jepang">Jepang</option>
+                                            <option value="Thailand">Thailand</option>
+                                        </Form.Select>
                                     </Form.Group>
 
                                     <Form.Group controlId="formValidUntilPenumpang1" className="mb-3">

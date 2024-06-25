@@ -24,8 +24,8 @@ const checkoutsSlice = createSlice({
         return_flight_id: null,
         seats_id: [],
         passengers: {
-            title: 'Mr.', name: 'Taro', born_date: '2000-05-13', citizenship: 'Indonesia', identity_number: '123123',
-            publisher_country: 'Indonesia', identity_expire_date: '2030-01-01'
+            title: '', name: '', born_date: '', citizenship: '', identity_number: '',
+            publisher_country: '', identity_expire_date: ''
         },
         seatClass: '',
         adultCount: 0,
