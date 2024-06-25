@@ -28,9 +28,9 @@ const checkoutsSlice = createSlice({
             publisher_country: '', identity_expire_date: ''
         },
         seatClass: '',
-        adultCount: null,
-        childCount: null,
-        babyCount: null,
+        adultCount: 0,
+        childCount: 0,
+        babyCount: 0,
     },
     reducers: {
         setDepartureFlightId: (state, action) => {
