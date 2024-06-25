@@ -13,6 +13,7 @@ const CheckoutPage = () => {
     const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
     const flights = useSelector((state) => state.flights.data);
+    const homeData = useSelector((state) => state.flights.homeData);
     const selectedFlight = useSelector((state) => state.flights.selectedFlight);
     const checkout = useSelector((state) => state.checkout);
 
@@ -168,6 +169,39 @@ const CheckoutPage = () => {
             </div>
         ));
     };
+
+    // Format harga dengan pemisah ribuan (toLocaleString)
+    const formatCurrency = (amount) => {
+        return amount.toLocaleString('id-ID');
+    };
+
+    // Perhitungan harga berdasarkan seatClass dari homeData
+    const calculatePrice = () => {
+        let seatPrice = 0;
+
+        switch (homeData.seat_class) {
+            case "economy":
+                seatPrice = 1000000;
+                break;
+            case "premium":
+                seatPrice = 1500000;
+                break;
+            case "business":
+                seatPrice = 2000000;
+                break;
+            case "first_class":
+                seatPrice = 3000000;
+                break;
+            default:
+                seatPrice = 0;
+        }
+
+        const adultPrice = seatPrice * checkout.adultCount;
+        const childPrice = seatPrice * checkout.childCount;
+        return adultPrice + childPrice;
+    };
+
+    const totalPrice = calculatePrice();
 
     const simpan = () => {
         setIsSaved(true);
@@ -684,23 +718,23 @@ const CheckoutPage = () => {
 
                                 <div className="border-bottom py-2">
                                     <p style={styles.fontBodyBold14} className="my-0">Rincian Harga</p>
-                                    {checkout.adultCount > 0 && (
+                                    {homeData.adultCount > 0 && (
                                         <div className="d-flex">
                                             <p style={styles.fontBodyRegular14} className="me-auto my-0">
-                                                {checkout.adultCount} Adult
+                                                {homeData.adultCount} Adult
                                             </p>
                                             <p style={styles.fontBodyRegular14} className="my-0">
-                                                IDR 9.550.000
+                                                IDR {formatCurrency(calculatePrice() / (checkout.adultCount + checkout.childCount) * homeData.adultCount)}
                                             </p>
                                         </div>
                                     )}
-                                    {checkout.childCount > 0 && (
+                                    {homeData.childCount > 0 && (
                                         <div className="d-flex">
                                             <p style={styles.fontBodyRegular14} className="me-auto my-0">
-                                                {checkout.childCount} Child
+                                                {homeData.childCount} Child
                                             </p>
                                             <p style={styles.fontBodyRegular14} className="my-0">
-                                                IDR 9.550.000
+                                                IDR {formatCurrency(calculatePrice() / (checkout.adultCount + checkout.childCount) * homeData.childCount)}
                                             </p>
                                         </div>
                                     )}
@@ -718,7 +752,7 @@ const CheckoutPage = () => {
 
                                 <div className="d-flex pt-2">
                                     <p style={styles.fontTitleBold16} className="me-auto">Total</p>
-                                    <h4 style={{ ...styles.fontTitleBold18, ...styles.textTotal }} className="font-title-bold-18 text-total">IDR 9.850.000</h4>
+                                    <h4 style={{ ...styles.fontTitleBold18, ...styles.textTotal }} className="font-title-bold-18 text-total">IDR {formatCurrency(totalPrice)}</h4>
                                 </div>
                             </Card>
                             {isSaved && (
