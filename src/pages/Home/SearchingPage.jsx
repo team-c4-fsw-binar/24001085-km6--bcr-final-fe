@@ -22,8 +22,10 @@ import { BiSortAlt2 } from "react-icons/bi"
 import { FaArrowLeft } from "react-icons/fa"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchFlights } from "../../redux/actions/flights"
+import { findTicketsDetail } from "../../redux/actions/checkout"
 import { selectFlight } from "../../redux/reducers/flight"
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { setDepartureFlightId } from "../../redux/reducers/checkout";
 
 const useQuery = () => {
   const location = useLocation();
@@ -227,7 +229,10 @@ const SearchingPage = () => {
   const handleSelectFlight = (flight) => {
     // Dispatch the selectFlight action
     dispatch(selectFlight(flight));
-    
+
+    // Dispatch the setDepartureFlightId action
+    dispatch(setDepartureFlightId(flight.id));
+
     // Create the flight parameters
     const flightParams = {
       departure_flight_id: flight.id,

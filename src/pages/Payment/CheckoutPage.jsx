@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { postBooking } from "../../redux/actions/checkout";
+import { postBooking, getFilteredSeats } from "../../redux/actions/checkout";
 import { selectFlight } from "../../redux/reducers/flight";
 import { fetchCheckout } from "../../redux/reducers/checkout";
+import Seat from '../../components/seat/seats';
 import * as icons from "../../assets/icons";
 
 const CheckoutPage = () => {
@@ -112,83 +113,61 @@ const CheckoutPage = () => {
         setPassengerDetails({ ...passengerDetails, [name]: value });
     };
 
+    const seatClass = useSelector((state) => state.checkout.seatClass);
+    const [departureSeats, setDepartureSeats] = useState([]);
+    const [returnSeats, setReturnSeats] = useState([]);
     const [selectedDepartureSeats, setSelectedDepartureSeats] = useState([]);
     const [selectedReturnSeats, setSelectedReturnSeats] = useState([]);
 
-    // Departure
-    const [departureSeats, setDepartureSeats] = useState(
-        Array.from({ length: 12 }, (_, rowIndex) =>
-            Array.from({ length: 6 }, (_, colIndex) => ({
-                row: String.fromCharCode(65 + colIndex), // Convert index to letter (A-F)
-                col: rowIndex + 1,
-                reserved: Math.random() < 0.3, // Randomly reserve some seats for demo
-                selected: false,
-            }))
-        )
-    );
+    useEffect(() => {
+        const fetchSeats = async () => {
+            try {
+                const departureSeatsData = await getFilteredSeats(checkout.departure_flight_id, seatClass);
+                setDepartureSeats(departureSeatsData.data || []);
+                if (checkout.return_flight_id) {
+                    const returnSeatsData = await getFilteredSeats(checkout.return_flight_id, seatClass);
+                    setReturnSeats(returnSeatsData.data || []);
+                }
+            } catch (error) {
+                console.error("Failed to fetch seats data:", error);
+            }
+        };
 
-    const handleDepartureSeatClick = (colIndex, rowIndex) => {
-        setDepartureSeats((prevSeats) => {
-            const updatedSeats = prevSeats.map((row, rIndex) =>
-                row.map((seat, cIndex) =>
-                    rIndex === rowIndex && cIndex === colIndex
-                        ? { ...seat, selected: !seat.selected }
-                        : seat
-                )
-            );
+        fetchSeats();
+    }, [checkout.departure_flight_id, seatClass, checkout.return_flight_id]);
 
-            // Retrieve the specific seat after updating the selection
-            const seat = updatedSeats[rowIndex][colIndex];
-            const seatId = `${String.fromCharCode(65 + colIndex)}${rowIndex + 1}`;
-
-            setSelectedDepartureSeats((prevSelected) =>
-                seat.selected
-                    ? [...prevSelected, seatId]
-                    : prevSelected.filter((id) => id !== seatId)
-            );
-
-            return updatedSeats;
-        });
+    const handleSeatSelect = (seat, isDeparture) => {
+        if (isDeparture) {
+            setSelectedDepartureSeats(prev => [...prev, seat]);
+        } else {
+            setSelectedReturnSeats(prev => [...prev, seat]);
+        }
     };
 
+    const renderSeats = (seats = [], selectedSeats, isDeparture) => {
+        const rows = 12;
+        const columns = 6;
+        const seatGrid = Array.from({ length: rows }, () => Array(columns).fill(null));
 
-
-    // Return
-    const [returnSeats, setReturnSeats] = useState(
-        Array.from({ length: 12 }, (_, rowIndex) =>
-            Array.from({ length: 6 }, (_, colIndex) => ({
-                row: String.fromCharCode(65 + colIndex), // Convert index to letter (A-F)
-                col: rowIndex + 1,
-                reserved: Math.random() < 0.5, // Different probability for reservation
-                selected: false,
-            }))
-        )
-    );
-
-    const handleReturnSeatClick = (colIndex, rowIndex) => {
-        setReturnSeats((prevSeats) => {
-            const updatedSeats = prevSeats.map((row, rIndex) =>
-                row.map((seat, cIndex) =>
-                    rIndex === rowIndex && cIndex === colIndex
-                        ? { ...seat, selected: !seat.selected }
-                        : seat
-                )
-            );
-
-            // Retrieve the specific seat after updating the selection
-            const seat = updatedSeats[rowIndex][colIndex];
-            const seatId = `${String.fromCharCode(65 + colIndex)}${rowIndex + 1}`;
-
-            setSelectedReturnSeats((prevSelected) =>
-                seat.selected
-                    ? [...prevSelected, seatId]
-                    : prevSelected.filter((id) => id !== seatId)
-            );
-
-            return updatedSeats;
+        seats.forEach(seat => {
+            const row = parseInt(seat.seat_no.slice(1)) - 1;
+            const col = seat.seat_no.charCodeAt(0) - 'A'.charCodeAt(0);
+            seatGrid[row][col] = seat;
         });
-    };
 
+        return seatGrid.map((row, rowIndex) => (
+            <div className="seat-row" key={rowIndex} style={styles.seatRow}>
+                {row.map((seat, colIndex) => (
+                    <Seat
+                        key={colIndex}
+                        seat={seat || { booked: true, seat_no: '' }}
+                        onSeatSelect={(seat) => handleSeatSelect(seat, isDeparture)}
+                        isSelected={selectedSeats.some(s => s.seat_no === seat?.seat_no)}
+                    />
+                ))}
+            </div>
+        ));
+    };
 
     const simpan = () => {
         setIsSaved(true);
@@ -287,29 +266,6 @@ const CheckoutPage = () => {
             display: 'flex',
             gap: '5px',
         },
-        seat: {
-            width: '35px',
-            height: '35px',
-            fontSize: '16px',
-            fontWeight: 500,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: 'none',
-            backgroundColor: '#73CA5C',
-            color: '#fff',
-            overflow: 'hidden',
-        },
-        seatReserved: {
-            backgroundColor: 'grey',
-            color: '#fff',
-            border: 'none',
-        },
-        seatSelected: {
-            backgroundColor: '#7126B5',
-            color: '#fff',
-            border: 'none',
-        },
 
         // Button Simpan
         btnSimpan: {
@@ -341,18 +297,19 @@ const CheckoutPage = () => {
             backgroundColor: '#73CA5C',
             color: '#FFFFFF',
         },
-        aisle: {
-            width: '20px',
-            height: '30px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#8A8A8A',
-        },
+        // aisle: {
+        //     width: '20px',
+        //     height: '30px',
+        //     display: 'flex',
+        //     alignItems: 'center',
+        //     justifyContent: 'center',
+        //     color: '#8A8A8A',
+        // },
         headerRow: {
             display: 'flex',
             justifyContent: 'center',
             marginBottom: '8px',
+            gap: '40px',
         },
         headerCell: {
             margin: '2px',
@@ -575,119 +532,67 @@ const CheckoutPage = () => {
                                 </Form>
                             </Card>
                             <Card className="p-4 mb-4 mx-3 border">
-                                <h4 style={styles.fontHeadingBold20} className="mb-3">
-                                    Pilih Kursi - Departure
-                                </h4>
+                                <h4 style={styles.fontHeadingBold20} className="mb-3">Pilih Kursi - Departure</h4>
                                 {!isSaved && (
-                                    <p style={{ ...styles.cardSeat, ...styles.fontBodyMedium14 }} className="mb-3 text-center">
-                                        {checkout.seatClass} - 64 Seats Available
+                                    <p className="mb-3 text-center"
+                                        style={{ ...styles.cardSeat, ...styles.fontBodyMedium14 }}>
+                                        {seatClass} - {departureSeats.length} Seats Available
                                     </p>
                                 )}
                                 {isSaved && (
-                                    <p style={{ ...styles.cardSeatChosen, ...styles.fontBodyMedium14 }}
-                                        className="mb-3 d-flex justify-align-content-between align-items-center">
+                                    <p className="mb-3 d-flex justify-content-between align-items-center"
+                                        style={{ ...styles.cardSeatChosen, ...styles.fontBodyMedium14 }}>
                                         <span className="flex-grow-1 text-start position-relative">
-                                            {checkout.seatClass} - 2 Seats Chosen
+                                            {seatClass} - {selectedDepartureSeats.length} Seats Chosen
                                         </span>
                                         <Image src={icons.checkIcon} alt="checklist" className="ms-2" />
                                     </p>
                                 )}
                                 <div style={styles.seatSelection}>
-                                    <div style={styles.headerRow}>
-                                        <div style={styles.headerCell}>A</div>
-                                        <div style={styles.headerCell}>B</div>
-                                        <div style={styles.headerCell}>C</div>
-                                        <div style={styles.aisle}></div> {/* Aisle space */}
-                                        <div style={styles.headerCell}>D</div>
-                                        <div style={styles.headerCell}>E</div>
-                                        <div style={styles.headerCell}>F</div>
+                                    <div className="headerRow" style={styles.headerRow}>
+                                        <div className="headerCell">A</div>
+                                        <div className="headerCell">B</div>
+                                        <div className="headerCell">C</div>
+                                        <div className="headerCell">D</div>
+                                        <div className="headerCell">E</div>
+                                        <div className="headerCell">F</div>
                                     </div>
-                                    {departureSeats.map((row, rowIndex) => (
-                                        <div key={rowIndex} style={styles.seatRow}>
-                                            {row.map((seat, colIndex) => (
-                                                <React.Fragment key={colIndex}>
-                                                    {colIndex === 3 && (
-                                                        <div style={styles.aisle}>
-                                                            {rowIndex + 1}
-                                                        </div>
-                                                    )} {/* Aisle Separator with Row Number */}
-                                                    <Button
-                                                        key={colIndex}
-                                                        style={{
-                                                            ...styles.seat,
-                                                            ...(seat.reserved ? styles.seatReserved : {}),
-                                                            ...(seat.selected ? styles.seatSelected : {}),
-                                                        }}
-                                                        onClick={() => handleDepartureSeatClick(colIndex, rowIndex)}
-                                                        disabled={seat.reserved || isSaved}
-                                                        variant="success"
-                                                    >
-                                                        {seat.row}{seat.col}
-                                                    </Button>
-                                                </React.Fragment>
-                                            ))}
-                                        </div>
-                                    ))}
+                                    {renderSeats(departureSeats, selectedDepartureSeats, true)}
                                 </div>
                             </Card>
-                            {isReturn && (
+                            {checkout.return_flight_id && (
                                 <Card className="p-4 mb-4 mx-3 border">
-                                    <h4 style={styles.fontHeadingBold20} className="mb-3">
-                                        Pilih Kursi - Return
-                                    </h4>
+                                    <h4 style={styles.fontHeadingBold20} className="mb-3">Pilih Kursi - Return</h4>
                                     {!isSaved && (
-                                        <p style={{ ...styles.cardSeat, ...styles.fontBodyMedium14 }} className="mb-3 text-center">
-                                            {checkout.seatClass} - 64 Seats Available
+                                        <p className="mb-3 text-center"
+                                            style={{ ...styles.cardSeat, ...styles.fontBodyMedium14 }}>
+                                            {seatClass} - {departureSeats.length} Seats Available
                                         </p>
                                     )}
                                     {isSaved && (
-                                        <p style={{ ...styles.cardSeatChosen, ...styles.fontBodyMedium14 }}
-                                            className="mb-3 d-flex justify-align-content-between align-items-center">
+                                        <p className="mb-3 d-flex justify-content-between align-items-center"
+                                            style={{ ...styles.cardSeatChosen, ...styles.fontBodyMedium14 }}>
                                             <span className="flex-grow-1 text-start position-relative">
-                                                {checkout.seatClass} - 2 Seats Chosen
+                                                {seatClass} - {selectedDepartureSeats.length} Seats Chosen
                                             </span>
                                             <Image src={icons.checkIcon} alt="checklist" className="ms-2" />
                                         </p>
                                     )}
                                     <div style={styles.seatSelection}>
-                                        <div style={styles.headerRow}>
-                                            <div style={styles.headerCell}>A</div>
-                                            <div style={styles.headerCell}>B</div>
-                                            <div style={styles.headerCell}>C</div>
-                                            <div style={styles.aisle}></div> {/* Aisle space */}
-                                            <div style={styles.headerCell}>D</div>
-                                            <div style={styles.headerCell}>E</div>
-                                            <div style={styles.headerCell}>F</div>
+                                        <div className="headerRow" style={styles.headerRow}>
+                                            <div className="headerCell">A</div>
+                                            <div className="headerCell">B</div>
+                                            <div className="headerCell">C</div>
+                                            <div className="aisle"></div> {/* Aisle space */}
+                                            <div className="headerCell">D</div>
+                                            <div className="headerCell">E</div>
+                                            <div className="headerCell">F</div>
                                         </div>
-                                        {returnSeats.map((row, rowIndex) => (
-                                            <div key={rowIndex} style={styles.seatRow}>
-                                                {row.map((seat, colIndex) => (
-                                                    <React.Fragment key={colIndex}>
-                                                        {colIndex === 3 && (
-                                                            <div style={styles.aisle}>
-                                                                {rowIndex + 1}
-                                                            </div>
-                                                        )} {/* Aisle Separator with Row Number */}
-                                                        <Button
-                                                            key={colIndex}
-                                                            style={{
-                                                                ...styles.seat,
-                                                                ...(seat.reserved ? styles.seatReserved : {}),
-                                                                ...(seat.selected ? styles.seatSelected : {}),
-                                                            }}
-                                                            onClick={() => handleReturnSeatClick(colIndex, rowIndex)}
-                                                            disabled={seat.reserved || isSaved}
-                                                            variant="success"
-                                                        >
-                                                            {seat.row}{seat.col}
-                                                        </Button>
-                                                    </React.Fragment>
-                                                ))}
-                                            </div>
-                                        ))}
+                                        {renderSeats(returnSeats, selectedReturnSeats, false)}
                                     </div>
                                 </Card>
                             )}
+
                             <div className="text-center w-100">
                                 <Button onClick={handleSubmit} disabled={isSaved ? true : false}
                                     style={{

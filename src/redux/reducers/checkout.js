@@ -34,6 +34,9 @@ const checkoutsSlice = createSlice({
         babyCount: null,
     },
     reducers: {
+        setDepartureFlightId: (state, action) => {
+            state.departure_flight_id = action.payload
+        },
         setSeatClass: (state, action) => {
             state.seatClass = action.payload
         },
@@ -50,6 +53,7 @@ const checkoutsSlice = createSlice({
 });
 
 export const {
+    setDepartureFlightId,
     setSeatClass,
     setAdultCount,
     setChildCount,

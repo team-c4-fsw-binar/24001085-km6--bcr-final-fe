@@ -68,3 +68,33 @@ export const getFilteredSeats = async (flightId, seatClass) => {
         throw error;
     }
 };
+
+export const findTicketsDetail =
+    async (departure_flight_id,
+            return_flight_id,
+            seat_class,
+            adultCount,
+            childCount
+    ) => {
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_API}}/api/findTickets/detail`,
+                {
+                    departure_flight_id,
+                    return_flight_id,
+                    seat_class,
+                    adultCount,
+                    childCount,
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
+            return response.data.data
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message)
+            return rejectWithValue(error.response?.data?.message || error.message)
+        }
+    }
