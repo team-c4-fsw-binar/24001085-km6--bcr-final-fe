@@ -228,6 +228,7 @@ const CheckoutPage = () => {
                             seat={seat}
                             onSeatSelect={(seat) => handleSeatSelect(seat, isDeparture)}
                             isSelected={selectedSeats.some(s => s.seat_no === seat?.seat_no)}
+                            isSaved={isSaved}
                         />
                     ) : null
                 ))}

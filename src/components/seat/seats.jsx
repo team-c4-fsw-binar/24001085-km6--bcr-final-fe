@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Seat = ({ seat, onSeatSelect, isSelected }) => {
+const Seat = ({ seat, onSeatSelect, isSelected, isSaved }) => {
     const handleClick = () => {
-        if (!seat.booked) {
+        if (!seat.booked && !isSaved) {
             onSeatSelect(seat);
         }
     };
@@ -18,6 +18,7 @@ const Seat = ({ seat, onSeatSelect, isSelected }) => {
                 ...styles.seat,
                 ...(seat.booked ? styles.seatReserved : {}),
                 ...(isSelected ? styles.seatSelected : {}),
+                ...(isSaved ? styles.seatDisabled : {}),
             }}
             onClick={handleClick}
         >
@@ -53,6 +54,9 @@ const styles = {
         backgroundColor: '#7126B5',
         color: '#fff',
         border: 'none',
+    },
+    seatDisabled: {
+        cursor: 'not-allowed',
     },
 };
 
