@@ -98,6 +98,10 @@ const HomePage = () => {
     return date.toLocaleDateString('id-ID', options);
   };
 
+  const formatCurrency = (amount) => {
+    return amount.toLocaleString('id-ID');
+  };
+
 
   useEffect(() => {
     const fetchFlightsData = async () => {
@@ -187,8 +191,33 @@ const HomePage = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    if (!selectedFrom || !selectedTo || !startDate || !total_passengers || !seatClass) {
-      toast.error('Please fill in all the fields.');
+    if (!selectedFrom) {
+      toast.error('Please fill the "From" destination.');
+      return;
+    }
+
+    if (!selectedTo) {
+      toast.error('Please fill the "To" destination.');
+      return;
+    }
+
+    if (!startDate) {
+      toast.error('Please select a departure date.');
+      return;
+    }
+
+    if (toggleSwitch && !endDate) {
+      toast.error('Please select a return date.');
+      return;
+    }
+
+    if (!total_passengers) {
+      toast.error('Please select the number of passengers.');
+      return;
+    }
+
+    if (!seatClass) {
+      toast.error('Please select a seat class.');
       return;
     }
 
@@ -453,7 +482,7 @@ const HomePage = () => {
                           <p style={styles.fontBodyMedium10} className='mb-0'>
                             {formatDate(flight.departureTime)}
                           </p>
-                          <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className='fw-bold' style={styles.redTextOnCard}>IDR {flight.economyPrice}</span></p>
+                          <p style={styles.fontBodyMedium10} className=' mb-0'>Mulai dari <span className='fw-bold' style={styles.redTextOnCard}>IDR {formatCurrency(flight.economyPrice)}</span></p>
                         </Card.Text>
                       </Card.Body>
                     </Card>
@@ -477,7 +506,7 @@ const HomePage = () => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <ListGroup style={{ maxHeight: '200px', overflowY: 'auto', marginTop: '20px' }}>
+          <ListGroup className='pe-2' style={{ maxHeight: '200px', overflowY: 'auto', marginTop: '20px' }}>
             {filteredCities.map((city) => (
               <ListGroup.Item
                 key={city.id}
@@ -503,7 +532,7 @@ const HomePage = () => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <ListGroup className='px-2' style={{ maxHeight: '200px', overflowY: 'auto', marginTop: '20px' }}>
+          <ListGroup className='pe-2' style={{ maxHeight: '200px', overflowY: 'auto', marginTop: '20px' }}>
             {filteredCities.map((city) => (
               <ListGroup.Item
                 key={city.id}
@@ -523,16 +552,16 @@ const HomePage = () => {
         <Modal.Header closeButton />
         <Modal.Body>
           <ListGroup>
-            <ListGroup.Item action active={tempSeatClass === "economy"} onClick={() => handleSeatClassSelect("economy")} readonly>
+            <ListGroup.Item action active={tempSeatClass === "economy"} onClick={() => handleSeatClassSelect("economy")} readOnly>
               <div className='d-flex justify-content-between'> Economy {tempSeatClass === "economy" && <img src={icons.checkIcon} alt="Check" />}</div>
             </ListGroup.Item>
-            <ListGroup.Item action active={tempSeatClass === "premium"} onClick={() => handleSeatClassSelect("premium")} readonly>
+            <ListGroup.Item action active={tempSeatClass === "premium"} onClick={() => handleSeatClassSelect("premium")} readOnly>
               <div className='d-flex justify-content-between'> Premium Economy {tempSeatClass === "premium" && <img src={icons.checkIcon} alt="Check" />}</div>
             </ListGroup.Item>
-            <ListGroup.Item action active={tempSeatClass === "business"} onClick={() => handleSeatClassSelect("business")} readonly>
+            <ListGroup.Item action active={tempSeatClass === "business"} onClick={() => handleSeatClassSelect("business")} readOnly>
               <div className='d-flex justify-content-between'>Business {tempSeatClass === "business" && <img src={icons.checkIcon} alt="Check" />}</div>
             </ListGroup.Item>
-            <ListGroup.Item action active={tempSeatClass === "first_class"} onClick={() => handleSeatClassSelect("first_class")} readonly>
+            <ListGroup.Item action active={tempSeatClass === "first_class"} onClick={() => handleSeatClassSelect("first_class")} readOnly>
               <div className='d-flex justify-content-between'>First Class {tempSeatClass === "first_class" && <img src={icons.checkIcon} alt="Check" />}</div>
             </ListGroup.Item>
           </ListGroup>
@@ -556,7 +585,7 @@ const HomePage = () => {
                   <p style={styles.fontBodyRegular12} className="mb-0">(12 tahun ke atas)</p>
                 </div>
                 <div className="d-flex align-items-center">
-                  <Button className='btnPassengersCounter' onClick={() => setTempAdultCount(Math.max(tempAdultCount - 1, 0))}>-</Button>
+                  <Button className='btnPassengersCounter' onClick={() => setTempAdultCount(Math.max(tempAdultCount - 1, 1))}>-</Button>
                   <p style={styles.fontBodyRegular14} className="mx-3 mb-0">{tempAdultCount}</p>
                   <Button className='btnPassengersCounter' onClick={() => setTempAdultCount(tempAdultCount + 1)}>+</Button>
                 </div>
