@@ -86,14 +86,17 @@ const SearchingPage = () => {
   useEffect(() => {
     if (flightStatus === "idle") {
       dispatch(fetchFlights(searchParams));
-    }
-    else if (flightStatus === "loading") {
+    } else if (flightStatus === "loading") {
       setIsLoading(true);
-    }
-    else {
+    } else {
       setIsLoading(false);
+      if (flightStatus === "failed") {
+        setIsEmpty(true);
+      } else {
+        setIsEmpty(flights.departure_results?.results?.length === 0);
+      }
     }
-  }, [flightStatus, dispatch, searchParams]);
+  }, [flightStatus, dispatch, searchParams, flights]);
 
 
   const departureFlights = flights.departure_results?.results || []
@@ -108,25 +111,31 @@ const SearchingPage = () => {
     const formattedDate = format(date, "d MMMM yyyy", { locale: id })
 
     return formattedDate
-  }
+  };
 
-  const handleSelectFlight = (flight) => {
+  const handleSelectFlight = (flight, isReturnFlight) => {
     // Dispatch the selectFlight action
     dispatch(selectFlight(flight));
 
-    // Dispatch the setDepartureFlightId action
-    dispatch(setDepartureFlightId(flight.id));
+    // Dispatch the setDepartureFlightId action if it's a departure flight
+    if (!isReturnFlight) {
+      dispatch(setDepartureFlightId(flight.id));
+    }
 
     // Create the flight parameters
     const flightParams = {
-      departure_flight_id: flight.id,
+      flight_id: flight.id,
     };
 
     // Convert the parameters to a query string
     const searchParams = new URLSearchParams(flightParams);
 
-    // Navigate to the checkout page with the query string
-    navigate(`/checkout?${searchParams.toString()}`);
+    // Navigate to the appropriate page based on the flight type
+    if (isReturnFlight) {
+      navigate(`/service`);
+    } else {
+      navigate(`/checkout`);
+    }
   };
 
   const styles = {
@@ -403,11 +412,9 @@ const SearchingPage = () => {
                           <Accordion
                             className="mb-2 accordion"
                             style={{ borderColor: "#7126b5" }}
+                            key={flight.id}
                           >
-                            <Accordion.Item
-                              eventKey={flight.id}
-                              key={flight.id}
-                            >
+                            <Accordion.Item eventKey={flight.id}>
                               <Accordion.Header
                                 style={{
                                   backgroundColor: "transparent",
@@ -436,9 +443,7 @@ const SearchingPage = () => {
                                         <h6 className="fw-bold">
                                           {flight.departureTime.slice(11, 16)}
                                         </h6>
-                                        <p>
-                                          {flight.departureAirport_respon.city}
-                                        </p>
+                                        <p>{flight.departureAirport_respon.city}</p>
                                       </Col>
                                       <Col
                                         md="5"
@@ -457,9 +462,7 @@ const SearchingPage = () => {
                                         <h6 className="fw-bold">
                                           {flight.arrivalTime.slice(11, 16)}
                                         </h6>
-                                        <p>
-                                          {flight.arrivalAirport_respon.city}
-                                        </p>
+                                        <p>{flight.arrivalAirport_respon.city}</p>
                                       </Col>
                                       <Col
                                         md="1"
@@ -473,15 +476,12 @@ const SearchingPage = () => {
                                         style={styles.ungu}
                                       >
                                         <h6 className="fw-bold">
-                                          IDR{" "}
-                                          {flight.economyPrice.toLocaleString(
-                                            "id-ID"
-                                          )}
+                                          IDR {flight.economyPrice.toLocaleString("id-ID")}
                                         </h6>
                                         <Button
                                           style={styles.customButton}
                                           className="custom-button button-pilih mt-2"
-                                          onClick={() => handleSelectFlight(flight)}
+                                          onClick={() => handleSelectFlight(flight, false)}
                                         >
                                           Pilih
                                         </Button>
@@ -490,98 +490,17 @@ const SearchingPage = () => {
                                   </div>
                                 </div>
                               </Accordion.Header>
-                              <Accordion.Body
-                                style={{ backgroundColor: "transparent" }}
-                              >
-                                <Card style={styles.cardAccor}>
-                                  <Card.Body style={styles.cardAccor}>
-                                    <h5 style={styles.ungu} className="fw-bold">
-                                      Detail Penerbangan
-                                    </h5>
-                                    <Row>
-                                      <Col md="9">
-                                        <h5 className="fw-bold">
-                                          {flight.departureTime.slice(11, 16)}
-                                        </h5>
-                                        <h6 className="fw-bold">
-                                          {formatDate(
-                                            flight.departureTime.slice(0, 10)
-                                          )}
-                                        </h6>
-                                        <h5 className="fw-bold">
-                                          {flight.departureAirport_respon.name}
-                                        </h5>
-                                      </Col>
-                                      <Col>
-                                        <h6 style={styles.unguMuda}>
-                                          Keberangkatan
-                                        </h6>
-                                      </Col>
-                                    </Row>
-                                    <hr />
-                                    <Row>
-                                      <Col md="1" className="mx-0 m-auto">
-                                        <Image
-                                          src={flight.Airline.imgUrl}
-                                          fluid
-                                        />
-                                      </Col>
-                                      <Col>
-                                        <p className="fw-bold mb-0">
-                                          {flight.Airline.name} -{" "}
-                                          {queryParams.seat_class}
-                                        </p>
-                                        <p className="fw-bold mb-0">
-                                          {flight.Airline.code}
-                                        </p>
-                                        <br />
-                                        <h6 className="fw-bold">Informasi:</h6>
-                                        <p className="mb-0">
-                                          Baggage {flight.Airline.baggage} kg
-                                        </p>
-                                        <p className="mb-0">
-                                          Cabin baggage{" "}
-                                          {flight.Airline.cabinBaggage} kg
-                                        </p>
-                                        <p>In Flight Entertainment</p>
-                                      </Col>
-                                    </Row>
-                                    <hr />
-                                    <Row>
-                                      <Col md="9">
-                                        <h5 className="fw-bold">
-                                          {flight.arrivalTime.slice(11, 16)}
-                                        </h5>
-                                        <h6 className="fw-bold">
-                                          {formatDate(
-                                            flight.arrivalTime.slice(0, 10)
-                                          )}
-                                        </h6>
-                                        <h5 className="fw-bold">
-                                          {flight.arrivalAirport_respon.name}
-                                        </h5>
-                                      </Col>
-                                      <Col>
-                                        <h6 style={styles.unguMuda}>
-                                          Kedatangan
-                                        </h6>
-                                      </Col>
-                                    </Row>
-                                  </Card.Body>
-                                </Card>
-                              </Accordion.Body>
                             </Accordion.Item>
                           </Accordion>
                         ))}
+
                         {returnFlights.map((flight) => (
                           <Accordion
                             className="mb-2 accordion"
                             style={{ borderColor: "#7126b5" }}
+                            key={flight.id}
                           >
-                            <Accordion.Item
-                              eventKey={flight.id}
-                              key={flight.id}
-                            >
+                            <Accordion.Item eventKey={flight.id}>
                               <Accordion.Header
                                 style={{
                                   backgroundColor: "transparent",
@@ -610,9 +529,7 @@ const SearchingPage = () => {
                                         <h6 className="fw-bold">
                                           {flight.departureTime.slice(11, 16)}
                                         </h6>
-                                        <p>
-                                          {flight.departureAirport_respon.city}
-                                        </p>
+                                        <p>{flight.departureAirport_respon.city}</p>
                                       </Col>
                                       <Col
                                         md="5"
@@ -631,9 +548,7 @@ const SearchingPage = () => {
                                         <h6 className="fw-bold">
                                           {flight.arrivalTime.slice(11, 16)}
                                         </h6>
-                                        <p>
-                                          {flight.arrivalAirport_respon.city}
-                                        </p>
+                                        <p>{flight.arrivalAirport_respon.city}</p>
                                       </Col>
                                       <Col
                                         md="1"
@@ -647,15 +562,12 @@ const SearchingPage = () => {
                                         style={styles.ungu}
                                       >
                                         <h6 className="fw-bold">
-                                          IDR{" "}
-                                          {flight.economyPrice.toLocaleString(
-                                            "id-ID"
-                                          )}
+                                          IDR {flight.economyPrice.toLocaleString("id-ID")}
                                         </h6>
                                         <Button
                                           style={styles.customButton}
                                           className="custom-button button-pilih mt-2"
-                                          onClick={() => handleSelectFlight(flight)}
+                                          onClick={() => handleSelectFlight(flight, true)}
                                         >
                                           Pilih
                                         </Button>
@@ -664,86 +576,6 @@ const SearchingPage = () => {
                                   </div>
                                 </div>
                               </Accordion.Header>
-                              <Accordion.Body
-                                style={{ backgroundColor: "transparent" }}
-                              >
-                                <Card style={styles.cardAccor}>
-                                  <Card.Body style={styles.cardAccor}>
-                                    <h5 style={styles.ungu} className="fw-bold">
-                                      Detail Penerbangan
-                                    </h5>
-                                    <Row>
-                                      <Col md="9">
-                                        <h5 className="fw-bold">
-                                          {flight.departureTime.slice(11, 16)}
-                                        </h5>
-                                        <h6 className="fw-bold">
-                                          {formatDate(
-                                            flight.departureTime.slice(0, 10)
-                                          )}
-                                        </h6>
-                                        <h5 className="fw-bold">
-                                          {flight.departureAirport_respon.name}
-                                        </h5>
-                                      </Col>
-                                      <Col>
-                                        <h6 style={styles.unguMuda}>
-                                          Keberangkatan
-                                        </h6>
-                                      </Col>
-                                    </Row>
-                                    <hr />
-                                    <Row>
-                                      <Col md="1" className="mx-0 m-auto">
-                                        <Image
-                                          src={flight.Airline.imgUrl}
-                                          fluid
-                                        />
-                                      </Col>
-                                      <Col>
-                                        <p className="fw-bold mb-0">
-                                          {flight.Airline.name} -{" "}
-                                          {queryParams.seat_class}
-                                        </p>
-                                        <p className="fw-bold mb-0">
-                                          {flight.Airline.code}
-                                        </p>
-                                        <br />
-                                        <h6 className="fw-bold">Informasi:</h6>
-                                        <p className="mb-0">
-                                          Baggage {flight.Airline.baggage} kg
-                                        </p>
-                                        <p className="mb-0">
-                                          Cabin baggage{" "}
-                                          {flight.Airline.cabinBaggage} kg
-                                        </p>
-                                        <p>In Flight Entertainment</p>
-                                      </Col>
-                                    </Row>
-                                    <hr />
-                                    <Row>
-                                      <Col md="9">
-                                        <h5 className="fw-bold">
-                                          {flight.arrivalTime.slice(11, 16)}
-                                        </h5>
-                                        <h6 className="fw-bold">
-                                          {formatDate(
-                                            flight.arrivalTime.slice(0, 10)
-                                          )}
-                                        </h6>
-                                        <h5 className="fw-bold">
-                                          {flight.arrivalAirport_respon.name}
-                                        </h5>
-                                      </Col>
-                                      <Col>
-                                        <h6 style={styles.unguMuda}>
-                                          Kedatangan
-                                        </h6>
-                                      </Col>
-                                    </Row>
-                                  </Card.Body>
-                                </Card>
-                              </Accordion.Body>
                             </Accordion.Item>
                           </Accordion>
                         ))}

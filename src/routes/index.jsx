@@ -6,6 +6,7 @@ import {
   VerifyOtpPage,
   RegisterPage,
   SearchingPage,
+  ServicePage,
   AccountPage,
   NotificationPage,
   CheckoutPage,
@@ -108,6 +109,16 @@ const router = createBrowserRouter([
       <div>
         <NonProtected>
           <SearchingPage />
+        </NonProtected>
+      </div>
+    ),
+  },
+  {
+    path: "/service",
+    element: (
+      <div>
+        <NonProtected>
+          <ServicePage />
         </NonProtected>
       </div>
     ),

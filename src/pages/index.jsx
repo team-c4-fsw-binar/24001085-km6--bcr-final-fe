@@ -1,5 +1,6 @@
 import HomePage from "./Home/HomePage";
 import SearchingPage from "./Home/SearchingPage";
+import ServicePage from "./Home/ServicePage";
 import LoginPage from "./Auth/LoginPage";
 import RegisterPage from "./Auth/RegisterPage";
 import VerifyOtpPage from "./Auth/VerifyOtpPage";
@@ -26,4 +27,5 @@ export {
   CheckoutPage,
   PaymentPage,
   HistoryPage,
+  ServicePage,
 }

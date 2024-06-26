@@ -16,6 +16,43 @@ const NotificationPage = () => {
     const navigate = useNavigate();
     const token = useSelector((state) => state.auth.token);
 
+
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            const response = await dispatch(getNotification());
+            if (response) {
+                setNotifications(response);
+            }
+        };
+
+        fetchNotifications();
+    }, [dispatch]);
+
+    const handleMarkAsRead = async (id) => {
+        const notification = notifications.find((notif) => notif.id === id);
+        if (notification && !notification.isRead) {
+            const formData = new FormData();
+            formData.append("isRead", true);
+
+            const response = await dispatch(putNotification(id, formData));
+            if (response) {
+                setNotifications((prev) =>
+                    prev.map((notif) =>
+                        notif.id === id ? { ...notif, isRead: true } : notif
+                    )
+                );
+            }
+        }
+        setCurrentNotification(notification);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setCurrentNotification(null);
+    };
+
     const styles = {
         fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
         fontBodyRegular12: { fontWeight: 400, fontSize: '12px' },
@@ -64,41 +101,6 @@ const NotificationPage = () => {
         bgNoread: {
             backgroundColor: '#a06ece2f',
         },
-    };
-
-    useEffect(() => {
-        const fetchNotifications = async () => {
-            const response = await dispatch(getNotification());
-            if (response) {
-                setNotifications(response);
-            }
-        };
-
-        fetchNotifications();
-    }, [dispatch]);
-
-    const handleMarkAsRead = async (id) => {
-        const notification = notifications.find((notif) => notif.id === id);
-        if (notification && !notification.isRead) {
-            const formData = new FormData();
-            formData.append("isRead", true);
-
-            const response = await dispatch(putNotification(id, formData));
-            if (response) {
-                setNotifications((prev) =>
-                    prev.map((notif) =>
-                        notif.id === id ? { ...notif, isRead: true } : notif
-                    )
-                );
-            }
-        }
-        setCurrentNotification(notification);
-        setShowModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false);
-        setCurrentNotification(null);
     };
 
     return (
