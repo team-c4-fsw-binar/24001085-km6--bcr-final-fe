@@ -139,6 +139,21 @@ const SearchingPage = () => {
     }
   };
 
+  const getPrice = (flight) => {
+    switch (homeData.seat_class) {
+      case 'economy':
+        return flight?.economyPrice;
+      case 'premium':
+        return flight?.premiumPrice;
+      case 'business':
+        return flight?.businessPrice;
+      case 'firstClass':
+        return flight?.firstClassPrice;
+      default:
+        return 'N/A';
+    }
+  };
+
   const styles = {
     customButton: {
       backgroundColor: "#7126B5",
@@ -477,7 +492,7 @@ const SearchingPage = () => {
                                         style={styles.ungu}
                                       >
                                         <h6 className="fw-bold">
-                                          IDR {flight?.economyPrice?.toLocaleString("id-ID")}
+                                          IDR {getPrice(flight)?.toLocaleString("id-ID")}
                                         </h6>
                                         <Button
                                           style={styles.customButton}
@@ -642,7 +657,7 @@ const SearchingPage = () => {
                                         style={styles.ungu}
                                       >
                                         <h6 className="fw-bold">
-                                          IDR {flight?.economyPrice?.toLocaleString("id-ID")}
+                                          IDR {getPrice(flight)?.toLocaleString("id-ID")}
                                         </h6>
                                         <Button
                                           style={styles.customButton}
