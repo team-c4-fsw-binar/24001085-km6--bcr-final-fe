@@ -24,6 +24,7 @@ const CheckoutPage = () => {
     const [isExpired, setIsExpired] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [isReturn, setIsReturn] = useState(true);
+    const [lanjutBayar, setLanjutBayar] = useState("");
     const initialPassengerDetails = {
         title: "",
         name: "",
@@ -233,11 +234,6 @@ const CheckoutPage = () => {
         return value.toLocaleString('id-ID');
     };
 
-    const simpan = () => {
-        setIsSaved(true);
-        setSuccess("Data Anda berhasil tersimpan!");
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -251,8 +247,11 @@ const CheckoutPage = () => {
                 childCount: checkout.childCount,
                 babyCount: checkout.babyCount,
             };
-            await dispatch(postBooking(bookingData));
-            simpan();
+            const response = await dispatch(postBooking(bookingData));
+            console.log(response);
+            setIsSaved(true);
+            setSuccess("Data Anda berhasil tersimpan!");
+            setLanjutBayar(response.data.redirect_url)
         } catch (err) {
             setError("Data gagal disimpan!");
         }
@@ -793,7 +792,7 @@ const CheckoutPage = () => {
                                 </div>
                             </Card>
                             {isSaved && (
-                                <Link to="/payment">
+                                <Link to={lanjutBayar}>
                                     <Button style={{ ...styles.btnLanjutBayar, ...styles.fontHeadingMedium20 }}
                                         className="btn w-100 py-2 mb-3" type="submit" variant="">
                                         Lanjut Bayar

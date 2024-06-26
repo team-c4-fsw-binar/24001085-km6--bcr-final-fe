@@ -45,6 +45,7 @@ export const postBooking = (bookingData, token) => {
                 if (responseData.token) {
                     setToken(responseData.token);
                 }
+                return responseData;
             } else {
                 console.error('Error Response:', responseData);
                 toast.error('Booking failed!');
