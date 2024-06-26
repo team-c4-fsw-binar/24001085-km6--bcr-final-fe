@@ -234,6 +234,36 @@ const CheckoutPage = () => {
         return value.toLocaleString('id-ID');
     };
 
+    const getSeatsDepatureAvailable = () => {
+        switch (seatClass) {
+            case 'economy':
+                return checkout.ticketDetails?.departure_flight?.detail?.numberOfEconomySeatsLeft;
+            case 'premium':
+                return checkout.ticketDetails?.departure_flight?.detail?.numberOfPremiumSeatsLeft;
+            case 'business':
+                return checkout.ticketDetails?.departure_flight?.detail?.numberOfBusinessSeatsLeft;
+            case 'first_class':
+                return checkout.ticketDetails?.departure_flight?.detail?.numberOfFirstClassSeatsLeft;
+            default:
+                return 'N/A'; // Or handle the default case as you see fit
+        }
+    };
+
+    const getSeatsReturnAvailable = () => {
+        switch (seatClass) {
+            case 'economy':
+                return checkout.ticketDetails?.return_flight?.detail?.numberOfEconomySeatsLeft;
+            case 'premium':
+                return checkout.ticketDetails?.return_flight?.detail?.numberOfPremiumSeatsLeft;
+            case 'business':
+                return checkout.ticketDetails?.return_flight?.detail?.numberOfBusinessSeatsLeft;
+            case 'first_class':
+                return checkout.ticketDetails?.return_flight?.detail?.numberOfFirstClassSeatsLeft;
+            default:
+                return 'N/A'; // Or handle the default case as you see fit
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -606,7 +636,7 @@ const CheckoutPage = () => {
                                 {!isSaved && (
                                     <p className="mb-3 text-center"
                                         style={{ ...styles.cardSeat, ...styles.fontBodyMedium14 }}>
-                                        {seatClass} - {departureSeats.length} Seats Available
+                                        {seatClass} - {getSeatsDepatureAvailable()} Seats Available
                                     </p>
                                 )}
                                 {isSaved && (
@@ -636,7 +666,7 @@ const CheckoutPage = () => {
                                     {!isSaved && (
                                         <p className="mb-3 text-center"
                                             style={{ ...styles.cardSeat, ...styles.fontBodyMedium14 }}>
-                                            {seatClass} - {departureSeats.length} Seats Available
+                                            {seatClass} - {getSeatsReturnAvailable()} Seats Available
                                         </p>
                                     )}
                                     {isSaved && (
