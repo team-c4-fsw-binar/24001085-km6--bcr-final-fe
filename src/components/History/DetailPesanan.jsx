@@ -19,18 +19,20 @@ const DetailPesanan = ({
 }) => {
   const styles = {
     detailMDnoReturn: {
+      maxHeight: "600px",
       position: "absolute",
       top: "78%",
       left: "75%",
-      transform: "translate(-50%, -50%)",
+      transform: "translate(-50%,-67%)",
       margin: "20px",
       padding: "10px",
     },
     detailMDReturn: {
+      maxHeight: "400px",
       position: "absolute",
       top: "98%",
       left: "75%",
-      transform: "translate(-50%, -50%)",
+      transform: "translate(-50%, -139%)",
       margin: "20px",
       padding: "10px",
     },
@@ -47,7 +49,7 @@ const DetailPesanan = ({
   }
 
   const cardStyle = isMediumScreen ? styleForCardMD : styles.detailSM
-
+  console.log(payment?.status, formatCurrency(booking.price_amount))
   return (
     isCardClicked &&
     index === selectedCardIndex && (
@@ -72,8 +74,8 @@ const DetailPesanan = ({
             <Col md={9}>
               <Card.Title as="h5">Detail Pemesanan</Card.Title>
             </Col>
-            <Col md={3} className="align-middle d-flex justify-content-end">
-              <p className="m-0">{getPaymentStatus(payment)}</p>
+            <Col md={3} className="d-flex justify-content-end ">
+              <p className="p-2">{getPaymentStatus(payment)}</p>
             </Col>
           </Row>
           <div className="d-flex">
@@ -109,25 +111,26 @@ const DetailPesanan = ({
           <div className="border my-2"></div>
           <Row className="fw-bold">
             <div className="col-1"></div>
-            <Col>
-              <p className="my-0 mx-1">
-                {booking?.departureFlight_respon?.Airline?.name}
-                {/*Airline*/}{" "}
-              </p>
-              <p>{booking?.departureFlight_respon?.Airline?.code}</p>
-            </Col>
-            <Col md={7}>
-              <p className=" mx-1">{seatClasses[0]}</p>
-            </Col>
+            <p className=" mx-5">
+              {booking?.departureFlight_respon?.Airline?.name} -{" "}
+              {seatClasses[0]}
+            </p>
+            <p className=" mx-5">
+              {booking?.departureFlight_respon?.Airline?.code}
+            </p>
           </Row>
           <Row>
-            <Col md={1} className="mt-3">
+            <Col md={1} className="">
               <Image
                 src={booking?.departureFlight_respon?.Airline?.imgUrl}
-                style={{ weight: "20px", height: "20px" }}
+                style={{
+                  weight: "10px",
+                  height: "10px",
+                  objectFit: "cover",
+                }}
               />
             </Col>
-            <Col className="">
+            <Col md={9} className="">
               <p className="fw-bold m-0">Informasi :</p>
               {booking.BookingPassengers?.map((passenger, idx) => (
                 <div key={idx}>
@@ -189,23 +192,24 @@ const DetailPesanan = ({
               </p>
               <div className="border my-2"></div>
               <Row className="fw-bold">
-                <div className="col-1"></div>
-                <Col>
-                  <p className="my-0 mx-1">
-                    {booking.returnFlight_respon?.Airline?.name}
-                    {/*Airline*/}{" "}
-                  </p>
-                  <p>{booking.returnFlight_respon?.Airline?.code}</p>
-                </Col>
-                <Col md={7}>
-                  <p className=" mx-1">{seatClasses[0]}</p>
-                </Col>
+                <p className="mx-5">
+                  {booking.returnFlight_respon?.Airline?.name} -{" "}
+                  {seatClasses[0]}
+                  {/*Airline*/}{" "}
+                </p>
+                <p className="mx-5 ">
+                  {booking.returnFlight_respon?.Airline?.code}
+                </p>
               </Row>
               <Row>
                 <Col md={1} className="mt-3">
                   <Image
                     src={booking.returnFlight_respon?.Airline?.imgUrl}
-                    style={{ weight: "20px", height: "20px" }}
+                    style={{
+                      weight: "10px",
+                      height: "10px",
+                      objectFit: "cover",
+                    }}
                   />
                 </Col>
                 <Col className="">
@@ -254,6 +258,7 @@ const DetailPesanan = ({
           <div>
             <p className="fw-bold col-6 mb-0">Rincian Harga</p>
           </div>
+
           <Row>
             <p className="col">
               {booking.adultCount} {booking.adultCount > 1 ? "Adults" : "Adult"}
@@ -287,40 +292,77 @@ const DetailPesanan = ({
             ""
           )}
           <div className="border my-2 "></div>
-          <Row className="my-4">
-            <p className="col-md-6 fw-bold mb-4" style={{ fontSize: "20px" }}>
-              Total
-            </p>
-            <p
-              className="col-md-6 d-flex justify-content-end fw-bold"
-              style={{ color: " #A06ECE", fontSize: "20px" }}
-            >
-              {formatCurrency(booking.price_amount)}
-            </p>
-            {payment?.status === "Success" ? (
-              <Button className="custom-button" size="lg">
-                Cetak Tiket
-              </Button>
-            ) : payment?.status === "Pending" ? (
-              <Button
-                className="custom-button-bayar"
-                size="lg"
-                onClick={() => handlePaymentRedirect(payment.redirect_url)}
+          {payment?.status === "failed" ? (
+            <Row className="my-4">
+              <p className="col-md-6 fw-bold mb-4" style={{ fontSize: "20px" }}>
+                Total
+              </p>
+              <p
+                className="col-md-6 d-flex justify-content-end fw-bold"
+                style={{ color: "#A06ECE", fontSize: "20px" }}
               >
-                Lanjut Bayar
-              </Button>
-            ) : payment?.status === "Need Method" ? (
-              <Button
-                className="custom-button-bayar"
-                size="lg"
-                onClick={() => handlePaymentRedirect(payment.redirect_url)}
+                -
+              </p>
+              {payment?.status === "Success" ? (
+                <Button className="custom-button" size="lg">
+                  Cetak Tiket
+                </Button>
+              ) : payment?.status === "Pending" ? (
+                <Button
+                  className="custom-button-bayar"
+                  size="lg"
+                  onClick={() => handlePaymentRedirect(payment.redirect_url)}
+                >
+                  Lanjut Bayar
+                </Button>
+              ) : payment?.status === "Need Method" ? (
+                <Button
+                  className="custom-button-bayar"
+                  size="lg"
+                  onClick={() => handlePaymentRedirect(payment.redirect_url)}
+                >
+                  Lanjut Bayar
+                </Button>
+              ) : (
+                ""
+              )}
+            </Row>
+          ) : (
+            <Row className="my-4">
+              <p className="col-md-6 fw-bold mb-4" style={{ fontSize: "20px" }}>
+                Total
+              </p>
+              <p
+                className="col-md-6 d-flex justify-content-end fw-bold"
+                style={{ color: " #A06ECE", fontSize: "20px" }}
               >
-                Lanjut Bayar
-              </Button>
-            ) : (
-              ""
-            )}
-          </Row>
+                {formatCurrency(booking.price_amount)}
+              </p>
+              {payment?.status === "Success" ? (
+                <Button className="custom-button" size="lg">
+                  Cetak Tiket
+                </Button>
+              ) : payment?.status === "Pending" ? (
+                <Button
+                  className="custom-button-bayar"
+                  size="lg"
+                  onClick={() => handlePaymentRedirect(payment.redirect_url)}
+                >
+                  Lanjut Bayar
+                </Button>
+              ) : payment?.status === "Need Method" ? (
+                <Button
+                  className="custom-button-bayar"
+                  size="lg"
+                  onClick={() => handlePaymentRedirect(payment.redirect_url)}
+                >
+                  Lanjut Bayar
+                </Button>
+              ) : (
+                ""
+              )}
+            </Row>
+          )}
         </Card>
       </Col>
     )

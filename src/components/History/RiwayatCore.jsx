@@ -79,7 +79,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
         }}
       >
         <p
-          className="d-flex justify-content-center align-center mt-1"
+          className="d-flex justify-content-center align-center p-1"
           style={{ fontSize: "14px" }}
         >
           Issued
@@ -96,7 +96,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
         }}
       >
         <p
-          className="d-flex justify-content-center align-center mt-1"
+          className="d-flex justify-content-center align-center p-1"
           style={{ fontSize: "14px" }}
         >
           Unpaid
@@ -113,7 +113,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
         }}
       >
         <p
-          className="d-flex justify-content-center align-center mt-1"
+          className="d-flex justify-content-center align-center p-1"
           style={{ fontSize: "14px" }}
         >
           Expired
@@ -130,7 +130,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
         }}
       >
         <p
-          className="d-flex justify-content-center align-center mt-1"
+          className="d-flex justify-content-center align-center p-1"
           style={{ fontSize: "14px" }}
         >
           Failed
@@ -244,7 +244,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
                     <Card
                       key={booking.id}
                       id="riwayat-card"
-                      className="p-3 mx-2 rounded-3 m-2"
+                      className="p-4 mx-2 rounded-3 m-2"
                       style={cardStyle}
                       onMouseEnter={() => handleMouseEnter(index)}
                       onMouseLeave={handleMouseLeave}
@@ -409,21 +409,25 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
                       )}
                       <div className="border my-3"></div>
                       <Row>
-                        <Col>
+                        <Col md={4} sm={5}>
                           <p className="m-0 fw-bold">Booking Code : </p>
                           <p className="ellipsis m-0">{booking.code}</p>
                         </Col>
-                        <Col>
+                        <Col md={4} sm={3}>
                           <p className="m-0 fw-bold">Class :</p>
                           <p className="m-0">{seatClasses[0]}</p>
                         </Col>
-                        <Col>
-                          <p
-                            className=" d-flex justify-content-center fw-bold align-center m-0"
-                            style={{ color: "#A06ECE", fontSize: "15px" }}
-                          >
-                            {formatCurrency(booking.price_amount)}
-                          </p>
+                        <Col md={4} sm={4}>
+                          {payment?.status == "failed" ? (
+                            "-"
+                          ) : (
+                            <p
+                              className=" d-flex justify-content-end fw-bold align-center mx-2"
+                              style={{ color: "#A06ECE", fontSize: "15px" }}
+                            >
+                              {formatCurrency(booking.price_amount)}
+                            </p>
+                          )}
                         </Col>
                       </Row>
                     </Card>
