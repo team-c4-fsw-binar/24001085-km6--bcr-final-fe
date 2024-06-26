@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { postBooking, getFilteredSeats } from "../../redux/actions/checkout";
+import { postBooking, getFilteredSeats, findTicketsDetail } from "../../redux/actions/checkout";
 import { selectFlight } from "../../redux/reducers/flight";
 import { fetchCheckout, setPassengerDetails, setSeatsId, setReturnFlightId } from "../../redux/reducers/checkout";
 import Seat from '../../components/seat/seats';
@@ -58,6 +58,36 @@ const CheckoutPage = () => {
             );
         }
     }, [checkout]);
+
+    useEffect(() => {
+        const fetch = async () => {
+            try {
+                const departureFlightId = selectedFlight?.id;  // Ensure this is not undefined
+                const seatClass = homeData?.seat_class;
+                const adultCount = homeData?.adultCount;
+                const childCount = homeData?.childCount;
+
+                if (!departureFlightId) {
+                    console.error('Departure flight ID is missing');
+                    return;
+                }
+
+                const actionResult = await dispatch(findTicketsDetail({
+                    departure_flight_id: departureFlightId,
+                    return_flight_id: null,  // if there's no return flight id, use null
+                    seat_class: seatClass,
+                    adultCount: adultCount,
+                    childCount: childCount
+                }));
+
+                console.log('TicketsDetail search successful!', actionResult);
+                console.log('Payload:', { departureFlightId, seatClass, adultCount, childCount });
+            } catch (error) {
+                console.error('Error fetching TicketsDetail', error);
+            }
+        };
+        fetch();
+    }, [dispatch, selectedFlight, homeData]);
 
     // Update time every second
     useEffect(() => {
@@ -196,37 +226,12 @@ const CheckoutPage = () => {
     };
 
     // Format harga dengan pemisah ribuan (toLocaleString)
-    const formatCurrency = (amount) => {
-        return amount.toLocaleString('id-ID');
-    };
-
-    // Perhitungan harga berdasarkan seatClass dari homeData
-    const calculatePrice = () => {
-        let seatPrice = 0;
-
-        switch (homeData.seat_class) {
-            case "economy":
-                seatPrice = 1000000;
-                break;
-            case "premium":
-                seatPrice = 1500000;
-                break;
-            case "business":
-                seatPrice = 2000000;
-                break;
-            case "first_class":
-                seatPrice = 3000000;
-                break;
-            default:
-                seatPrice = 0;
+    const formatCurrency = (value) => {
+        if (isNaN(value) || value === null || value === undefined) {
+            return "0";
         }
-
-        const adultPrice = seatPrice * checkout.adultCount;
-        const childPrice = seatPrice * checkout.childCount;
-        return adultPrice + childPrice;
+        return value.toLocaleString('id-ID');
     };
-
-    const totalPrice = calculatePrice();
 
     const simpan = () => {
         setIsSaved(true);
@@ -756,7 +761,7 @@ const CheckoutPage = () => {
                                                 {homeData.adultCount} Adult
                                             </p>
                                             <p style={styles.fontBodyRegular14} className="my-0">
-                                                IDR {formatCurrency(calculatePrice() / (checkout.adultCount + checkout.childCount) * homeData.adultCount)}
+                                                IDR {formatCurrency(checkout?.ticketDetails?.departure_flight?.price?.adultTotal)}
                                             </p>
                                         </div>
                                     )}
@@ -766,7 +771,7 @@ const CheckoutPage = () => {
                                                 {homeData.childCount} Child
                                             </p>
                                             <p style={styles.fontBodyRegular14} className="my-0">
-                                                IDR {formatCurrency(calculatePrice() / (checkout.adultCount + checkout.childCount) * homeData.childCount)}
+                                                IDR {formatCurrency(checkout?.ticketDetails?.departure_flight?.price?.childTotal)}
                                             </p>
                                         </div>
                                     )}
@@ -784,7 +789,7 @@ const CheckoutPage = () => {
 
                                 <div className="d-flex pt-2">
                                     <p style={styles.fontTitleBold16} className="me-auto">Total</p>
-                                    <h4 style={{ ...styles.fontTitleBold18, ...styles.textTotal }} className="font-title-bold-18 text-total">IDR {formatCurrency(totalPrice)}</h4>
+                                    <h4 style={{ ...styles.fontTitleBold18, ...styles.textTotal }} className="font-title-bold-18 text-total">IDR {formatCurrency(checkout?.ticketDetails?.departure_flight?.price?.total)}</h4>
                                 </div>
                             </Card>
                             {isSaved && (

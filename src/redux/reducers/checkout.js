@@ -1,5 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import axios from "axios"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { findTicketsDetail } from '../actions/checkout';
 
 export const fetchCheckout = createAsyncThunk(
     "checkout/fetchCheckout",
@@ -12,12 +13,12 @@ export const fetchCheckout = createAsyncThunk(
                     "Content-Type": "application/json",
                 },
             }
-        )
-        return response.data
+        );
+        return response.data;
     }
-)
+);
 
-const checkoutsSlice = createSlice({
+const checkoutSlice = createSlice({
     name: "checkout",
     initialState: {
         departure_flight_id: null,
@@ -31,13 +32,15 @@ const checkoutsSlice = createSlice({
         adultCount: 0,
         childCount: 0,
         babyCount: 0,
+        ticketDetails: {},
+        error: null,
     },
     reducers: {
         setDepartureFlightId: (state, action) => {
-            state.departure_flight_id = action.payload
+            state.departure_flight_id = action.payload;
         },
         setReturnFlightId: (state, action) => {
-            state.return_flight_id = action.payload
+            state.return_flight_id = action.payload;
         },
         setSeatsId: (state, action) => {
             state.seats_id = action.payload;
@@ -50,17 +53,26 @@ const checkoutsSlice = createSlice({
             };
         },
         setSeatClass: (state, action) => {
-            state.seatClass = action.payload
+            state.seatClass = action.payload;
         },
         setAdultCount: (state, action) => {
-            state.adultCount = action.payload
+            state.adultCount = action.payload;
         },
         setChildCount: (state, action) => {
-            state.childCount = action.payload
+            state.childCount = action.payload;
         },
         setBabyCount: (state, action) => {
-            state.babyCount = action.payload
+            state.babyCount = action.payload;
         },
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(findTicketsDetail.fulfilled, (state, action) => {
+                state.ticketDetails = action.payload;
+            })
+            .addCase(findTicketsDetail.rejected, (state, action) => {
+                state.error = action.payload;
+            });
     },
 });
 
@@ -73,6 +85,6 @@ export const {
     setAdultCount,
     setChildCount,
     setBabyCount,
-} = checkoutsSlice.actions
+} = checkoutSlice.actions;
 
-export default checkoutsSlice.reducer
+export default checkoutSlice.reducer;
