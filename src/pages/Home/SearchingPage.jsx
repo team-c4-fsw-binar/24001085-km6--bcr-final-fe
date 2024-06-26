@@ -35,25 +35,15 @@ const useQuery = () => {
 const SearchingPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [showMyModal, setShowMyModal] = useState(false)
-
-  const handleOnClose = () => setShowMyModal(false)
-
-  const [isEmpty, setIsEmpty] = useState(false)
-
-  const [isLoading, setIsLoading] = useState(false)
-
-  const [isTiketHabis, setIsTiketHabis] = useState(false)
-
+  const query = useQuery();
   const flightStatus = useSelector((state) => state.flights.status);
   const error = useSelector((state) => state.flights.error);
   const flights = useSelector((state) => state.flights.data);
-
-  // console.log("FLIGHTS NEW", flights)
-  // console.log("FLIGHTS NEW", flightStatus)
-
-  const query = useQuery();
+  const [showMyModal, setShowMyModal] = useState(false)
+  const handleOnClose = () => setShowMyModal(false)
+  const [isEmpty, setIsEmpty] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isTiketHabis, setIsTiketHabis] = useState(false)
 
   const [queryParams, setQueryParams] = useState({
     from: query.get('from'),
@@ -108,6 +98,36 @@ const SearchingPage = () => {
 
   const departureFlights = flights.departure_results?.results || []
   const returnFlights = flights.return_results?.results || []
+
+
+  const formatDate = (inputDate) => {
+    // Ubah format input tanggal dari yyyy-mm-dd menjadi Date object
+    const date = new Date(inputDate)
+
+    // Format tanggal menjadi 'd MMMM yyyy' menggunakan date-fns
+    const formattedDate = format(date, "d MMMM yyyy", { locale: id })
+
+    return formattedDate
+  }
+
+  const handleSelectFlight = (flight) => {
+    // Dispatch the selectFlight action
+    dispatch(selectFlight(flight));
+
+    // Dispatch the setDepartureFlightId action
+    dispatch(setDepartureFlightId(flight.id));
+
+    // Create the flight parameters
+    const flightParams = {
+      departure_flight_id: flight.id,
+    };
+
+    // Convert the parameters to a query string
+    const searchParams = new URLSearchParams(flightParams);
+
+    // Navigate to the checkout page with the query string
+    navigate(`/checkout?${searchParams.toString()}`);
+  };
 
   const styles = {
     customButton: {
@@ -215,35 +235,6 @@ const SearchingPage = () => {
       margin: "0 1px",
     },
   }
-
-  const formatDate = (inputDate) => {
-    // Ubah format input tanggal dari yyyy-mm-dd menjadi Date object
-    const date = new Date(inputDate)
-
-    // Format tanggal menjadi 'd MMMM yyyy' menggunakan date-fns
-    const formattedDate = format(date, "d MMMM yyyy", { locale: id })
-
-    return formattedDate
-  }
-
-  const handleSelectFlight = (flight) => {
-    // Dispatch the selectFlight action
-    dispatch(selectFlight(flight));
-
-    // Dispatch the setDepartureFlightId action
-    dispatch(setDepartureFlightId(flight.id));
-
-    // Create the flight parameters
-    const flightParams = {
-      departure_flight_id: flight.id,
-    };
-
-    // Convert the parameters to a query string
-    const searchParams = new URLSearchParams(flightParams);
-
-    // Navigate to the checkout page with the query string
-    navigate(`/checkout?${searchParams.toString()}`);
-  };
 
   return (
     <div>

@@ -17,10 +17,6 @@ const CheckoutPage = () => {
     const selectedFlight = useSelector((state) => state.flights.selectedFlight);
     const checkout = useSelector((state) => state.checkout);
 
-    // const departureAirport = flights?.departureAirport_respon|| []
-    // const arrivalAirport = flights?.arrivalAirport_respon || []
-    // const airline = flights?.Airline || []
-
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [time, setTime] = useState("");
@@ -62,11 +58,6 @@ const CheckoutPage = () => {
             );
         }
     }, [checkout]);
-
-
-    // useEffect(() => {
-    //     dispatch(fetchCheckout());
-    // }, [dispatch]);
 
     // Update time every second
     useEffect(() => {
@@ -122,7 +113,6 @@ const CheckoutPage = () => {
         email: "",
     });
 
-    // Mengisi profile details dari Redux state saat komponen dimuat
     useEffect(() => {
         if (user) {
             setProfileDetails({
@@ -132,16 +122,6 @@ const CheckoutPage = () => {
             });
         }
     }, [user]);
-
-    // const [passengerDetails, setPassengerDetails] = useState({
-    //     title: "",
-    //     name: "",
-    //     born_date: "",
-    //     citizenship: "",
-    //     identity_number: "",
-    //     publisher_country: "",
-    //     identity_expire_date: "",
-    // });
 
     const handlePassengerChange = (index, e) => {
         const { name, value } = e.target;
@@ -155,7 +135,6 @@ const CheckoutPage = () => {
         });
         dispatch(setPassengerDetails({ index, [name]: value }));
     };
-
 
     const handleSeatSelect = (seat, isDeparture) => {
         const selectedSeats = isDeparture ? selectedDepartureSeats : selectedReturnSeats;
@@ -190,17 +169,6 @@ const CheckoutPage = () => {
 
         fetchSeats();
     }, [checkout.departure_flight_id, seatClass, checkout.return_flight_id]);
-
-    // const handleSeatSelect = (seat, isDeparture) => {
-    //     if (isDeparture) {
-    //         setSelectedDepartureSeats(prev => [...prev, seat]);
-    //         dispatch(setSeatsId([...selectedDepartureSeats, seat].map(s => s.id)));
-    //     } else {
-    //         setSelectedReturnSeats(prev => [...prev, seat]);
-    //         dispatch(setSeatsId([...selectedReturnSeats, seat].map(s => s.id)));
-    //     }
-    // };
-
 
     const renderSeats = (seats = [], selectedSeats, isDeparture) => {
         const rows = 12;
@@ -394,14 +362,6 @@ const CheckoutPage = () => {
             backgroundColor: '#73CA5C',
             color: '#FFFFFF',
         },
-        // aisle: {
-        //     width: '20px',
-        //     height: '30px',
-        //     display: 'flex',
-        //     alignItems: 'center',
-        //     justifyContent: 'center',
-        //     color: '#8A8A8A',
-        // },
         headerRow: {
             display: 'flex',
             justifyContent: 'center',
