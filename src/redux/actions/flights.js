@@ -33,3 +33,21 @@ export const fetchFlights = createAsyncThunk(
     }
   }
 )
+
+export const getFlights = async() => {
+  let config = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: `${import.meta.env.VITE_BACKEND_API}/api/flights`,
+
+  };
+
+  try {
+    const response = await axios.request(config);
+    const { data } = response.data
+    return data
+  }
+  catch (error) {
+    console.log(error);
+  }
+}

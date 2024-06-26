@@ -84,6 +84,10 @@ const SearchingPage = () => {
     return_date: ""
   });
 
+  const openModalSearch = () => {
+    Modal.show()
+  }
+
   useEffect(() => {
     if (flightStatus === "idle") {
       dispatch(fetchFlights(searchParams));
@@ -280,7 +284,7 @@ const SearchingPage = () => {
             </Link>
           </Col>
           <Col className="text-right" md={3}>
-            <Button style={styles.buttonUbah}>Ubah Pencarian</Button>
+            <Button style={styles.buttonUbah} onClick={openModalSearch}>Ubah Pencarian</Button>
           </Col>
         </Row>
         <Row>
