@@ -7,6 +7,11 @@ const Seat = ({ seat, onSeatSelect, isSelected }) => {
         }
     };
 
+    // Hide the seat if seat_no is not available
+    if (!seat.seat_no) {
+        return null;
+    }
+
     return (
         <div
             style={{

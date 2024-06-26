@@ -215,12 +215,14 @@ const CheckoutPage = () => {
         return seatGrid.map((row, rowIndex) => (
             <div className="seat-row" key={rowIndex} style={styles.seatRow}>
                 {row.map((seat, colIndex) => (
-                    <Seat
-                        key={colIndex}
-                        seat={seat || { booked: true, seat_no: '' }}
-                        onSeatSelect={(seat) => handleSeatSelect(seat, isDeparture)}
-                        isSelected={selectedSeats.some(s => s.seat_no === seat?.seat_no)}
-                    />
+                    seat && seat.seat_no ? (
+                        <Seat
+                            key={colIndex}
+                            seat={seat}
+                            onSeatSelect={(seat) => handleSeatSelect(seat, isDeparture)}
+                            isSelected={selectedSeats.some(s => s.seat_no === seat?.seat_no)}
+                        />
+                    ) : null
                 ))}
             </div>
         ));
