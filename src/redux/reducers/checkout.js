@@ -23,10 +23,10 @@ const checkoutsSlice = createSlice({
         departure_flight_id: null,
         return_flight_id: null,
         seats_id: [],
-        passengers: {
+        passengers: [{
             title: '', name: '', born_date: '', citizenship: '', identity_number: '',
             publisher_country: '', identity_expire_date: ''
-        },
+        }],
         seatClass: '',
         adultCount: 0,
         childCount: 0,
@@ -43,7 +43,11 @@ const checkoutsSlice = createSlice({
             state.seats_id = action.payload;
         },
         setPassengerDetails: (state, action) => {
-            state.passengers = { ...state.passengers, ...action.payload };
+            const { index, ...details } = action.payload;
+            state.passengers[index] = {
+                ...state.passengers[index],
+                ...details,
+            };
         },
         setSeatClass: (state, action) => {
             state.seatClass = action.payload

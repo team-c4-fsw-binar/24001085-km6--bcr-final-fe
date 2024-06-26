@@ -4,8 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { postBooking, getFilteredSeats } from "../../redux/actions/checkout";
 import { selectFlight } from "../../redux/reducers/flight";
-import { fetchCheckout } from "../../redux/reducers/checkout";
-import { setPassengerDetails, setSeatsId, setReturnFlightId } from "../../redux/reducers/checkout";
+import { fetchCheckout, setPassengerDetails, setSeatsId, setReturnFlightId } from "../../redux/reducers/checkout";
 import Seat from '../../components/seat/seats';
 import * as icons from "../../assets/icons";
 
@@ -29,7 +28,7 @@ const CheckoutPage = () => {
     const [isExpired, setIsExpired] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [isReturn, setIsReturn] = useState(true);
-    const [passengerDetails, setPassengerDetailsState] = useState({
+    const initialPassengerDetails = {
         title: "",
         name: "",
         born_date: "",
@@ -37,23 +36,30 @@ const CheckoutPage = () => {
         identity_number: "",
         publisher_country: "",
         identity_expire_date: "",
-    });
+    };
+
+    const totalPassengers = homeData.total_passengers || 1;
+    const [passengerDetails, setPassengerDetailsState] = useState(
+        Array.from({ length: totalPassengers }, () => ({ ...initialPassengerDetails }))
+    );
 
     useEffect(() => {
         dispatch(fetchCheckout());
     }, [dispatch]);
 
     useEffect(() => {
-        if (checkout) {
-            setPassengerDetailsState({
-                title: checkout.passengers.title || "",
-                name: checkout.passengers.name || "",
-                born_date: checkout.passengers.born_date || "",
-                citizenship: checkout.passengers.citizenship || "",
-                identity_number: checkout.passengers.identity_number || "",
-                publisher_country: checkout.passengers.publisher_country || "",
-                identity_expire_date: checkout.passengers.identity_expire_date || "",
-            });
+        if (checkout && checkout.passengers) {
+            setPassengerDetailsState(
+                checkout.passengers.map((passenger, index) => ({
+                    title: passenger.title || "",
+                    name: passenger.name || "",
+                    born_date: passenger.born_date || "",
+                    citizenship: passenger.citizenship || "",
+                    identity_number: passenger.identity_number || "",
+                    publisher_country: passenger.publisher_country || "",
+                    identity_expire_date: passenger.identity_expire_date || "",
+                }))
+            );
         }
     }, [checkout]);
 
@@ -137,15 +143,19 @@ const CheckoutPage = () => {
     //     identity_expire_date: "",
     // });
 
-    const handlePassengerChange = (e) => {
+    const handlePassengerChange = (index, e) => {
         const { name, value } = e.target;
-        setPassengerDetailsState((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
-        dispatch(setPassengerDetails({ [name]: value }));
+        setPassengerDetailsState((prevState) => {
+            const updatedPassengers = [...prevState];
+            updatedPassengers[index] = {
+                ...updatedPassengers[index],
+                [name]: value,
+            };
+            return updatedPassengers;
+        });
+        dispatch(setPassengerDetails({ index, [name]: value }));
     };
-    
+
 
     const handleSeatSelect = (seat, isDeparture) => {
         const selectedSeats = isDeparture ? selectedDepartureSeats : selectedReturnSeats;
@@ -190,7 +200,7 @@ const CheckoutPage = () => {
     //         dispatch(setSeatsId([...selectedReturnSeats, seat].map(s => s.id)));
     //     }
     // };
-    
+
 
     const renderSeats = (seats = [], selectedSeats, isDeparture) => {
         const rows = 12;
@@ -519,109 +529,113 @@ const CheckoutPage = () => {
                                 <p style={styles.fontHeadingBold20} className="mb-3">
                                     Isi Data Penumpang
                                 </p>
-                                <p style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }}
-                                    className="mb-3 d-flex justify-align-content-between align-items-center">
-                                    <span className="flex-grow-1 text-start position-relative">
-                                        Data Penumpang 1
-                                    </span>
-                                    {isSaved && (
-                                        <Image src={icons.checkIcon
-                                        } alt="checklist" className="ms-2" />
-                                    )}
-                                </p>
-                                <Form onSubmit={handleSubmit}>
-                                    <Form.Group controlId="formTitlePenumpang1" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Title</Form.Label>
-                                        <Form.Select
-                                            style={styles.formControl}
-                                            readOnly={isSaved}
-                                            value={passengerDetails.title}
-                                            name="title"
-                                            onChange={handlePassengerChange}
-                                        >
-                                            <option value="Mr.">Mr.</option>
-                                            <option value="Mrs.">Mrs.</option>
-                                            <option value="Ms.">Ms.</option>
-                                        </Form.Select>
-                                    </Form.Group>
+                                {Array.from({ length: totalPassengers }).map((_, index) => (
+                                    <div key={index} className="mb-4">
+                                        <p style={{ ...styles.cardHeader, ...styles.fontTitleMedium16 }} className="mb-3 d-flex justify-content-between align-items-center">
+                                            <span className="flex-grow-1 text-start position-relative">
+                                                {`Data Penumpang ${index + 1}`}
+                                            </span>
+                                            {isSaved && (
+                                                <Image src={icons.checkIcon} alt="checklist" className="ms-2" />
+                                            )}
+                                        </p>
+                                        <Form onSubmit={handleSubmit}>
+                                            <Form.Group controlId={`formTitlePenumpang${index + 1}`} className="mb-3">
+                                                <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Title</Form.Label>
+                                                <Form.Select
+                                                    style={styles.formControl}
+                                                    readOnly={isSaved}
+                                                    value={passengerDetails[index]?.title || ""}
+                                                    name="title"
+                                                    onChange={(e) => handlePassengerChange(index, e)}
+                                                >
+                                                    <option value="" disabled>Pilih Title</option>
+                                                    <option value="Mr.">Mr.</option>
+                                                    <option value="Mrs.">Mrs.</option>
+                                                    <option value="Ms.">Ms.</option>
+                                                </Form.Select>
+                                            </Form.Group>
 
-                                    <Form.Group controlId="formNamaLengkapPenumpang1" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Lengkap</Form.Label>
-                                        <Form.Control
-                                            style={styles.formControl}
-                                            type="text"
-                                            readOnly={isSaved}
-                                            value={passengerDetails.name}
-                                            name="name"
-                                            onChange={handlePassengerChange}
-                                        />
-                                    </Form.Group>
+                                            <Form.Group controlId={`formNamaLengkapPenumpang${index + 1}`} className="mb-3">
+                                                <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Lengkap</Form.Label>
+                                                <Form.Control
+                                                    style={styles.formControl}
+                                                    type="text"
+                                                    readOnly={isSaved}
+                                                    value={passengerDetails[index]?.name || ""}
+                                                    name="name"
+                                                    onChange={(e) => handlePassengerChange(index, e)}
+                                                />
+                                            </Form.Group>
 
-                                    <Form.Group controlId="formBornDatePenumpang1" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Tanggal Lahir</Form.Label>
-                                        <Form.Control
-                                            style={styles.formControl}
-                                            type="date"
-                                            readOnly={isSaved}
-                                            value={passengerDetails.born_date}
-                                            name="born_date"
-                                            onChange={handlePassengerChange}
-                                        />
-                                    </Form.Group>
+                                            <Form.Group controlId={`formBornDatePenumpang${index + 1}`} className="mb-3">
+                                                <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Tanggal Lahir</Form.Label>
+                                                <Form.Control
+                                                    style={styles.formControl}
+                                                    type="date"
+                                                    readOnly={isSaved}
+                                                    value={passengerDetails[index]?.born_date || ""}
+                                                    name="born_date"
+                                                    onChange={(e) => handlePassengerChange(index, e)}
+                                                />
+                                            </Form.Group>
 
-                                    <Form.Group controlId="formCitizenshipPenumpang1" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Kewarganegaraan</Form.Label>
-                                        <Form.Control
-                                            style={styles.formControl}
-                                            type="text"
-                                            readOnly={isSaved}
-                                            value={passengerDetails.citizenship}
-                                            name="citizenship"
-                                            onChange={handlePassengerChange}
-                                        />
-                                    </Form.Group>
+                                            <Form.Group controlId={`formCitizenshipPenumpang${index + 1}`} className="mb-3">
+                                                <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Kewarganegaraan</Form.Label>
+                                                <Form.Control
+                                                    style={styles.formControl}
+                                                    type="text"
+                                                    readOnly={isSaved}
+                                                    value={passengerDetails[index]?.citizenship || ""}
+                                                    name="citizenship"
+                                                    onChange={(e) => handlePassengerChange(index, e)}
+                                                />
+                                            </Form.Group>
 
-                                    <Form.Group controlId="formIdentityNumberPenumpang1" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nomor Identitas</Form.Label>
-                                        <Form.Control
-                                            style={styles.formControl}
-                                            type="text"
-                                            readOnly={isSaved}
-                                            value={passengerDetails.identity_number}
-                                            name="identity_number"
-                                            onChange={handlePassengerChange}
-                                        />
-                                    </Form.Group>
+                                            <Form.Group controlId={`formIdentityNumberPenumpang${index + 1}`} className="mb-3">
+                                                <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nomor Identitas</Form.Label>
+                                                <Form.Control
+                                                    style={styles.formControl}
+                                                    type="text"
+                                                    readOnly={isSaved}
+                                                    value={passengerDetails[index]?.identity_number || ""}
+                                                    name="identity_number"
+                                                    onChange={(e) => handlePassengerChange(index, e)}
+                                                />
+                                            </Form.Group>
 
-                                    <Form.Group controlId="formPublisherCountryPenumpang1" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Negara Penerbit</Form.Label>
-                                        <Form.Select
-                                            style={styles.formControl}
-                                            readOnly={isSaved}
-                                            value={passengerDetails.publisher_country}
-                                            name="publisher_country"
-                                            onChange={handlePassengerChange}
-                                        >
-                                            <option value="Indonesia">Indonesia</option>
-                                            <option value="Amerika Serikat">Amerika Serikat</option>
-                                            <option value="China">China</option>
-                                            <option value="Jepang">Jepang</option>
-                                            <option value="Thailand">Thailand</option>
-                                        </Form.Select>
-                                    </Form.Group>
+                                            <Form.Group controlId={`formPublisherCountryPenumpang${index + 1}`} className="mb-3">
+                                                <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Negara Penerbit</Form.Label>
+                                                <Form.Select
+                                                    style={styles.formControl}
+                                                    readOnly={isSaved}
+                                                    value={passengerDetails[index]?.publisher_country || ""}
+                                                    name="publisher_country"
+                                                    onChange={(e) => handlePassengerChange(index, e)}
+                                                >
+                                                    <option value="" disabled>Pilih Negara Penerbit</option>
+                                                    <option value="Indonesia">Indonesia</option>
+                                                    <option value="Amerika Serikat">Amerika Serikat</option>
+                                                    <option value="China">China</option>
+                                                    <option value="Jepang">Jepang</option>
+                                                    <option value="Thailand">Thailand</option>
+                                                </Form.Select>
+                                            </Form.Group>
 
-                                    <Form.Group controlId="formValidUntilPenumpang1" className="mb-3">
-                                        <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Berlaku Hingga</Form.Label>
-                                        <Form.Control
-                                            style={styles.formControl}
-                                            type="date"
-                                            readOnly={isSaved}
-                                            value={passengerDetails.identity_expire_date}
-                                            name="identity_expire_date"
-                                            onChange={handlePassengerChange}
-                                        />
-                                    </Form.Group>
-                                </Form>
+                                            <Form.Group controlId={`formValidUntilPenumpang${index + 1}`} className="mb-3">
+                                                <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Berlaku Hingga</Form.Label>
+                                                <Form.Control
+                                                    style={styles.formControl}
+                                                    type="date"
+                                                    readOnly={isSaved}
+                                                    value={passengerDetails[index]?.identity_expire_date || ""}
+                                                    name="identity_expire_date"
+                                                    onChange={(e) => handlePassengerChange(index, e)}
+                                                />
+                                            </Form.Group>
+                                        </Form>
+                                    </div>
+                                ))}
                             </Card>
                             <Card className="p-4 mb-4 mx-3 border">
                                 <h4 style={styles.fontHeadingBold20} className="mb-3">Pilih Kursi - Departure</h4>
