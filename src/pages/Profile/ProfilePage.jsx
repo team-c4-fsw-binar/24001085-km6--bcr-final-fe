@@ -269,7 +269,7 @@ const ProfilePage = () => {
 
                                         <Form.Group controlId="formNomorTelepon" className="mb-3">
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
-                                                Nama Telepon
+                                                Nomor Telepon
                                             </Form.Label>
                                             <Form.Control
                                                 type="text"

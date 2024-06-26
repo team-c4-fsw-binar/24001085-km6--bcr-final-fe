@@ -4,6 +4,8 @@ import bookingsReducer from "./reducers/booking"
 import paymentsReducer from "./reducers/payment"
 import flightsReducer from "./reducers/flight"
 import airportsReducer from "./reducers/airport"
+import homeReducer from "./reducers/home"
+import ticketReducer from "./reducers/ticket"
 import reducers from "./reducers"
 
 // this will make a global state/temporary database in frontend
@@ -18,6 +20,8 @@ export default configureStore(
       payments: paymentsReducer,
       flights: flightsReducer,
       airports: airportsReducer,
+      home: homeReducer,
+      ticket: ticketReducer,
     },
   } // state database
 )
