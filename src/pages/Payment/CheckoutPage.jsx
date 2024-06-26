@@ -63,7 +63,7 @@ const CheckoutPage = () => {
     useEffect(() => {
         const fetch = async () => {
             try {
-                const departureFlightId = selectedFlight?.id;  // Ensure this is not undefined
+                const departureFlightId = selectedFlight?.id;
                 const seatClass = homeData?.seat_class;
                 const adultCount = homeData?.adultCount;
                 const childCount = homeData?.childCount;
@@ -169,6 +169,13 @@ const CheckoutPage = () => {
 
     const handleSeatSelect = (seat, isDeparture) => {
         const selectedSeats = isDeparture ? selectedDepartureSeats : selectedReturnSeats;
+        const totalSelectedSeats = selectedDepartureSeats.length + selectedReturnSeats.length;
+
+        if (totalSelectedSeats >= totalPassengers) {
+            setError("Anda hanya bisa memilih kursi sejumlah total penumpang.");
+            return;
+        }
+
         const updatedSelectedSeats = [...selectedSeats, seat];
         if (isDeparture) {
             setSelectedDepartureSeats(updatedSelectedSeats);
