@@ -28,8 +28,11 @@ export const findTicket =
 
       const { departure_results, return_results } = data
 
+      // set ticket data to redux store or redusercs
       dispatch(setDepartureTicket(departure_results));
+
       dispatch(setReturnTicket(return_results));
+
       dispatch(setUserTicket({
         from, 
         to, 
