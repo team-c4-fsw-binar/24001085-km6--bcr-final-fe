@@ -147,7 +147,7 @@ const SearchingPage = () => {
         return flight?.premiumPrice;
       case 'business':
         return flight?.businessPrice;
-      case 'firstClass':
+      case 'first_class':
         return flight?.firstClassPrice;
       default:
         return 'N/A';
