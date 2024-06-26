@@ -3,10 +3,12 @@ import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap"
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { postBooking, getFilteredSeats, findTicketsDetail } from "../../redux/actions/checkout";
-import { selectFlight } from "../../redux/reducers/flight";
+import { selectFlightDeparture, selectFlightReturn } from "../../redux/reducers/flight";
 import { fetchCheckout, setPassengerDetails, setSeatsId, setReturnFlightId } from "../../redux/reducers/checkout";
 import Seat from '../../components/seat/seats';
 import * as icons from "../../assets/icons";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CheckoutPage = () => {
     const dispatch = useDispatch();
@@ -14,7 +16,8 @@ const CheckoutPage = () => {
     const { user } = useSelector((state) => state.auth);
     const flights = useSelector((state) => state.flights.data);
     const homeData = useSelector((state) => state.flights.homeData);
-    const selectedFlight = useSelector((state) => state.flights.selectedFlight);
+    const selectedFlightDeparture = useSelector((state) => state.flights.selectedFlightDeparture);
+    const selectedFlightReturn = useSelector((state) => state.flights.selectedFlightReturn);
     const checkout = useSelector((state) => state.checkout);
 
     const [error, setError] = useState("");
@@ -63,7 +66,8 @@ const CheckoutPage = () => {
     useEffect(() => {
         const fetch = async () => {
             try {
-                const departureFlightId = selectedFlight?.id;
+                const departureFlightId = selectedFlightDeparture?.id;
+                const returnFlightId = selectedFlightReturn?.id;
                 const seatClass = homeData?.seat_class;
                 const adultCount = homeData?.adultCount;
                 const childCount = homeData?.childCount;
@@ -73,9 +77,14 @@ const CheckoutPage = () => {
                     return;
                 }
 
+                if (!returnFlightId) {
+                    console.error('Return flight ID is missing');
+                    return;
+                }
+
                 const actionResult = await dispatch(findTicketsDetail({
                     departure_flight_id: departureFlightId,
-                    return_flight_id: null,  // if there's no return flight id, use null
+                    return_flight_id: returnFlightId,
                     seat_class: seatClass,
                     adultCount: adultCount,
                     childCount: childCount
@@ -88,7 +97,7 @@ const CheckoutPage = () => {
             }
         };
         fetch();
-    }, [dispatch, selectedFlight, homeData]);
+    }, [dispatch, selectedFlightDeparture, selectedFlightReturn, homeData]);
 
     // Update time every second
     useEffect(() => {
@@ -130,12 +139,20 @@ const CheckoutPage = () => {
         return new Intl.DateTimeFormat('id-ID', options).format(date);
     };
 
-    const selectedFlightFormat = selectedFlight ? {
-        ...selectedFlight,
-        departureTime: formatTimeFlight(selectedFlight.departureTime),
-        departureDate: formatDate(selectedFlight.departureTime),
-        arrivalTime: formatTimeFlight(selectedFlight.arrivalTime),
-        arrivalDate: formatDate(selectedFlight.arrivalTime)
+    const selectedFlightDepartureFormat = selectedFlightDeparture ? {
+        ...selectedFlightDeparture,
+        departureTime: formatTimeFlight(selectedFlightDeparture.departureTime),
+        departureDate: formatDate(selectedFlightDeparture.departureTime),
+        arrivalTime: formatTimeFlight(selectedFlightDeparture.arrivalTime),
+        arrivalDate: formatDate(selectedFlightDeparture.arrivalTime)
+    } : {};
+
+    const selectedFlightReturnFormat = selectedFlightReturn ? {
+        ...selectedFlightReturn,
+        departureTime: formatTimeFlight(selectedFlightReturn.departureTime),
+        departureDate: formatDate(selectedFlightReturn.departureTime),
+        arrivalTime: formatTimeFlight(selectedFlightReturn.arrivalTime),
+        arrivalDate: formatDate(selectedFlightReturn.arrivalTime)
     } : {};
 
     const [profileDetails, setProfileDetails] = useState({
@@ -167,23 +184,42 @@ const CheckoutPage = () => {
         dispatch(setPassengerDetails({ index, [name]: value }));
     };
 
-    const handleSeatSelect = (seat, isDeparture) => {
-        const selectedSeats = isDeparture ? selectedDepartureSeats : selectedReturnSeats;
+    const handleSeatSelect = (seat, isDeparture, isReturn) => {
+        let selectedSeats;
+    
+        // Tentukan array kursi yang dipilih berdasarkan isDeparture dan isReturn
+        if (isDeparture) {
+            selectedSeats = selectedDepartureSeats;
+        } else if (isReturn) {
+            selectedSeats = selectedReturnSeats;
+        } else {
+            selectedSeats = [];
+        }
+    
+        // Hitung jumlah total kursi yang dipilih untuk pergi dan pulang
         const totalSelectedSeats = selectedDepartureSeats.length + selectedReturnSeats.length;
-
-        if (totalSelectedSeats >= totalPassengers) {
-            setError("Anda hanya bisa memilih kursi sejumlah total penumpang.");
+    
+        // Batasi jumlah kursi yang dapat dipilih berdasarkan jumlah penumpang
+        if (totalSelectedSeats >= totalPassengers * 2) {
+            toast.error("Anda hanya bisa memilih kursi sejumlah total penumpang");
             return;
         }
-
+    
+        // Perbarui array kursi yang dipilih dengan kursi baru
         const updatedSelectedSeats = [...selectedSeats, seat];
+    
+        // Set array kursi yang diperbarui ke state yang sesuai
         if (isDeparture) {
             setSelectedDepartureSeats(updatedSelectedSeats);
-        } else {
+        } else if (isReturn) {
             setSelectedReturnSeats(updatedSelectedSeats);
         }
-        dispatch(setSeatsId(updatedSelectedSeats.map(s => s.id)));
-    };
+    
+        // Update state global dengan ID dari kursi yang dipilih untuk kedua perjalanan
+        const allSelectedSeats = [...selectedDepartureSeats, ...selectedReturnSeats];
+        const updatedAllSelectedSeats = [...allSelectedSeats, seat];
+        dispatch(setSeatsId(updatedAllSelectedSeats.map(s => s.id)));
+    };    
 
     const seatClass = useSelector((state) => state.checkout.seatClass);
     const [departureSeats, setDepartureSeats] = useState([]);
@@ -206,9 +242,9 @@ const CheckoutPage = () => {
         };
 
         fetchSeats();
-    }, [checkout.departure_flight_id, seatClass, checkout.return_flight_id]);
+    }, [checkout.departure_flight_id, checkout.return_flight_id, seatClass]);
 
-    const renderSeats = (seats = [], selectedSeats, isDeparture) => {
+    const renderSeats = (seats = [], selectedSeats, isDeparture, isReturn) => {
         const rows = 12;
         const columns = 6;
         const seatGrid = Array.from({ length: rows }, () => Array(columns).fill(null));
@@ -226,7 +262,7 @@ const CheckoutPage = () => {
                         <Seat
                             key={colIndex}
                             seat={seat}
-                            onSeatSelect={(seat) => handleSeatSelect(seat, isDeparture)}
+                            onSeatSelect={(seat) => handleSeatSelect(seat, isDeparture, isReturn)}
                             isSelected={selectedSeats.some(s => s.seat_no === seat?.seat_no)}
                             isSaved={isSaved}
                         />
@@ -667,7 +703,7 @@ const CheckoutPage = () => {
                                         <div className="headerCell">E</div>
                                         <div className="headerCell">F</div>
                                     </div>
-                                    {renderSeats(departureSeats, selectedDepartureSeats, true)}
+                                    {renderSeats(departureSeats, selectedDepartureSeats, true, false)}
                                 </div>
                             </Card>
                             {checkout.return_flight_id && (
@@ -683,7 +719,7 @@ const CheckoutPage = () => {
                                         <p className="mb-3 d-flex justify-content-between align-items-center"
                                             style={{ ...styles.cardSeatChosen, ...styles.fontBodyMedium14 }}>
                                             <span className="flex-grow-1 text-start position-relative">
-                                                {seatClass} - {selectedDepartureSeats.length} Seats Chosen
+                                                {seatClass} - {selectedReturnSeats.length} Seats Chosen
                                             </span>
                                             <Image src={icons.checkIcon} alt="checklist" className="ms-2" />
                                         </p>
@@ -693,12 +729,11 @@ const CheckoutPage = () => {
                                             <div className="headerCell">A</div>
                                             <div className="headerCell">B</div>
                                             <div className="headerCell">C</div>
-                                            <div className="aisle"></div> {/* Aisle space */}
                                             <div className="headerCell">D</div>
                                             <div className="headerCell">E</div>
                                             <div className="headerCell">F</div>
                                         </div>
-                                        {renderSeats(returnSeats, selectedReturnSeats, false)}
+                                        {renderSeats(returnSeats, selectedReturnSeats, false, true)}
                                     </div>
                                 </Card>
                             )}
@@ -725,74 +760,37 @@ const CheckoutPage = () => {
                                 <div className="border-bottom pb-2">
                                     <p style={styles.fontTitleBold18}>Detail Penerbangan</p>
                                     <div className="d-flex align-items-center">
-                                        <p style={styles.fontTitleBold16} className="my-0 me-auto">{selectedFlightFormat.departureTime}</p>
+                                        <p style={styles.fontTitleBold16} className="my-0 me-auto">{selectedFlightDepartureFormat.departureTime}</p>
                                         <p style={{ ...styles.fontBodyBold12, ...styles.textKeberangkatan }} className="my-0">Keberangkatan</p>
                                     </div>
-                                    <p style={styles.fontBodyRegular14} className="my-0">{selectedFlightFormat.departureDate}</p>
-                                    <p style={styles.fontBodyMedium14} className="me-auto my-0">{selectedFlight.departureAirport_respon?.name} - Terminal {selectedFlight.departureAirport}</p>
+                                    <p style={styles.fontBodyRegular14} className="my-0">{selectedFlightDepartureFormat.departureDate}</p>
+                                    <p style={styles.fontBodyMedium14} className="me-auto my-0">{selectedFlightDeparture.departureAirport_respon?.name} - Terminal {selectedFlightDeparture.departureAirport}</p>
                                 </div>
 
                                 <div className="border-bottom py-2">
-                                    <p style={styles.fontBodyBold14} className="my-0 ">{selectedFlight.Airline?.name} - {checkout.seatClass}</p>
-                                    <p style={styles.fontBodyBold14} className=" mb-3">{selectedFlight.Airline?.code}</p>
+                                    <p style={styles.fontBodyBold14} className="my-0 ">{selectedFlightDeparture.Airline?.name} - {checkout.seatClass}</p>
+                                    <p style={styles.fontBodyBold14} className=" mb-3">{selectedFlightDeparture.Airline?.code}</p>
                                     <div className="d-flex align-items-start">
                                         <div>
-                                            <Image src={selectedFlight.Airline.imgUrl} alt="information" className="me-1" style={{ width: '100px' }} />
+                                            <Image src={selectedFlightDeparture.Airline.imgUrl} alt="information" className="me-1" style={{ width: '100px' }} />
                                             <p style={styles.fontBodyBold14} className="my-0">Informasi:</p>
-                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi {selectedFlight.Airline?.baggage} kg</p>
-                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin {selectedFlight.Airline?.cabinBaggage} kg</p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi {selectedFlightDeparture.Airline?.baggage} kg</p>
+                                            <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin {selectedFlightDeparture.Airline?.cabinBaggage} kg</p>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="py-2">
-                                    <div className="d-flex align-items-center">
-                                        <p style={styles.fontBodyBold14} className="my-0 me-auto">{selectedFlightFormat.arrivalTime}</p>
-                                        <p style={{ ...styles.fontBodyBold12, ...styles.textKedatangan }} className="my-0">Kedatangan</p>
-                                    </div>
-                                    <p style={styles.fontBodyRegular14} className="my-0">{selectedFlightFormat.arrivalDate}</p>
-                                    <p style={styles.fontBodyMedium14} className="my-0">{selectedFlight.arrivalAirport_respon?.name}</p>
-                                </div>
-
-                                {/* {isReturn && (
-                                    <>
-                                        <hr />
-                                        <div className="border-bottom pb-2">
-                                            <div className="d-flex align-items-center">
-                                                <p style={styles.fontTitleBold16} className="my-0 me-auto">13:00</p>
-                                                <p style={{ ...styles.fontBodyBold12, ...styles.textKeberangkatan }} className="my-0">Kepulangan</p>
-                                            </div>
-                                            <p style={styles.fontBodyRegular14} className="my-0">20 April 2023</p>
-                                            <p style={styles.fontBodyMedium14} className="me-auto my-0">Melbourne International Airport</p>
-                                        </div>
-
-                                        <div className="border-bottom py-2">
-                                            <p style={styles.fontBodyBold14} className="my-0 ms-4">Jet Air - Business</p>
-                                            <p style={styles.fontBodyBold14} className="ms-4 mb-3">JT - 203</p>
-                                            <div className="d-flex align-items-start">
-                                                <Image src={icons.informationIcon} alt="information" className="me-1" />
-                                                <div>
-                                                    <p style={styles.fontBodyBold14} className="my-0">Informasi:</p>
-                                                    <p style={styles.fontBodyRegular14} className="my-0">Bagasi 20 kg</p>
-                                                    <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin 7 kg</p>
-                                                    <p style={styles.fontBodyRegular14} className="my-0">In-Flight Entertainment</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="py-2">
-                                            <div className="d-flex align-items-center">
-                                                <p style={styles.fontBodyBold14} className="my-0 me-auto">11:00</p>
-                                                <p style={{ ...styles.fontBodyBold12, ...styles.textKedatangan }} className="my-0">Kedatangan</p>
-                                            </div>
-                                            <p style={styles.fontBodyRegular14} className="my-0">21 April 2023</p>
-                                            <p style={styles.fontBodyMedium14} className="my-0">Soekarno Hatta - Terminal 1A Domestik</p>
-                                        </div>
-                                        <hr />
-                                    </>
-                                )} */}
 
                                 <div className="border-bottom py-2">
+                                    <div className="d-flex align-items-center">
+                                        <p style={styles.fontBodyBold14} className="my-0 me-auto">{selectedFlightDepartureFormat.arrivalTime}</p>
+                                        <p style={{ ...styles.fontBodyBold12, ...styles.textKedatangan }} className="my-0">Kedatangan</p>
+                                    </div>
+                                    <p style={styles.fontBodyRegular14} className="my-0">{selectedFlightDepartureFormat.arrivalDate}</p>
+                                    <p style={styles.fontBodyMedium14} className="my-0">{selectedFlightDeparture.arrivalAirport_respon?.name}</p>
+                                </div>
+
+
+                                <div className="py-2">
                                     <p style={styles.fontBodyBold14} className="my-0">Rincian Harga</p>
                                     {homeData.adultCount > 0 && (
                                         <div className="d-flex">
@@ -826,9 +824,81 @@ const CheckoutPage = () => {
                                     )}
                                 </div>
 
+                                {isReturn && (
+                                    <>
+                                        <hr />
+                                        <div className="border-bottom pb-2">
+                                            <div className="d-flex align-items-center">
+                                                <p style={styles.fontTitleBold16} className="my-0 me-auto">{selectedFlightReturnFormat.departureTime}</p>
+                                                <p style={{ ...styles.fontBodyBold12, ...styles.textKeberangkatan }} className="my-0">Kepulangan</p>
+                                            </div>
+                                            <p style={styles.fontBodyRegular14} className="my-0">{selectedFlightReturnFormat.departureDate}</p>
+                                            <p style={styles.fontBodyMedium14} className="me-auto my-0">{selectedFlightReturn.departureAirport_respon?.name}</p>
+                                        </div>
+
+                                        <div className="border-bottom py-2">
+                                            <p style={styles.fontBodyBold14} className="my-0 ">{selectedFlightReturn.Airline?.name} - {checkout.seatClass}</p>
+                                            <p style={styles.fontBodyBold14} className=" mb-3">{selectedFlightReturn.Airline?.code}</p>
+                                            <div className="d-flex align-items-start">
+                                                <div>
+                                                    <Image src={selectedFlightReturn.Airline.imgUrl} alt="information" className="me-1" style={{ width: '100px' }} />
+                                                    <p style={styles.fontBodyBold14} className="my-0">Informasi:</p>
+                                                    <p style={styles.fontBodyRegular14} className="my-0">Bagasi {selectedFlightReturn.Airline?.baggage} kg</p>
+                                                    <p style={styles.fontBodyRegular14} className="my-0">Bagasi Kabin {selectedFlightReturn.Airline?.cabinBaggage} kg</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="border-bottom py-2">
+                                            <div className="d-flex align-items-center">
+                                                <p style={styles.fontBodyBold14} className="my-0 me-auto">{selectedFlightReturnFormat.arrivalTime}</p>
+                                                <p style={{ ...styles.fontBodyBold12, ...styles.textKedatangan }} className="my-0">Kedatangan</p>
+                                            </div>
+                                            <p style={styles.fontBodyRegular14} className="my-0">{selectedFlightReturnFormat.arrivalDate}</p>
+                                            <p style={styles.fontBodyMedium14} className="my-0">{selectedFlightReturn.arrivalAirport_respon?.name} - Terminal {selectedFlightReturn.departureAirport}</p>
+                                        </div>
+
+                                        <div className="py-2">
+                                            <p style={styles.fontBodyBold14} className="my-0">Rincian Harga</p>
+                                            {homeData.adultCount > 0 && (
+                                                <div className="d-flex">
+                                                    <p style={styles.fontBodyRegular14} className="me-auto my-0">
+                                                        {homeData.adultCount} Adult
+                                                    </p>
+                                                    <p style={styles.fontBodyRegular14} className="my-0">
+                                                        IDR {formatCurrency(checkout?.ticketDetails?.return_flight?.price?.adultTotal)}
+                                                    </p>
+                                                </div>
+                                            )}
+                                            {homeData.childCount > 0 && (
+                                                <div className="d-flex">
+                                                    <p style={styles.fontBodyRegular14} className="me-auto my-0">
+                                                        {homeData.childCount} Child
+                                                    </p>
+                                                    <p style={styles.fontBodyRegular14} className="my-0">
+                                                        IDR {formatCurrency(checkout?.ticketDetails?.return_flight?.price?.childTotal)}
+                                                    </p>
+                                                </div>
+                                            )}
+                                            {checkout.babyCount > 0 && (
+                                                <div className="d-flex">
+                                                    <p style={styles.fontBodyRegular14} className="me-auto my-0">
+                                                        {checkout.babyCount} Baby
+                                                    </p>
+                                                    <p style={styles.fontBodyRegular14} className="my-0">
+                                                        IDR 0
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <hr />
+                                    </>
+                                )}
+
+
                                 <div className="d-flex pt-2">
                                     <p style={styles.fontTitleBold16} className="me-auto">Total</p>
-                                    <h4 style={{ ...styles.fontTitleBold18, ...styles.textTotal }} className="font-title-bold-18 text-total">IDR {formatCurrency(checkout?.ticketDetails?.departure_flight?.price?.total)}</h4>
+                                    <h4 style={{ ...styles.fontTitleBold18, ...styles.textTotal }} className="font-title-bold-18 text-total">IDR {formatCurrency(checkout?.ticketDetails?.total_amount)}</h4>
                                 </div>
                             </Card>
                             {isSaved && (
@@ -843,7 +913,7 @@ const CheckoutPage = () => {
                     </Row>
                 </Container >
             )}
-
+            <ToastContainer theme="colored" />
         </>
     );
 };

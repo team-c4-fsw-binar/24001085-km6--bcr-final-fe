@@ -28,7 +28,7 @@ export const fetchFlights = createAsyncThunk(
       )
       return response.data.data
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message)
+      // toast.error(error.response?.data?.message || error.message)
       return rejectWithValue(error.response?.data?.message || error.message)
     }
   }

@@ -12,6 +12,8 @@ import {
 } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import Navbar from "../../components/Navigation/Navbar"
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import * as icons from "../../assets/icons"
 import * as images from "../../assets/images"
@@ -23,9 +25,9 @@ import { FaArrowLeft } from "react-icons/fa"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchFlights } from "../../redux/actions/flights"
 import { findTicketsDetail } from "../../redux/actions/checkout"
-import { selectFlight } from "../../redux/reducers/flight"
+import { selectFlightDeparture, selectFlightReturn } from "../../redux/reducers/flight"
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { setDepartureFlightId } from "../../redux/reducers/checkout";
+import { setDepartureFlightId, setReturnFlightId } from "../../redux/reducers/checkout";
 
 const useQuery = () => {
   const location = useLocation();
@@ -45,6 +47,9 @@ const SearchingPage = () => {
   const [isEmpty, setIsEmpty] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isTiketHabis, setIsTiketHabis] = useState(false)
+
+  const [selectedDepartureFlight, setSelectedDepartureFlight] = useState(null);
+  const [selectedReturnFlight, setSelectedReturnFlight] = useState(null);
 
   const [queryParams, setQueryParams] = useState({
     from: query.get('from'),
@@ -100,8 +105,8 @@ const SearchingPage = () => {
   }, [flightStatus, dispatch, searchParams, flights]);
 
 
-  const departureFlights = flights.departure_results?.results || []
-  const returnFlights = flights.return_results?.results || []
+  const departureFlights = flights?.departure_results?.results || []
+  const returnFlights = flights?.return_results?.results || []
 
 
   const formatDate = (inputDate) => {
@@ -114,29 +119,24 @@ const SearchingPage = () => {
     return formattedDate
   };
 
-  const handleSelectFlight = (flight, isReturnFlight) => {
-    // Dispatch the selectFlight action
-    dispatch(selectFlight(flight));
+  const handleSelectFlightDeparture = (flight) => {
+    setSelectedDepartureFlight(flight);
+    dispatch(selectFlightDeparture(flight));
+    dispatch(setDepartureFlightId(flight.id));
+  };
 
-    // Dispatch the setDepartureFlightId action if it's a departure flight
-    if (!isReturnFlight) {
-      dispatch(setDepartureFlightId(flight.id));
+  const handleSelectFlightReturn = (flight) => {
+    setSelectedReturnFlight(flight);
+    dispatch(selectFlightReturn(flight));
+    dispatch(setReturnFlightId(flight.id));
+  };
+
+  const handleCheckout = () => {
+    if (homeData.return_date && !selectedReturnFlight) {
+      toast.error("Please select a return flight");
+      return;
     }
-
-    // Create the flight parameters
-    const flightParams = {
-      flight_id: flight.id,
-    };
-
-    // Convert the parameters to a query string
-    const searchParams = new URLSearchParams(flightParams);
-
-    // Navigate to the appropriate page based on the flight type
-    if (isReturnFlight) {
-      navigate(`/service`);
-    } else {
-      navigate(`/checkout`);
-    }
+    navigate("/checkout");
   };
 
   const getPrice = (flight) => {
@@ -398,6 +398,7 @@ const SearchingPage = () => {
                         <Button
                           style={styles.customButton}
                           className="custom-button button-pilih mt-2 w-100"
+                          onClick={handleCheckout} disabled={!selectedDepartureFlight}
                         >
                           Continue
                         </Button>
@@ -424,7 +425,7 @@ const SearchingPage = () => {
                       </>
                     ) : (
                       <>
-                        {flights?.departure_results?.results?.map((flight, index) => (
+                        {departureFlights.map((flight, index) => (
                           <Accordion
                             className="mb-2 accordion"
                             style={{ borderColor: "#7126b5" }}
@@ -497,7 +498,7 @@ const SearchingPage = () => {
                                         <Button
                                           style={styles.customButton}
                                           className="custom-button button-pilih mt-2"
-                                          onClick={() => handleSelectFlight(flight, false)}
+                                          onClick={() => handleSelectFlightDeparture(flight)}
                                         >
                                           Pilih
                                         </Button>
@@ -589,7 +590,7 @@ const SearchingPage = () => {
                           </Accordion>
                         ))}
 
-                        {flights?.return_results?.results?.map((flight, index) => (
+                        {homeData.return_date && returnFlights.map((flight, index) => (
                           <Accordion
                             className="mb-2 accordion"
                             style={{ borderColor: "#7126b5" }}
@@ -662,7 +663,7 @@ const SearchingPage = () => {
                                         <Button
                                           style={styles.customButton}
                                           className="custom-button button-pilih mt-2"
-                                          onClick={() => handleSelectFlight(flight, true)}
+                                          onClick={() => handleSelectFlightReturn(flight)}
                                         >
                                           Pilih
                                         </Button>
@@ -762,6 +763,7 @@ const SearchingPage = () => {
           )}
         </Row>
       </Container>
+      <ToastContainer theme="colored"/>
     </div>
   )
 }

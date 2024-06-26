@@ -43,7 +43,8 @@ const flightsSlice = createSlice({
     data: [],
     status: "idle",
     error: null,
-    selectedFlight: null,
+    selectedFlightDeparture: null,
+    selectedFlightReturn: null,
   },
   reducers: {
     setHomeData: (state, action) => {
@@ -52,8 +53,11 @@ const flightsSlice = createSlice({
     setFlights: (state, action) => {
       state.data = action.payload;
     },
-    selectFlight: (state, action) => {
-      state.selectedFlight = action.payload;
+    selectFlightDeparture: (state, action) => {
+      state.selectedFlightDeparture = action.payload;
+    },
+    selectFlightReturn: (state, action) => {
+      state.selectedFlightReturn = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -82,5 +86,5 @@ const flightsSlice = createSlice({
   },
 })
 
-export const { setHomeData, setFlights, selectFlight } = flightsSlice.actions;
+export const { setHomeData, setFlights, selectFlightDeparture, selectFlightReturn } = flightsSlice.actions;
 export default flightsSlice.reducer
