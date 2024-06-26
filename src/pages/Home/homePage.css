@@ -7,30 +7,11 @@
   background: white;
   padding: 20px;
   margin: auto;
-  transform: translateY(-40%);
+  transform: translateY(-30%);
 }
 
 .destinasiFavoritContainer {
-  transform: translateY(-20%);
-}
-
-.custom-button:hover {
-  background-color: #5a2091;
-  border-color: #5a2091;
-}
-
-.customSwitchTogleDate .form-check-input {
-  width: 3rem;
-  height: 1.5rem;
-}
-
-.customSwitchTogleDate .form-check-input:checked {
-  background-color: #4b1979;
-  border-color: #4b1979;
-}
-
-.customSwitchTogleDate .form-check-input:focus {
-  box-shadow: none;
+  transform: translateY(-10%);
 }
 
 .btnDestinasi {
@@ -85,14 +66,6 @@
   color: white;
 }
 
-.inputTextDecorationNone:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-.swap-icon-container {
-  justify-content: center;
-}
 
 /* mobile */
 @media (max-width: 768px) {
@@ -113,16 +86,9 @@
     font-size: 12px;
   }
 
-  .swap-icon-container {
-    justify-content: flex-start;
-  }
-
-  .swap-icon {
-    margin-left: auto;
-  }
-
   .cardDestinasi {
     width: 100%;
+    margin: 10px 0;
     display: flex;
     justify-content: center;
     flex: 0 1 calc(50% - 10px);

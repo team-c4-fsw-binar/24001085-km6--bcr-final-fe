@@ -8,7 +8,12 @@ const initialState = {
     from : null,
     to : null,
     departureDate : null,
-    passengers : null,
+    passengers : {
+      adult : null,
+      child : null,
+      baby : null,
+      total : null
+    },
     seatClass : null,
     returnDate : null
   }
