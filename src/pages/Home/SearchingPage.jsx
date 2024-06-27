@@ -10,7 +10,7 @@ import {
   Modal,
   Row,
 } from "react-bootstrap"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Navbar from "../../components/Navigation/Navbar"
 
 import * as icons from "../../assets/icons"
@@ -18,145 +18,168 @@ import * as images from "../../assets/images"
 
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
+import Pagination from "react-bootstrap/Pagination"
 import { BiSortAlt2 } from "react-icons/bi"
 import { FaArrowLeft } from "react-icons/fa"
 import { useDispatch, useSelector } from "react-redux"
+import SearchFlightsComponents from "../../components/Home/SearchFlights"
 import { fetchFlights } from "../../redux/actions/flights"
-import { findTicketsDetail } from "../../redux/actions/checkout"
-import { selectFlight } from "../../redux/reducers/flight"
-import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { setDepartureFlightId } from "../../redux/reducers/checkout";
-
-const useQuery = () => {
-  const location = useLocation();
-  return new URLSearchParams(location.search);
-};
+import { findTicket } from "../../redux/actions/ticket"
+import {
+  setDepartureFlightId,
+  setReturnFlightId,
+} from "../../redux/reducers/checkout"
+import "../styles/searchingPage.css"
 
 const SearchingPage = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const query = useQuery();
-  const flightStatus = useSelector((state) => state.flights.status);
-  const error = useSelector((state) => state.flights.error);
-  const homeData = useSelector((state) => state.flights.homeData);
-  const flights = useSelector((state) => state.flights.data);
-  const [showMyModal, setShowMyModal] = useState(false)
-  const handleOnClose = () => setShowMyModal(false)
+  const [showModalFliter, setShowModalFilter] = useState(false)
+  const [showModalUbah, setShowModalUbah] = useState(false)
   const [isEmpty, setIsEmpty] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isTiketHabis, setIsTiketHabis] = useState(false)
+  const [selectedDeparture, setSelectedDeparture] = useState(null)
+  const [selectedReturn, setSelectedReturn] = useState(null)
+  const [isReturnFlightOn, setIsReturnFlightOn] = useState(false)
+  const [selectedFilter, setSelectedFilter] = useState("harga_termurah")
 
-  const [queryParams, setQueryParams] = useState({
-    from: query.get('from'),
-    to: query.get('to'),
-    departure_date: query.get('departure_date'),
-    return_date: query.get('return_date'),
-    adultCount: query.get('adultCount'),
-    childCount: query.get('childCount'),
-    babyCount: query.get('babyCount'),
-    total_passengers: query.get('total_passengers'),
-    seat_class: query.get('seat_class'),
-    filter: JSON.parse(query.get('filter'))
-  });
+  const handleFilterOnClose = () => setShowModalFilter(false)
+  const handleUbahOnClose = () => setShowModalUbah(false)
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const actionResult = await dispatch(fetchFlights(queryParams));
-        console.log('Flight search successful!', actionResult);
-        console.log('Payload:', queryParams);
-      } catch (error) {
-        console.error('Error fetching flights', error);
-      }
-    };
-    fetch();
-  }, [dispatch, queryParams]);
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const [searchParams, setSearchParams] = useState({
-    from: "",
-    to: "",
-    departure_date: "",
-    adultCount: "",
-    childCount: "",
-    babyCount: "",
-    total_passengers: "",
-    seat_class: "",
-    return_date: ""
-  });
+  const flightStatus = useSelector((state) => state.flights.status)
+  const error = useSelector((state) => state.flights.error)
+  const flights = useSelector((state) => state.flights.data)
+  const statesss = useSelector((state) => state.flights)
+  console.log("ini state.flights", statesss)
+  const tickets = useSelector((state) => state.ticket)
+  console.log("ini slice nya tiket", tickets)
+  // console.log(dispatch());
+  // console.log((state)=> state);
 
-  const openModalSearch = () => {
-    Modal.show()
+  console.log("FLIGHTS NEW", flights)
+  console.log("FLIGHTS STATUS", flightStatus)
+
+  const urlSearch = new URLSearchParams(location.search)
+  const searchParams = tickets.userTicket
+
+  console.log("searchparams", searchParams)
+
+  const departureData = tickets.departureTicket
+  const returnData = tickets.returnTicket
+
+  const departureFlights = departureData.results || []
+  const returnFlights = returnData.results || []
+
+  console.log("dep flights", departureFlights)
+  console.log("ret flights", returnFlights)
+
+  const handlePilih = (flight, type) => {
+    if (type === "departure") {
+      setSelectedDeparture(flight)
+      setSelectedReturn(null)
+    } else {
+      setSelectedReturn(flight)
+    }
   }
 
-  useEffect(() => {
-    if (flightStatus === "idle") {
-      dispatch(fetchFlights(searchParams));
-    } else if (flightStatus === "loading") {
-      setIsLoading(true);
-    } else {
-      setIsLoading(false);
-      if (flightStatus === "failed") {
-        setIsEmpty(true);
-      } else {
-        setIsEmpty(flights.departure_results?.results?.length === 0);
-      }
+  const handleFilterSelection = (filter) => {
+    setSelectedFilter(filter)
+    setShowModalFilter(false)
+  }
+
+  let pagination = []
+
+  const getFlightPrice = (flight) => {
+    switch (searchParams.seatClass) {
+      case "economy":
+        return flight.economyPrice.toLocaleString("id-ID")
+      case "firstClass":
+        return flight.firstClassPrice.toLocaleString("id-ID")
+      case "business":
+        return flight.businessPrice.toLocaleString("id-ID")
+      case "premium":
+        return flight.premiumPrice.toLocaleString("id-ID")
+      default:
+        return flight.economyPrice.toLocaleString("id-ID")
     }
-  }, [flightStatus, dispatch, searchParams, flights]);
+  }
 
-
-  const departureFlights = flights.departure_results?.results || []
-  const returnFlights = flights.return_results?.results || []
-
-
-  const formatDate = (inputDate) => {
-    // Ubah format input tanggal dari yyyy-mm-dd menjadi Date object
-    const date = new Date(inputDate)
-
-    // Format tanggal menjadi 'd MMMM yyyy' menggunakan date-fns
-    const formattedDate = format(date, "d MMMM yyyy", { locale: id })
-
-    return formattedDate
-  };
+  const handleGanti = (type) => {
+    // if (type === "departure") {
+    //   setSelectedDeparture(null)
+    //   setSelectedReturn(null)
+    // } else {
+    //   setSelectedReturn(null)
+    // }
+  }
 
   const handleSelectFlight = (flight, isReturnFlight) => {
-    // Dispatch the selectFlight action
-    dispatch(selectFlight(flight));
+    dispatch(selectFlight(flight))
 
     // Dispatch the setDepartureFlightId action if it's a departure flight
-    if (!isReturnFlight) {
-      dispatch(setDepartureFlightId(flight.id));
+    if (!isReturnFlightOn) {
+      dispatch(setDepartureFlightId(selectedDeparture.id))
+    } else {
+      dispatch(setDepartureFlightId(selectedDeparture.id))
+      dispatch(setReturnFlightId(selectedReturn.id))
     }
 
     // Create the flight parameters
     const flightParams = {
       flight_id: flight.id,
-    };
+    }
 
     // Convert the parameters to a query string
     const searchParams = new URLSearchParams(flightParams);
 
     // Navigate to the appropriate page based on the flight type
     if (isReturnFlight) {
-      navigate(`/service`);
+      navigate(`/service`)
     } else {
-      navigate(`/checkout`);
+      navigate(`/checkout`)
     }
-  };
+  }
 
-  const getPrice = (flight) => {
-    switch (homeData.seat_class) {
-      case 'economy':
-        return flight?.economyPrice;
-      case 'premium':
-        return flight?.premiumPrice;
-      case 'business':
-        return flight?.businessPrice;
-      case 'first_class':
-        return flight?.firstClassPrice;
-      default:
-        return 'N/A';
+  useEffect(() => {
+    dispatch(findTicket("/search", searchParams.from, searchParams.to, searchParams.departureDate, searchParams.passengers.total, searchParams.seatClass, searchParams.returnDate, searchParams.passengers.adult, searchParams.passengers.child, searchParams.passengers.baby, selectedFilter))
+
+    if (flightStatus === "idle") {
+      dispatch(findTicket("/search", searchParams.from, searchParams.to, searchParams.departureDate, searchParams.passengers.total, searchParams.seatClass, searchParams.returnDate, searchParams.passengers.adult, searchParams.passengers.child, searchParams.passengers.baby, selectedFilter))
+    } else if (flightStatus === "loading") {
+      setIsLoading(true)
+      dispatch(fetchFlights(searchParams))
+    } else {
+      setIsLoading(false)
     }
-  };
+
+    if (departureFlights.length === 0) {
+      setIsEmpty(true)
+    } else {
+      let active = 1
+      for (
+        let number = 1;
+        number <= departureData.totalPage;
+        number++
+      ) {
+        pagination.push(
+          <Pagination.Item key={number} active={number === active}>
+            {number}
+          </Pagination.Item>
+        )
+      }
+    }
+
+    setIsReturnFlightOn(returnFlights.length > 0)
+  }, [
+    flightStatus,
+    dispatch,
+    searchParams,
+    departureFlights,
+    returnFlights,
+    selectedFilter,
+  ])
 
   const styles = {
     customButton: {
@@ -263,6 +286,23 @@ const SearchingPage = () => {
       backgroundColor: "#ccc",
       margin: "0 1px",
     },
+    bgTransparent: {
+      backgroundColor: "transparent",
+    },
+  }
+
+  const formatDate = (inputDate) => {
+    // Ubah format input tanggal dari yyyy-mm-dd menjadi Date object
+    const date = new Date(inputDate)
+
+    // Format tanggal menjadi 'd MMMM yyyy' menggunakan date-fns
+    const formattedDate = format(date, "d MMMM yyyy", { locale: id })
+
+    return formattedDate
+  }
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1)
   }
 
   return (
@@ -277,108 +317,116 @@ const SearchingPage = () => {
                 style={{ ...styles.customButton, ...styles.buttonKembali }}
               >
                 <FaArrowLeft style={{ marginRight: "10px" }} />
-                {queryParams.from} to {queryParams.to} -{" "}
-                {queryParams.total_passengers} Penumpang -{" "}
-                {queryParams.seat_class}
+                {searchParams.from} to {searchParams.to} -{" "}
+                {searchParams.total_passengers} Penumpang -{" "}
+                {capitalizeFirstLetter(searchParams.seatClass)}
               </Button>
             </Link>
           </Col>
           <Col className="text-right" md={3}>
-            <Button style={styles.buttonUbah} onClick={openModalSearch}>Ubah Pencarian</Button>
-          </Col>
-        </Row>
-        <Row>
-          <Col className="d-flex justify-content-between px-5" style={{ cursor: 'pointer' }}>
-            {[
-              "SENIN",
-              "SELASA",
-              "RABU",
-              "KAMIS",
-              "JUMAT",
-              "SABTU",
-              "MINGGU",
-              "SENIN",
-            ].map((day, index) => (
-              <div key={index}>
-                <Card
-                  className="text-center p-2"
-                  style={styles.cardTanggal}
-                  onMouseOver={(e) =>
-                  (e.currentTarget.style = {
-                    ...styles.cardTanggal,
-                    ...styles.cardTanggalHover,
-                  })
-                  }
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style = styles.cardTanggal)
-                  }
-                >
-                  <Card.Body>
-                    <Card.Text>{day}</Card.Text>
-                    <Card.Title>{formatDate(queryParams.departure_date)}</Card.Title>
-                  </Card.Body>
-                </Card>
-              </div>
-            ))}
-          </Col>
-        </Row>
-        <hr />
-        <Row>
-          <Col md={10}></Col>
-          <Col className="text-right">
             <Button
-              variant=""
-              onClick={() => setShowMyModal(true)}
-              className="mb-3 text-right ml-auto w-100"
-              style={styles.outlineButton}
-              onMouseOver={(e) =>
-              (e.currentTarget.style = {
-                ...styles.outlineButton,
-                ...styles.outlineButtonHover,
-              })
-              }
-              onMouseOut={(e) => (e.currentTarget.style = styles.outlineButton)}
+              style={styles.buttonUbah}
+              onClick={() => setShowModalUbah(true)}
             >
-              <BiSortAlt2 /> Termurah
+              Ubah Pencarian
             </Button>
           </Col>
         </Row>
-        <Modal show={showMyModal} onHide={handleOnClose}>
+        <Modal show={showModalUbah} centered onHide={handleUbahOnClose}>
+          <Modal.Header closeButton />
+          <Modal.Body className="p-2">
+            <SearchFlightsComponents />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              className="custom-button"
+              style={styles.customButton}
+              onClick={handleUbahOnClose}
+            >
+              Batal
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <hr />
+        <Row>
+          <Col md={9}></Col>
+          <Col className="text-right">
+            <Button
+              variant=""
+              onClick={() => setShowModalFilter(true)}
+              className="mb-3 text-right ml-auto w-100 outline-button"
+              // style={styles.outlineButton}
+              // onMouseOver={(e) =>
+              //   (e.currentTarget.style = {
+              //     ...styles.outlineButton,
+              //     ...styles.outlineButtonHover,
+              //   })
+              // }
+              // onMouseOut={(e) => (e.currentTarget.style = styles.outlineButton)}
+            >
+              <BiSortAlt2 />{" "}
+              {selectedFilter.replace("_", " ").replace("_", " ")}
+            </Button>
+          </Col>
+        </Row>
+        <Modal show={showModalFliter} onHide={handleFilterOnClose}>
           <Modal.Header closeButton></Modal.Header>
           <Modal.Body className="p-0">
-            <ListGroup className="m-0" style={{ cursor: 'pointer' }}>
-              {[
-                "Harga - Termurah",
-                "Durasi - Terpendek",
-                "Keberangkatan - Paling Awal",
-                "Keberangkatan - Paling Akhir",
-                "Kedatangan - Paling Awal",
-                "Kedatangan - Paling Akhir",
-              ].map((text, index) => (
-                <>
-                  <ListGroup.Item
-                    key={index}
-                    style={styles.modalItem}
-                    onMouseOver={(e) =>
-                    (e.currentTarget.style = {
-                      ...styles.modalItem,
-                      ...styles.modalItemHover,
-                    })
-                    }
-                    onMouseOut={(e) =>
-                      (e.currentTarget.style = styles.modalItem)
-                    }
-                  >
-                    <b>{text.split(" - ")[0]}</b> - {text.split(" - ")[1]}
-                  </ListGroup.Item>
-                  {index < 5 && <hr className="p-0 m-0" />}
-                </>
-              ))}
+            <ListGroup className="m-0">
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() => handleFilterSelection("harga_termurah")}
+              >
+                <b>Harga</b> - Termurah
+              </ListGroup.Item>
+              <hr className="p-0 m-0" />
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() => handleFilterSelection("durasi_terpendek")}
+              >
+                <b>Durasi</b> - Terpendek
+              </ListGroup.Item>
+              <hr className="p-0 m-0" />
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() =>
+                  handleFilterSelection("keberangkatan_paling_awal")
+                }
+              >
+                <b>Keberangkatan</b> - Paling Awal
+              </ListGroup.Item>
+              <hr className="p-0 m-0" />
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() =>
+                  handleFilterSelection("keberangkatan_paling_akhir")
+                }
+              >
+                <b>Keberangkatan</b> - Paling Akhir
+              </ListGroup.Item>
+              <hr className="p-0 m-0" />
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() => handleFilterSelection("kedatangan_paling_awal")}
+              >
+                <b>Kedatangan</b> - Paling Awal
+              </ListGroup.Item>
+              <hr className="p-0 m-0" />
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() => handleFilterSelection("kedatangan_paling_akhir")}
+              >
+                <b>Kedatangan</b> - Paling Akhir
+              </ListGroup.Item>
             </ListGroup>
           </Modal.Body>
           <Modal.Footer>
-            <Button style={styles.customButton} onClick={handleOnClose}>
-              Pilih
+            <Button
+              className="custom-button"
+              style={styles.customButton}
+              onClick={handleFilterOnClose}
+            >
+              Tutup
             </Button>
           </Modal.Footer>
         </Modal>
@@ -391,23 +439,113 @@ const SearchingPage = () => {
             </Col>
           ) : (
             <>
-              <Col md={3} className="my-2">
-                <Card>
-                  <Card.Body>
-                    <Card.Title>FLIGHT SELECTION</Card.Title>
-                    <ListGroup variant="flush" style={{ cursor: 'pointer' }}>
-                      <ListGroup.Item>Departure</ListGroup.Item>
-                      <ListGroup.Item>Return</ListGroup.Item>
-                      <ListGroup.Item>
-                        <Button
-                          style={styles.customButton}
-                          className="custom-button button-pilih mt-2 w-100"
-                        >
-                          Continue
-                        </Button>
-                      </ListGroup.Item>
-                    </ListGroup>
+              <Col md={3} className="mb-2">
+                <Card className="mb-4">
+                  <Card.Header className="fw-bold" style={styles.bgTransparent}>
+                    Rincian Penerbangan
+                  </Card.Header>
+                  <Card.Body className="px-3">
+                    <Card.Text>
+                      <h6 style={styles.ungu}>Berangkat</h6>
+                      <p>
+                        <b>
+                          {searchParams.from} -&gt; {searchParams.to}
+                        </b>
+                      </p>
+                      <p>
+                        {formatDate(searchParams.departureDate.slice(0, 10))}
+                      </p>
+                      {"\n"}
+                      {selectedDeparture ? (
+                        <>
+                          <div className="d-flex align-items-center">
+                            <Col md={2} className="mx-2">
+                              <Image
+                                src={selectedDeparture.Airline.imgUrl}
+                                height="10"
+                                className="mr-2"
+                              />
+                            </Col>
+                            <Col>
+                              <p className="mx-1 fw-bold">
+                                {selectedDeparture.Airline.name}
+                              </p>
+                              <p className=" mx-1 fw-bold">
+                                ({selectedDeparture.Airline.code})
+                              </p>
+                            </Col>
+                          </div>
+                          <p>
+                            {selectedDeparture.departureTime.slice(11, 16)} -{" "}
+                            {selectedDeparture.arrivalTime.slice(11, 16)}
+                          </p>
+                          <Button
+                            className="custom-button button-pilih mt-2 w-100"
+                            onClick={handleGanti("departure")}
+                          >
+                            Ganti pilihan
+                          </Button>
+                        </>
+                      ) : (
+                        "Belum dipilih"
+                      )}
+                    </Card.Text>
+                    {isReturnFlightOn ? (
+                      <Card.Text>
+                        <br />
+                        <h6 style={styles.ungu}>Pulang</h6>
+                        <p>
+                          <b>
+                            {searchParams.to} -&gt; {searchParams.from}
+                          </b>
+                        </p>
+                        <p>
+                          {formatDate(searchParams.returnDate.slice(0, 10))}
+                        </p>
+                        {"\n"}
+                        {selectedReturn ? (
+                          <>
+                            <div className="d-flex align-items-center">
+                              <Col md={2} className="mx-2">
+                                <Image
+                                  src={selectedReturn.Airline.imgUrl}
+                                  height="10"
+                                  className="mr-2"
+                                />
+                              </Col>
+                              <Col>
+                                <p className="mx-1 fw-bold">
+                                  {selectedReturn.Airline.name}
+                                </p>
+                                <p className=" mx-1 fw-bold">
+                                  ({selectedReturn.Airline.code})
+                                </p>
+                              </Col>
+                            </div>
+                            <p>
+                              {selectedReturn.departureTime.slice(11, 16)} -{" "}
+                              {selectedReturn.arrivalTime.slice(11, 16)}
+                            </p>
+                            <Button
+                              className="custom-button button-pilih mt-2 w-100"
+                              onClick={handleGanti("return")}
+                            >
+                              Ganti pilihan
+                            </Button>
+                          </>
+                        ) : (
+                          "Belum dipilih"
+                        )}
+                      </Card.Text>
+                    ) : (
+                      <></>
+                    )}
                   </Card.Body>
+                  <Card.Footer style={styles.bgTransparent}>
+                    <Button className="custom-button button-pilih mt-2 w-100">
+                      Continue
+                    </Button>
+                  </Card.Footer>
                 </Card>
               </Col>
               <Col md={9} className="text-center">
@@ -428,13 +566,15 @@ const SearchingPage = () => {
                       </>
                     ) : (
                       <>
-                        {flights?.departure_results?.results?.map((flight, index) => (
+                        {departureFlights.map((flight) => (
                           <Accordion
                             className="mb-2 accordion"
                             style={{ borderColor: "#7126b5" }}
-                            key={flight.id}
                           >
-                            <Accordion.Item eventKey={flight.id}>
+                            <Accordion.Item
+                              eventKey={flight.id}
+                              key={flight.id}
+                            >
                               <Accordion.Header
                                 style={{
                                   backgroundColor: "transparent",
@@ -446,13 +586,13 @@ const SearchingPage = () => {
                                     <div className="d-flex align-items-center">
                                       <div className="mx-2">
                                         <Image
-                                          src={flight?.Airline?.imgUrl}
+                                          src={flight.Airline.imgUrl}
                                           height="20"
                                           className="mr-2"
                                         />
                                       </div>
                                       <h5 className="ml-2 fw-bold">
-                                        {flight?.Airline?.name}
+                                        {flight.Airline.name}
                                       </h5>
                                     </div>
                                     <Row className="d-flex justify-content-between mt-3 mx-0">
@@ -461,9 +601,11 @@ const SearchingPage = () => {
                                         className="d-flex flex-column align-items-center"
                                       >
                                         <h6 className="fw-bold">
-                                          {flight?.departureTime?.slice(11, 16)}
+                                          {flight.departureTime.slice(11, 16)}
                                         </h6>
-                                        <p>{flight?.departureAirport_respon?.city}</p>
+                                        <p>
+                                          {flight.departureAirport_respon.city}
+                                        </p>
                                       </Col>
                                       <Col
                                         md="5"
@@ -480,9 +622,11 @@ const SearchingPage = () => {
                                         className="d-flex flex-column align-items-center p-0"
                                       >
                                         <h6 className="fw-bold">
-                                          {flight?.arrivalTime?.slice(11, 16)}
+                                          {flight.arrivalTime.slice(11, 16)}
                                         </h6>
-                                        <p>{flight?.arrivalAirport_respon?.city}</p>
+                                        <p>
+                                          {flight.arrivalAirport_respon.city}
+                                        </p>
                                       </Col>
                                       <Col
                                         md="1"
@@ -496,12 +640,13 @@ const SearchingPage = () => {
                                         style={styles.ungu}
                                       >
                                         <h6 className="fw-bold">
-                                          IDR {getPrice(flight)?.toLocaleString("id-ID")}
+                                          IDR {getFlightPrice(flight)}
                                         </h6>
                                         <Button
-                                          style={styles.customButton}
                                           className="custom-button button-pilih mt-2"
-                                          onClick={() => handleSelectFlight(flight, false)}
+                                          onClick={() =>
+                                            handlePilih(flight, "departure")
+                                          }
                                         >
                                           Pilih
                                         </Button>
@@ -529,7 +674,10 @@ const SearchingPage = () => {
                                           )}
                                         </h6>
                                         <h5 className="fw-bold">
-                                          {flight?.departureAirport_respon?.name}
+                                          {
+                                            flight?.departureAirport_respon
+                                              ?.name
+                                          }
                                         </h5>
                                       </Col>
                                       <Col>
@@ -548,7 +696,10 @@ const SearchingPage = () => {
                                       </Col>
                                       <Col>
                                         <p className="fw-bold mb-0">
-                                          {flight?.Airline?.name} -{homeData?.seat_class}
+                                          {flight?.Airline?.name} -{" "}
+                                          {capitalizeFirstLetter(
+                                            searchParams.seatClass
+                                          )}
                                         </p>
                                         <p className="fw-bold mb-0">
                                           {flight?.Airline?.code}
@@ -562,7 +713,6 @@ const SearchingPage = () => {
                                           Cabin baggage{" "}
                                           {flight?.Airline?.cabinBaggage} kg
                                         </p>
-                                        <p>In Flight Entertainment</p>
                                       </Col>
                                     </Row>
                                     <hr />
@@ -592,171 +742,7 @@ const SearchingPage = () => {
                             </Accordion.Item>
                           </Accordion>
                         ))}
-
-                        {flights?.return_results?.results?.map((flight, index) => (
-                          <Accordion
-                            className="mb-2 accordion"
-                            style={{ borderColor: "#7126b5" }}
-                            key={flight?.id}
-                          >
-                            <Accordion.Item eventKey={flight.id}>
-                              <Accordion.Header
-                                style={{
-                                  backgroundColor: "transparent",
-                                  borderColor: "#7126b5",
-                                }}
-                              >
-                                <div className="d-flex justify-content-between w-100">
-                                  <div className="w-100">
-                                    <div className="d-flex align-items-center">
-                                      <div className="mx-2">
-                                        <Image
-                                          src={flight?.Airline?.imgUrl}
-                                          height="20"
-                                          className="mr-2"
-                                        />
-                                      </div>
-                                      <h5 className="ml-2 fw-bold">
-                                        {flight?.Airline?.name}
-                                      </h5>
-                                    </div>
-                                    <Row className="d-flex justify-content-between mt-3 mx-0">
-                                      <Col
-                                        md="1"
-                                        className="d-flex flex-column align-items-center"
-                                      >
-                                        <h6 className="fw-bold">
-                                          {flight?.departureTime?.slice(11, 16)}
-                                        </h6>
-                                        <p>{flight?.departureAirport_respon?.city}</p>
-                                      </Col>
-                                      <Col
-                                        md="5"
-                                        className="d-flex flex-column align-items-center"
-                                      >
-                                        <p className="my-0">4h 0m</p>
-                                        <div className="arrow-pic p-0">
-                                          <Image src={icons.longArrow} />
-                                        </div>
-                                        <p>direct</p>
-                                      </Col>
-                                      <Col
-                                        md="1"
-                                        className="d-flex flex-column align-items-center p-0"
-                                      >
-                                        <h6 className="fw-bold">
-                                          {flight?.arrivalTime?.slice(11, 16)}
-                                        </h6>
-                                        <p>{flight?.arrivalAirport_respon?.city}</p>
-                                      </Col>
-                                      <Col
-                                        md="1"
-                                        className="d-flex flex-column align-items-center"
-                                      >
-                                        <Image src={icons.baggageDelay} />
-                                      </Col>
-                                      <Col
-                                        md="2"
-                                        className="d-flex flex-column px-0"
-                                        style={styles.ungu}
-                                      >
-                                        <h6 className="fw-bold">
-                                          IDR {getPrice(flight)?.toLocaleString("id-ID")}
-                                        </h6>
-                                        <Button
-                                          style={styles.customButton}
-                                          className="custom-button button-pilih mt-2"
-                                          onClick={() => handleSelectFlight(flight, true)}
-                                        >
-                                          Pilih
-                                        </Button>
-                                      </Col>
-                                    </Row>
-                                  </div>
-                                </div>
-                              </Accordion.Header>
-                              <Accordion.Body
-                                style={{ backgroundColor: "transparent" }}
-                              >
-                                <Card style={styles.cardAccor}>
-                                  <Card.Body style={styles.cardAccor}>
-                                    <h5 style={styles.ungu} className="fw-bold">
-                                      Detail Penerbangan
-                                    </h5>
-                                    <Row>
-                                      <Col md="9">
-                                        <h5 className="fw-bold">
-                                          {flight?.departureTime?.slice(11, 16)}
-                                        </h5>
-                                        <h6 className="fw-bold">
-                                          {formatDate(
-                                            flight?.departureTime?.slice(0, 10)
-                                          )}
-                                        </h6>
-                                        <h5 className="fw-bold">
-                                          {flight?.departureAirport_respon?.name}
-                                        </h5>
-                                      </Col>
-                                      <Col>
-                                        <h6 style={styles.unguMuda}>
-                                          Keberangkatan
-                                        </h6>
-                                      </Col>
-                                    </Row>
-                                    <hr />
-                                    <Row>
-                                      <Col md="1" className="mx-0 m-auto">
-                                        <Image
-                                          src={flight?.Airline.imgUrl}
-                                          fluid
-                                        />
-                                      </Col>
-                                      <Col>
-                                        <p className="fw-bold mb-0">
-                                          {flight?.Airline?.name} -{homeData?.seat_class}
-                                        </p>
-                                        <p className="fw-bold mb-0">
-                                          {flight?.Airline?.code}
-                                        </p>
-                                        <br />
-                                        <h6 className="fw-bold">Informasi:</h6>
-                                        <p className="mb-0">
-                                          Baggage {flight?.Airline?.baggage} kg
-                                        </p>
-                                        <p className="mb-0">
-                                          Cabin baggage{" "}
-                                          {flight?.Airline?.cabinBaggage} kg
-                                        </p>
-                                        <p>In Flight Entertainment</p>
-                                      </Col>
-                                    </Row>
-                                    <hr />
-                                    <Row>
-                                      <Col md="9">
-                                        <h5 className="fw-bold">
-                                          {flight?.arrivalTime?.slice(11, 16)}
-                                        </h5>
-                                        <h6 className="fw-bold">
-                                          {formatDate(
-                                            flight?.arrivalTime?.slice(0, 10)
-                                          )}
-                                        </h6>
-                                        <h5 className="fw-bold">
-                                          {flight?.arrivalAirport_respon?.name}
-                                        </h5>
-                                      </Col>
-                                      <Col>
-                                        <h6 style={styles.unguMuda}>
-                                          Kedatangan
-                                        </h6>
-                                      </Col>
-                                    </Row>
-                                  </Card.Body>
-                                </Card>
-                              </Accordion.Body>
-                            </Accordion.Item>
-                          </Accordion>
-                        ))}
+                        <Pagination>{pagination}</Pagination>
                       </>
                     )}
                   </>

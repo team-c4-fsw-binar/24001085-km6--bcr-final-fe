@@ -1,8 +1,8 @@
-import axios from "axios"
+import axios from "axios";
 import { setDepartureTicket, setReturnTicket, setUserTicket } from "../reducers/ticket";
 
 export const findTicket = 
-  (navigate, from, to, departureDate, totalPassengers, seatClass, returnDate, adult, child, baby) => 
+  (navigate, from, to, departureDate, totalPassengers, seatClass, returnDate, adult, child, baby, filter) => 
   async (dispatch) => {
 
     let data = new FormData();
@@ -18,7 +18,7 @@ export const findTicket =
 
     let config = {
       method: 'post',
-      url: `${import.meta.env.VITE_BACKEND_API}/api/findTickets`,
+      url: `${import.meta.env.VITE_BACKEND_API}/api/findTickets?page=1&limit=10`,
       data : data
     };
 
@@ -39,7 +39,8 @@ export const findTicket =
         departureDate: departureDate.toISOString(),
         seatClass, 
         returnDate: returnDate ? returnDate.toISOString() : null,
-        passengers: { adult, child, baby, total: totalPassengers }
+        passengers: { adult, child, baby, total: totalPassengers },
+        filter: filter ? filter : "harga_termurah",
       }));
 
       navigate('/search');

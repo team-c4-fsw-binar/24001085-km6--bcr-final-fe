@@ -10,7 +10,9 @@ export const fetchFlights = createAsyncThunk(
   ) => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_API}/api/findTickets`,
+        `${
+          import.meta.env.VITE_BACKEND_API
+        }/api/findTickets?page=1&limit=10`,
         {
           from,
           to,
