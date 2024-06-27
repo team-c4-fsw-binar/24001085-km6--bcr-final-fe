@@ -45,7 +45,7 @@ const HistoryPage = () => {
 
   return (
     <>
-      <div className="shadow">
+      <div className="shadow" style={{ height: "140px" }}>
         <div className="container mb-4">
           {" "}
           <Row>
@@ -53,16 +53,16 @@ const HistoryPage = () => {
               Riwayat Pemesanan
             </h4>
           </Row>
-          <Row className="p-2">
-            <Col md={9} sm={7} xs={7} className="container d-grid">
+          <Row className="">
+            <Col md={10} sm={10} xs={10} className="container d-grid m-0">
               <Button
-                className="beranda-button d-flex justify-content-left rounded-4 "
+                className="beranda-button d-flex justify-content-left rounded-4 align-items-center mb-3 mt-0 "
                 style={{
-                  height: "50px",
+                  height: "44px",
                   weight: "77px",
                   alignContent: "center",
-                  fontSize: "23px",
-                  fontWeight: "600",
+                  fontSize: "17px",
+                  fontWeight: "700",
                 }}
                 onClick={BerandaClick}
               >
@@ -70,24 +70,29 @@ const HistoryPage = () => {
                 Beranda
               </Button>
             </Col>
-            <Col md={2} sm={2} xs={2} className="d-grid">
+            <Col
+              md={1}
+              sm={1}
+              xs={1}
+              className=" mb-2 d-flex justify-content-center align-items-center"
+            >
               <Button
                 variant="outline-dark"
-                className="rounded-5"
+                className="rounded-5 m-0"
                 onClick={() => setModalShowDate(true)}
               >
-                <BsFunnel /> Filter
+                <BsFunnel />
               </Button>
             </Col>
             <Col
               md={1}
-              sm={2}
-              xs={2}
-              className="d-grid d-flex justify-content-center rounded-5"
+              sm={1}
+              xs={1}
+              className="d-grid d-flex justify-content-start aligns-items-center rounded-5 mb-2"
             >
               <Button
                 variant="outline"
-                className="rounded-3"
+                className="rounded-3 m-0"
                 onClick={() => setModalShowCari(true)}
               >
                 <Image src={icons.searchIcon} />

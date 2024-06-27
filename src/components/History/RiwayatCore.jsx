@@ -72,7 +72,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "green",
+          backgroundColor: "#00FF00",
           color: "white",
           width: "68px",
           height: "28px",
@@ -85,11 +85,11 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
           Issued
         </p>
       </div>
-    ) : payment.status === "Pending" || payment.status === "Need Method" ? (
+    ) : payment.status === "Pending" ? (
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "red",
+          backgroundColor: "#FFC107",
           color: "white",
           width: "68px",
           height: "28px",
@@ -102,11 +102,28 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
           Unpaid
         </p>
       </div>
-    ) : payment.status === "Expire" ? (
+    ) : payment.status === "Need Method" ? (
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "grey",
+          backgroundColor: "#00B0FF",
+          color: "white",
+          width: "110px",
+          height: "28px",
+        }}
+      >
+        <p
+          className="d-flex justify-content-center align-center p-1"
+          style={{ fontSize: "14px" }}
+        >
+          Need Method
+        </p>
+      </div>
+    ) : payment.status === "Expired" ? (
+      <div
+        className=" rounded-4 "
+        style={{
+          backgroundColor: "#808080",
           color: "white",
           width: "80px",
           height: "28px",
@@ -123,7 +140,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "grey",
+          backgroundColor: "#FF0000",
           color: "white",
           width: "80px",
           height: "28px",
@@ -162,7 +179,14 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
     customLg: {
       width: "990px",
     },
+    overflowHistory: {
+      overflowY: "auto",
+      maxHeight: "1000px",
+      paddingRight: "15px",
+      boxSizing: "content-box",
+    },
   }
+
   const formatDate = (dateString) => {
     const options = { day: "numeric", month: "long", year: "numeric" }
     return new Date(dateString).toLocaleDateString("id-ID", options)
@@ -204,6 +228,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
         bookingsData.map((booking, index) => {
           //   const payment = getPaymentForBooking(booking.id)
           const payment = booking?.Payment
+
           //   const flight = getFlightForBooking(booking.departure_flight_id)
           let cardStyle = styles.riwayatCard
           if (clickedIndex === index || hoverIndex === index) {
@@ -215,6 +240,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
           const seatClasses = booking.BookingSeats.map(
             (bookingSeat) => bookingSeat.Seat.seat_class
           )
+
           let priceAdult = 0
           if (seatClasses[0] === "economy") {
             priceAdult = booking.departureFlight_respon.economyPrice
@@ -230,7 +256,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
           }
 
           return (
-            <div className="container" key={booking.id} fluid>
+            <div className="container" key={booking.id}>
               <div className="row">
                 <Col
                   md={7}
