@@ -79,7 +79,6 @@ const TiketPDF = ({
   formatDate,
   formatTime,
   formatCurrency,
-  logoTerbangAja,
 }) => (
   <Document>
     <Page style={styles.page}>
@@ -226,9 +225,15 @@ const TiketPDF = ({
           <Text style={styles.text}>
             {booking.adultCount} {booking.adultCount > 1 ? "Adults" : "Adult"}
           </Text>
-          <Text style={styles.text}>
-            {formatCurrency(booking.adultCount * priceAdult)}
-          </Text>
+          {booking?.returnFlight_respon ? (
+            <Text style={styles.text}>
+              {formatCurrency(booking.adultCount * priceAdult * 2)}
+            </Text>
+          ) : (
+            <Text style={styles.text}>
+              {formatCurrency(booking.adultCount * priceAdult)}
+            </Text>
+          )}
         </View>
         {booking.childCount > 0 && (
           <View style={styles.row}>
@@ -236,9 +241,15 @@ const TiketPDF = ({
               {booking.childCount}{" "}
               {booking.childCount > 1 ? "Children" : "Child"}
             </Text>
-            <Text style={styles.text}>
-              {formatCurrency(booking.childCount * priceAdult)}
-            </Text>
+            {booking?.returnFlight_respon ? (
+              <Text style={styles.text}>
+                {formatCurrency(booking.childCount * priceAdult * 2)}
+              </Text>
+            ) : (
+              <Text style={styles.text}>
+                {formatCurrency(booking.childCount * priceAdult)}
+              </Text>
+            )}
           </View>
         )}
         {booking.babyCount > 0 && (

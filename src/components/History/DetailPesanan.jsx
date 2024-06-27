@@ -311,9 +311,15 @@ const DetailPesanan = ({
                   {booking.adultCount}{" "}
                   {booking.adultCount > 1 ? "Adults" : "Adult"}
                 </p>
-                <p className="col d-flex justify-content-end">
-                  {formatCurrency(booking.adultCount * priceAdult)}
-                </p>
+                {booking?.returnFlight_respon ? (
+                  <p className="col d-flex justify-content-end">
+                    {formatCurrency(booking.adultCount * priceAdult * 2)}
+                  </p>
+                ) : (
+                  <p className="col d-flex justify-content-end">
+                    {formatCurrency(booking.adultCount * priceAdult)}
+                  </p>
+                )}
               </Row>
               {booking.childCount > 0 ? (
                 <Row>
@@ -321,9 +327,15 @@ const DetailPesanan = ({
                     {booking.childCount}{" "}
                     {booking.childCount > 1 ? "Childs" : "Child"}
                   </p>
-                  <p className="col d-flex justify-content-end">
-                    {formatCurrency(priceAdult)}
-                  </p>
+                  {booking?.returnFlight_respon ? (
+                    <p className="col d-flex justify-content-end">
+                      {formatCurrency(booking.childCount * priceAdult * 2)}
+                    </p>
+                  ) : (
+                    <p className="col d-flex justify-content-end">
+                      {formatCurrency(booking.childCount * priceAdult)}
+                    </p>
+                  )}
                 </Row>
               ) : (
                 ""
