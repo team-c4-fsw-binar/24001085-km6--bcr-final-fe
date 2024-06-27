@@ -115,22 +115,28 @@ const SearchingPage = () => {
   }
 
   // select flight mba wulan (masih pake flight id lewat url)
-  const handleCheckout = (flight, isReturnFlight) => {
+  const handleCheckout = (isReturnFlight) => {
+
+    if (isReturnFlight) {
+      dispatch(setReturnFlightId(selectedReturn.id))
+      dispatch(selectFlightReturn(selectedReturn))
+    }
+
     dispatch(
       findTicketsDetail({
-        departure_flight_id: selectedDeparture.id,
-        return_flight_id: selectedReturn.id,
+        departure_flight_id: selectedDeparture?.id,
+        return_flight_id: selectedReturn?.id,
         seat_class: searchParams.seatClass,
         adultCount: searchParams.passengers.adult,
         childCount: searchParams.passengers.child
       })
     )
 
-    dispatch(setDepartureFlightId(selectedDeparture.id))
-    dispatch(setReturnFlightId(selectedReturn.id))
+    console.log((state) => state.checkout.ticketDetails)
+
+    dispatch(setDepartureFlightId(selectedDeparture?.id))
     dispatch(setSeatClass(searchParams.seatClass))
     dispatch(selectFlightDeparture(selectedDeparture))
-    dispatch(selectFlightReturn(selectedReturn))
 
     dispatch(
       fetchFlights(
@@ -337,6 +343,19 @@ const SearchingPage = () => {
     return string.charAt(0).toUpperCase() + string.slice(1)
   }
 
+  const msToTime = (dep, arr) => {
+    let arrivalTime = new Date(arr)
+    let departureTime = new Date(dep)
+    let diff = arrivalTime.getTime() - departureTime.getTime()
+
+    let minutes = Math.floor((diff / (1000 * 60)) % 60),
+      hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+
+    hours = hours < 10 ? "0" + hours : hours
+    minutes = minutes < 10 ? "0" + minutes : minutes
+    return hours + "h " + minutes + "m"
+  }
+
   return (
     <div>
       <Container>
@@ -510,12 +529,12 @@ const SearchingPage = () => {
                             {selectedDeparture.departureTime.slice(11, 16)} -{" "}
                             {selectedDeparture.arrivalTime.slice(11, 16)}
                           </p>
-                          <Button
+                          {/* <Button
                             className="custom-button button-pilih mt-2 w-100"
                             onClick={handleGanti("departure")}
                           >
                             Ganti pilihan
-                          </Button>
+                          </Button> */}
                         </>
                       ) : (
                         "Belum dipilih"
@@ -557,12 +576,12 @@ const SearchingPage = () => {
                               {selectedReturn.departureTime.slice(11, 16)} -{" "}
                               {selectedReturn.arrivalTime.slice(11, 16)}
                             </p>
-                            <Button
+                            {/* <Button
                               className="custom-button button-pilih mt-2 w-100"
                               onClick={handleGanti("return")}
                             >
                               Ganti pilihan
-                            </Button>
+                            </Button> */}
                           </>
                         ) : (
                           "Belum dipilih"
@@ -575,7 +594,7 @@ const SearchingPage = () => {
                   <Card.Footer style={styles.bgTransparent}>
                     <Button
                       className="custom-button button-pilih mt-2 w-100"
-                      onClick={handleCheckout}
+                      onClick={handleCheckout(isReturnFlightOn)}
                     >
                       Checkout
                     </Button>
@@ -655,7 +674,12 @@ const SearchingPage = () => {
                                             md="5"
                                             className="d-flex flex-column align-items-center"
                                           >
-                                            <p className="my-0">4h 0m</p>
+                                            <p className="my-0">
+                                              {msToTime(
+                                                flight.departureTime,
+                                                flight.arrivalTime
+                                              )}
+                                            </p>
                                             <div className="arrow-pic p-0">
                                               <Image src={icons.longArrow} />
                                             </div>
@@ -864,7 +888,12 @@ const SearchingPage = () => {
                                             md="5"
                                             className="d-flex flex-column align-items-center"
                                           >
-                                            <p className="my-0">4h 0m</p>
+                                            <p className="my-0">
+                                              {msToTime(
+                                                flight.departureTime,
+                                                flight.arrivalTime
+                                              )}
+                                            </p>
                                             <div className="arrow-pic p-0">
                                               <Image src={icons.longArrow} />
                                             </div>

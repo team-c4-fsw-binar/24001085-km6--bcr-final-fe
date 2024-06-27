@@ -57,6 +57,12 @@ const CheckoutPage = () => {
   )
 
   useEffect(() => {
+    if (!selectedFlightReturn) {
+      setIsReturn(false)
+    }
+  }, [isReturn])
+
+  useEffect(() => {
     dispatch(fetchCheckout())
   }, [dispatch])
 
