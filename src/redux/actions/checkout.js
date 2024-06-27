@@ -1,7 +1,7 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { setUser, setToken } from '../reducers/auth';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { setToken, setUser } from '../reducers/auth';
 
 export const postBooking = (bookingData, token) => {
     return async (dispatch, getState) => {
@@ -102,7 +102,6 @@ export const findTicketsDetail = createAsyncThunk(
             );
             return response.data.data;
         } catch (error) {
-            toast.error(error.response?.data?.message || error.message);
             return rejectWithValue(error.response?.data?.message || error.message);
         }
     }
