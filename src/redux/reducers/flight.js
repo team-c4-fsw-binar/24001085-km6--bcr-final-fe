@@ -16,7 +16,13 @@ export const fetchFlights = createAsyncThunk(
 
 export const findTicketsDetail = createAsyncThunk(
   "flights/findTicketsDetail",
-  async ({ departure_flight_id, return_flight_id, seat_class, adultCount, childCount }) => {
+  async ({
+    departure_flight_id,
+    return_flight_id,
+    seat_class,
+    adultCount,
+    childCount,
+  }) => {
     const response = await axios.post(
       `${import.meta.env.VITE_BACKEND_API}/api/findTickets/detail`,
       {
@@ -43,17 +49,21 @@ const flightsSlice = createSlice({
     data: [],
     status: "idle",
     error: null,
-    selectedFlight: null,
+    selectedFlightDeparture: null,
+    selectedFlightReturn: null,
   },
   reducers: {
     setHomeData: (state, action) => {
-      state.homeData = action.payload;
+      state.homeData = action.payload
     },
     setFlights: (state, action) => {
-      state.data = action.payload;
+      state.data = action.payload
     },
-    selectFlight: (state, action) => {
-      state.selectedFlight = action.payload;
+    selectFlightDeparture: (state, action) => {
+      state.selectedFlightDeparture = action.payload
+    },
+    selectFlightReturn: (state, action) => {
+      state.selectedFlightReturn = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -82,5 +92,10 @@ const flightsSlice = createSlice({
   },
 })
 
-export const { setHomeData, setFlights, selectFlight } = flightsSlice.actions;
+export const {
+  setHomeData,
+  setFlights,
+  selectFlightDeparture,
+  selectFlightReturn,
+} = flightsSlice.actions
 export default flightsSlice.reducer

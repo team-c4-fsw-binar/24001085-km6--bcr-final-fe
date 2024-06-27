@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Form, ListGroup, Modal, Row } from "react-bootstrap";
-import Select from 'react-select';
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import Select from 'react-select';
 import * as icons from "../../assets/icons";
 
 import { getAllCity } from "../../redux/actions/airport";
-import { findTicket } from "../../redux/actions/ticket";
+import { setHomeData } from "../../redux/reducers/flight";
 
-import DatePickerModal from "../Modal/DatepickerModal";
 import { format } from "date-fns";
+import { findTicket } from "../../redux/actions/ticket";
+import DatePickerModal from "../Modal/DatepickerModal";
 
 import '../styles/others/search.css';
 
@@ -43,6 +44,8 @@ const SearchFlightsComponents = () => {
 
   // get city start
   const [cityOptions, setCityOptions] = useState([]);
+
+  const homeData = useSelector((state) => state.flights.homeData);
 
   useEffect(() => {
     (async () => {
@@ -82,9 +85,26 @@ const SearchFlightsComponents = () => {
         selectedFrom.label, selectedTo.label, departureDate, totalPassenger, seatClass, returnDate, 
         adultPassenger, childPassenger, babyPassenger
       ));
+
+      dispatch(
+        setHomeData({
+          from: selectedFrom.label,
+          to: selectedTo.label,
+          departure_date: departureDate.toISOString(),
+          return_date: returnDate.toISOString(),
+          adultCount: adultPassenger,
+          childCount: childPassenger,
+          babyCount: babyPassenger,
+          total_passengers: totalPassenger,
+          seat_class: seatClass,
+        })
+      )
     }
+    console.log(homeData)
   
     setValidated(true);
+
+    
   }
   // get ticket end
 

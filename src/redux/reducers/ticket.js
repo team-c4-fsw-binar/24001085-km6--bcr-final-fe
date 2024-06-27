@@ -18,9 +18,8 @@ const initialState = {
         total : null
       },
       seatClass : null,
-      returnDate : null,
-      // filter : null
-
+      returnDate : "",
+      filter : "harga_termurah"
     }
   }
 };

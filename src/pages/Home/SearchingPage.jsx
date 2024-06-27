@@ -24,11 +24,12 @@ import { useDispatch, useSelector } from "react-redux"
 import SearchFlightsComponents from "../../components/Home/SearchFlights"
 import { fetchFlights } from "../../redux/actions/flights"
 import { findTicket } from "../../redux/actions/ticket"
+import { setDepartureFlightId, setReturnFlightId, setSeatClass } from "../../redux/reducers/checkout"
 import {
-  setDepartureFlightId,
-  setReturnFlightId,
-} from "../../redux/reducers/checkout"
-import { findTicketsDetail } from "../../redux/reducers/flight"
+  findTicketsDetail,
+  selectFlightDeparture, selectFlightReturn,
+  setHomeData
+} from "../../redux/reducers/flight"
 import "../styles/searchingPage.css"
 
 const SearchingPage = () => {
@@ -52,6 +53,9 @@ const SearchingPage = () => {
 
   const ticketStatus = useSelector((state) => state.ticket.status)
   const tickets = useSelector((state) => state.ticket)
+  const homeData = useSelector((state) => state.flights.homeData)
+
+  console.log("homeData di searchpage", homeData)
 
   const searchParams = tickets.data.userTicket
 
@@ -60,8 +64,8 @@ const SearchingPage = () => {
   const departureData = tickets.data.departureTicket
   const returnData = tickets.data.returnTicket
 
-  const departureFlights = departureData.results || []
-  const returnFlights = returnData.results || []
+  const departureFlights = departureData?.results || []
+  const returnFlights = returnData?.results || []
 
   console.log("dep flights", departureFlights)
   console.log("ret flights", returnFlights)
@@ -106,47 +110,46 @@ const SearchingPage = () => {
     //   setSelectedDeparture(null)
     //   setSelectedReturn(null)
     // } else {
-    //   setSelectedReturn(null)
+    //   setSelectedReturn(null) 
     // }
   }
 
   // select flight mba wulan (masih pake flight id lewat url)
-  const handleSelectFlight = (flight, isReturnFlight) => {
-    dispatch(selectFlight(flight))
+  const handleCheckout = (flight, isReturnFlight) => {
+    dispatch(
+      findTicketsDetail({
+        departure_flight_id: selectedDeparture.id,
+        return_flight_id: selectedReturn.id,
+        seat_class: searchParams.seatClass,
+        adultCount: searchParams.passengers.adult,
+        childCount: searchParams.passengers.child
+      })
+    )
 
-    // Dispatch the setDepartureFlightId action if it's a departure flight
-    if (!isReturnFlightOn) {
-      dispatch(setDepartureFlightId(selectedDeparture.id))
-    } else {
-      dispatch(setDepartureFlightId(selectedDeparture.id))
-      dispatch(setReturnFlightId(selectedReturn.id))
-    }
+    dispatch(setDepartureFlightId(selectedDeparture.id))
+    dispatch(setReturnFlightId(selectedReturn.id))
+    dispatch(setSeatClass(searchParams.seatClass))
+    dispatch(selectFlightDeparture(selectedDeparture))
+    dispatch(selectFlightReturn(selectedReturn))
 
-    // Create the flight parameters
-    const flightParams = {
-      flight_id: flight.id,
-    }
-
-    // Convert the parameters to a query string
-    const searchParams = new URLSearchParams(flightParams)
-
-    // Navigate to the appropriate page based on the flight type
-    if (isReturnFlight) {
-      navigate(`/service`)
-    } else {
-      // new code attempt, not sure if working
-      dispatch(
-        findTicketsDetail(
-          selectedDeparture.id,
-          selectedReturn.id,
-          searchParams.seatClass,
-          searchParams.passengers.adult,
-          searchParams.passengers.child
-        )
+    dispatch(
+      fetchFlights(
+        searchParams.from,
+        searchParams.to,
+        searchParams.departureDate,
+        searchParams.passengers.total,
+        searchParams.seatClass,
+        searchParams.returnDate,
+        searchParams.filter
       )
-      navigate(`/checkout`)
-    }
+    )
+
+    dispatch(setHomeData(homeData))
+    console.log("homeData", homeData)
+
+    navigate(`/checkout`)
   }
+  
 
   useEffect(() => {
     // setSearchParams(tickets.userTicket)
@@ -167,7 +170,7 @@ const SearchingPage = () => {
           selectedFilter
         )
       )
-      // setIsReturnFlightOn(searchParams.returnDate !== null)
+      setIsReturnFlightOn(searchParams.returnDate !== null)
     } else if (ticketStatus === "loading") {
       setIsLoading(true)
       dispatch(fetchFlights(searchParams))
@@ -196,19 +199,6 @@ const SearchingPage = () => {
       console.log("ganti filter udah false", gantiFilter)
     }
 
-    // pagination still not showing up
-    if (departureFlights.length === 0) {
-      setIsEmpty(true)
-    } else {
-      let active = 1
-      for (let number = 1; number <= departureData.totalPage; number++) {
-        pagination.push(
-          <Pagination.Item key={number} active={number === active}>
-            {number}
-          </Pagination.Item>
-        )
-      }
-    }
   }, [
     ticketStatus,
     dispatch,
@@ -585,9 +575,9 @@ const SearchingPage = () => {
                   <Card.Footer style={styles.bgTransparent}>
                     <Button
                       className="custom-button button-pilih mt-2 w-100"
-                      // onClick={handleSelectFlight}
+                      onClick={handleCheckout}
                     >
-                      Continue
+                      Checkout
                     </Button>
                   </Card.Footer>
                 </Card>
