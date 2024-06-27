@@ -75,7 +75,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "#00FF00",
+          backgroundColor: "#06D001",
           color: "white",
           width: "68px",
           height: "28px",
@@ -92,7 +92,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "#FFC107",
+          backgroundColor: "#FF1E1E",
           color: "white",
           width: "68px",
           height: "28px",
@@ -109,7 +109,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "#00B0FF",
+          backgroundColor: "#2192FF",
           color: "white",
           width: "110px",
           height: "28px",
@@ -143,7 +143,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "#FF0000",
+          backgroundColor: "#373A40",
           color: "white",
           width: "80px",
           height: "28px",

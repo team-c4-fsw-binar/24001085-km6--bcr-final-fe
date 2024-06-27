@@ -73,9 +73,6 @@ const DetailPesanan = ({
       ? styles.expiredOrFailed
       : cardStyle
 
-  const handleCetakTiket = () => {
-    downloadPdf()
-  }
   return (
     isCardClicked &&
     index === selectedCardIndex && (
