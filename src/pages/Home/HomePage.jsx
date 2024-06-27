@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Card, Col, Container, Row, Spinner } from "react-bootstrap";
+import * as icons from "../../assets/icons";
+import * as images from "../../assets/images";
 import SearchFlightsComponents from "../../components/Home/SearchFlights";
 import { getFlights } from "../../redux/actions/flights";
-import * as images from "../../assets/images";
-import * as icons from "../../assets/icons";
 import "./homePage.css";
 
 export default function HomePage() {
@@ -39,6 +39,7 @@ export default function HomePage() {
     const d = new Date(date);
     return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long' });
 };
+
 
   return (
     <>

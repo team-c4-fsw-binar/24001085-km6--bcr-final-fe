@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom"
 
 import { BsArrowLeft, BsFunnel } from "react-icons/bs"
 import "../styles/historyPage.css"
-import DetailPemesanan from "../../components/History/riwayat"
-import PopupCard from "../../components/Modal/SearchModal"
-import Datepicker from "../../components/Modal/DatepickerModal"
+import MainComponent from "../../components/History/RiwayatCore"
+import PopupCard from "../../components/Modal/searchHistory"
+import Datepicker from "../../components/Modal/DatepickerModalHistory"
 
 import * as icons from "../../assets/icons"
 
@@ -15,20 +15,46 @@ const HistoryPage = () => {
 
   const [modalShowCari, setModalShowCari] = useState(false)
   const [modalShowDate, setModalShowDate] = useState(false)
+  const [startDate, setStartDate] = useState("")
+  const [endDate, setEndDate] = useState("")
+  const [lastSearch, setLastSearch] = useState("")
+  const [searchInput, setSearchInput] = useState("")
+  // const formatDate = (date) => {
+  //   return date.toISOString().split("T")[0]
+  // }
+
+  const handleSearchSubmit = (search) => {
+    setLastSearch(search)
+    setModalShowCari(false) // Close the modal after search
+  }
+  const formatDate = (date) => {
+    const d = new Date(date)
+    let month = "" + (d.getMonth() + 1)
+    let day = "" + d.getDate()
+    const year = d.getFullYear()
+
+    if (month.length < 2) month = "0" + month
+    if (day.length < 2) day = "0" + day
+
+    return [year, month, day].join("-")
+  }
   const BerandaClick = () => {
     // Mengarahkan ke halaman beranda
     navigate("/")
   }
+
   return (
     <>
       <div className="shadow">
         <div className="container mb-4">
           {" "}
           <Row>
-            <h2 className="my-4">Riwayat Pemesanan</h2>
+            <h4 className="my-4" style={{ fontWeight: 700, fontSize: "20px" }}>
+              Riwayat Pemesanan
+            </h4>
           </Row>
-          <Row>
-            <Col md={10} className="d-grid  ">
+          <Row className="p-2">
+            <Col md={9} sm={7} xs={7} className="container d-grid">
               <Button
                 className="beranda-button d-flex justify-content-left rounded-4 "
                 style={{
@@ -44,7 +70,7 @@ const HistoryPage = () => {
                 Beranda
               </Button>
             </Col>
-            <Col md={1} className="d-grid">
+            <Col md={2} sm={2} xs={2} className="d-grid">
               <Button
                 variant="outline-dark"
                 className="rounded-5"
@@ -55,6 +81,8 @@ const HistoryPage = () => {
             </Col>
             <Col
               md={1}
+              sm={2}
+              xs={2}
               className="d-grid d-flex justify-content-center rounded-5"
             >
               <Button
@@ -69,15 +97,26 @@ const HistoryPage = () => {
           <PopupCard
             show={modalShowCari}
             onHide={() => setModalShowCari(false)}
+            onSubmitSearch={handleSearchSubmit}
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
           />
           <Datepicker
             show={modalShowDate}
             onHide={() => setModalShowDate(false)}
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
           />
         </div>
       </div>
 
-      <DetailPemesanan />
+      <MainComponent
+        startDate={startDate ? formatDate(startDate) : ""}
+        endDate={endDate ? formatDate(endDate) : ""}
+        searchInput={searchInput}
+      />
     </>
   )
 }

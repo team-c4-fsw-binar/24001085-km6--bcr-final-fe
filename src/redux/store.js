@@ -4,6 +4,7 @@ import bookingsReducer from "./reducers/booking"
 import paymentsReducer from "./reducers/payment"
 import flightsReducer from "./reducers/flight"
 import airportsReducer from "./reducers/airport"
+import checkoutReducer from "./reducers/checkout"
 import homeReducer from "./reducers/home"
 import ticketReducer from "./reducers/ticket"
 import reducers from "./reducers"
@@ -20,6 +21,7 @@ export default configureStore(
       payments: paymentsReducer,
       flights: flightsReducer,
       airports: airportsReducer,
+      checkout: checkoutReducer,
       home: homeReducer,
       ticket: ticketReducer,
     },

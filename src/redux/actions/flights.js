@@ -10,7 +10,9 @@ export const fetchFlights = createAsyncThunk(
   ) => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_API}/api/findTickets`,
+        `${
+          import.meta.env.VITE_BACKEND_API
+        }/api/findTickets?page=1&limit=10`,
         {
           from,
           to,
@@ -22,8 +24,6 @@ export const fetchFlights = createAsyncThunk(
         },
         {
           headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzE3MzMxNDQxLCJleHAiOjE3MTczMzg2NDF9.zowQ-u1HgkeVEynSA5Dvb-1iNqi8r7a9FKBaFaiPeXs",
             "Content-Type": "application/json",
           },
         }

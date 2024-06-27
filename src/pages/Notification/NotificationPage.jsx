@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotification, putNotification } from "../../redux/actions/notification";
 import * as icons from "../../assets/icons";
+import * as images from "../../assets/images";
 import { ToastContainer } from 'react-toastify';
 
 const NotificationPage = () => {
@@ -15,55 +16,7 @@ const NotificationPage = () => {
     const navigate = useNavigate();
     const token = useSelector((state) => state.auth.token);
 
-    const styles = {
-        fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
-        fontBodyRegular12: { fontWeight: 400, fontSize: '12px' },
-        fontBodyRegular14: { fontWeight: 400, fontSize: '14px' },
-        fontBodyMedium10: { fontWeight: 500, fontSize: '10px' },
-        fontBodyMedium12: { fontWeight: 500, fontSize: '12px' },
-        fontBodyMedium14: { fontWeight: 500, fontSize: '14px' },
-        fontBodyBold10: { fontWeight: 700, fontSize: '10px' },
-        fontBodyBold12: { fontWeight: 700, fontSize: '12px' },
-        fontBodyBold14: { fontWeight: 700, fontSize: '14px' },
-        fontTitleRegular16: { fontWeight: 400, fontSize: '16px' },
-        fontTitleRegular18: { fontWeight: 400, fontSize: '18px' },
-        fontTitleMedium16: { fontWeight: 500, fontSize: '16px' },
-        fontTitleMedium18: { fontWeight: 500, fontSize: '18px' },
-        fontTitleBold16: { fontWeight: 700, fontSize: '16px' },
-        fontTitleBold18: { fontWeight: 700, fontSize: '18px' },
-        fontHeadingRegular20: { fontWeight: 400, fontSize: '20px' },
-        fontHeadingRegular24: { fontWeight: 400, fontSize: '24px' },
-        fontHeadingMedium20: { fontWeight: 500, fontSize: '20px' },
-        fontHeadingMedium24: { fontWeight: 500, fontSize: '24px' },
-        fontHeadingBold20: { fontWeight: 700, fontSize: '20px' },
-        fontHeadingBold24: { fontWeight: 700, fontSize: '24px' },
 
-        // card
-        card: {
-            border: 'none',
-            cursor: 'pointer',
-        },
-
-        cardBody: {
-            borderBottom: '1px solid #E5E5E5',
-        },
-
-        // button beranda
-        bgBeranda: {
-            backgroundColor: '#A06ECE',
-            borderRadius: '12px',
-        },
-
-        textBeranda: {
-            textDecoration: 'none',
-            color: '#FFFFFF',
-        },
-
-        // background read
-        bgNoread: {
-            backgroundColor: '#a06ece2f',
-        },
-    };
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -100,6 +53,56 @@ const NotificationPage = () => {
         setCurrentNotification(null);
     };
 
+    const styles = {
+        fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
+        fontBodyRegular12: { fontWeight: 400, fontSize: '12px' },
+        fontBodyRegular14: { fontWeight: 400, fontSize: '14px' },
+        fontBodyMedium10: { fontWeight: 500, fontSize: '10px' },
+        fontBodyMedium12: { fontWeight: 500, fontSize: '12px' },
+        fontBodyMedium14: { fontWeight: 500, fontSize: '14px' },
+        fontBodyBold10: { fontWeight: 700, fontSize: '10px' },
+        fontBodyBold12: { fontWeight: 700, fontSize: '12px' },
+        fontBodyBold14: { fontWeight: 700, fontSize: '14px' },
+        fontTitleRegular16: { fontWeight: 400, fontSize: '16px' },
+        fontTitleRegular18: { fontWeight: 400, fontSize: '18px' },
+        fontTitleMedium16: { fontWeight: 500, fontSize: '16px' },
+        fontTitleMedium18: { fontWeight: 500, fontSize: '18px' },
+        fontTitleBold16: { fontWeight: 700, fontSize: '16px' },
+        fontTitleBold18: { fontWeight: 700, fontSize: '18px' },
+        fontHeadingRegular20: { fontWeight: 400, fontSize: '20px' },
+        fontHeadingRegular24: { fontWeight: 400, fontSize: '24px' },
+        fontHeadingMedium20: { fontWeight: 500, fontSize: '20px' },
+        fontHeadingMedium24: { fontWeight: 500, fontSize: '24px' },
+        fontHeadingBold20: { fontWeight: 700, fontSize: '20px' },
+        fontHeadingBold24: { fontWeight: 700, fontSize: '24px' },
+
+        // card
+        card: {
+            border: 'none',
+            cursor: 'pointer',
+        },
+
+        // cardBody: {
+        //     borderBottom: '1px solid #E5E5E5',
+        // },
+
+        // button beranda
+        bgBeranda: {
+            backgroundColor: '#A06ECE',
+            borderRadius: '12px',
+        },
+
+        textBeranda: {
+            textDecoration: 'none',
+            color: '#FFFFFF',
+        },
+
+        // background read
+        bgNoread: {
+            backgroundColor: '#a06ece2f',
+        },
+    };
+
     return (
         <>
             <div className="shadow">
@@ -116,6 +119,12 @@ const NotificationPage = () => {
                                 </Link>
                             </div>
                         </div>
+                        {/* <Link to="/filter">
+                            <Image src={icons.filterButton} alt="filter" />
+                        </Link>
+                        <Link to="/search">
+                            <Image src={icons.searchIcon} alt="search" />
+                        </Link> */}
                     </div>
                 </Container>
             </div>
@@ -168,7 +177,9 @@ const NotificationPage = () => {
                         </Card>
                     ))
                 ) : (
-                    <p>Loading...</p>
+                    <center>
+                        <Image src={images.loadingPage} alt="loading" />
+                    </center>
                 )}
             </Container>
 

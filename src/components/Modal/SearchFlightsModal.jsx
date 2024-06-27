@@ -4,12 +4,18 @@ import propTypes from "prop-types";
 
 const SearchFlightsModal = ({ show, onHide }) => {
   return (
-    <Modal show={show} onHide={onHide}>
+    <Modal
+      show={show}
+      onHide={onHide}
+      size="xl">
       <Modal.Header closeButton>
         <Modal.Title>Cari Penerbangan</Modal.Title>
       </Modal.Header>
 
-      <SearchFlightsComponents />
+      <Modal.Body> 
+        <SearchFlightsComponents />
+      </Modal.Body>
+
     </Modal>
   )
 }

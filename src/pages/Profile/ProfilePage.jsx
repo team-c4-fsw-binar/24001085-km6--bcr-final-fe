@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProfile, putProfile, changePassword } from "../../redux/actions/profile";
 import * as icons from "../../assets/icons";
 import { logout } from "../../redux/actions/auth";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProfilePage = () => {
     const dispatch = useDispatch();
@@ -24,15 +26,10 @@ const ProfilePage = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [activeTab, setActiveTab] = useState('profile');
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigateTo = useNavigate();
 
-    
-    useEffect(() => {
-        dispatch(getProfile(null, null, null)).then((response) => {
-            setProfile(response.data); // Mengupdate state profile dengan data dari API atau Redux state
-        });
-    }, [dispatch]);
 
     useEffect(() => {
         if (user) {
@@ -44,6 +41,7 @@ const ProfilePage = () => {
     }, [user]);
 
     const handleSaveClick = () => {
+        setIsLoading(true);
         const formData = new FormData();
         formData.append('name', dataName);
         formData.append('phone', dataPhone);
@@ -51,26 +49,63 @@ const ProfilePage = () => {
         if (dataPhoto) {
             formData.append('photo', dataPhoto);
         }
+        dispatch(putProfile(navigateTo, '/profile', null, formData))
+            .then(() => {
+                setIsLoading(false); // Stop loading on success
+                setActiveTab('profile');
+            })
+            .catch((error) => {
+                setIsLoading(false); // Stop loading on error
+                toast.error("Failed to save profile changes.");
+                console.error("Error saving profile:", error);
+            });
+    };
 
-        dispatch(putProfile(navigateTo, '/profile', null, formData));
-        setActiveTab('profile');
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setDataPhoto(e.target.files[0]);
+        }
     };
 
     const handlePasswordChangeClick = () => {
-        if (newPassword && newPassword === confirmPassword) {
-            const formData = new FormData();
-            formData.append('current_password', currentPassword);
-            formData.append('new_password', newPassword);
-    
-            dispatch(changePassword(navigateTo, '/profile', null, formData));
-            setActiveTab('profile');
-            setCurrentPassword('');
-            setNewPassword('');
-            setConfirmPassword('');
-        } else {
-            alert("Password baru dan konfirmasi password harus sama.");
+        setIsLoading(true);
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            setIsLoading(false);
+            toast.error("Semua kolom password harus diisi jika ingin mengubah password.");
+            return;
         }
+
+        if (newPassword === currentPassword) {
+            setIsLoading(false);
+            toast.error("Password baru tidak boleh sama dengan password lama.");
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            setIsLoading(false);
+            toast.error("Password baru dan konfirmasi password harus sama.");
+            return;
+        }
+
+        const formDataPassword = new FormData();
+        formDataPassword.append('current_password', currentPassword);
+        formDataPassword.append('new_password', newPassword);
+
+        dispatch(changePassword(navigateTo, '/profile', null, formDataPassword))
+            .then(() => {
+                setIsLoading(false);
+                setCurrentPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+                setActiveTab('profile');
+            })
+            .catch((error) => {
+                setIsLoading(false);
+                toast.error("Failed to change password.");
+                console.error("Error changing password:", error);
+            });
     };
+
 
     const toggleShowCurrentPassword = () => {
         setShowCurrentPassword(!showCurrentPassword);
@@ -91,7 +126,16 @@ const ProfilePage = () => {
             );
         } else {
             return (
-                <p style={{ color: 'red', fontWeight: 'bold', marginBottom: '10px' }}>Not Verified</p>
+                <div>
+                    <p style={{ color: 'red', fontWeight: 'bold', marginBottom: '10px' }}>Not Verified</p>
+                    <Button
+                        className="px-4"
+                        style={{ backgroundColor: '#7126B5', border: 'none' }}
+                        onClick={() => navigateTo('/verify-otp')}
+                    >
+                        Verify
+                    </Button>
+                </div>
             );
         }
     };
@@ -139,7 +183,7 @@ const ProfilePage = () => {
             color: '#000000',
             display: 'flex',
             alignItems: 'center',
-            margin: '10px 0 10px 0'
+            margin: '10px 0 0 0',
         },
         cardHeader: {
             backgroundColor: '#A06ECE',
@@ -201,7 +245,7 @@ const ProfilePage = () => {
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.profileIcon} alt="profil" className="me-3" />
-                                    <p>Profil</p>
+                                    <p className="pt-3">Profil</p>
                                 </Button>
                             </div>
                             <div style={styles.sidebar}>
@@ -210,7 +254,7 @@ const ProfilePage = () => {
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.editIcon} alt="edit" className="me-3" />
-                                    <p>Ubah Profil</p>
+                                    <p className="pt-3">Ubah Profil</p>
                                 </Button>
                             </div>
                             <div style={styles.sidebar}>
@@ -219,7 +263,7 @@ const ProfilePage = () => {
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.settingIcon} alt="settings" className="me-3" />
-                                    <p>Pengaturan Akun</p>
+                                    <p className="pt-3">Pengaturan Akun</p>
                                 </Button>
                             </div>
                             <div style={styles.sidebar}>
@@ -231,7 +275,7 @@ const ProfilePage = () => {
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.logoutIcon} alt="logout" className="me-3" />
-                                    <p>Keluar</p>
+                                    <p className="pt-3">Keluar</p>
                                 </Button>
                             </div>
                             <div style={styles.textVersion}>Version 1.1.0</div>
@@ -303,15 +347,16 @@ const ProfilePage = () => {
                                 <Card.Body>
                                     <Form enctype="multipart/form-data">
                                         <Form.Group controlId="formFotoProfil" className="mb-3">
-                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Foto Profil</Form.Label>
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
+                                                Foto Profil
+                                            </Form.Label>
                                             <Form.Control
                                                 type="file"
                                                 accept="image/*"
-                                                onChange={(e) => setDataPhoto(e.target.files[0])}
+                                                onChange={handleFileChange}
                                                 style={styles.formControl}
                                             />
                                         </Form.Group>
-
                                         <Form.Group controlId="formNamaLengkap" className="mb-3">
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Lengkap</Form.Label>
                                             <Form.Control
@@ -323,7 +368,7 @@ const ProfilePage = () => {
                                         </Form.Group>
 
                                         <Form.Group controlId="formNomorTelepon" className="mb-3">
-                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nama Telepon</Form.Label>
+                                            <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Nomor Telepon</Form.Label>
                                             <Form.Control
                                                 type="text"
                                                 value={dataPhone}
@@ -339,6 +384,7 @@ const ProfilePage = () => {
                                                 value={dataEmail}
                                                 onChange={(e) => setDataEmail(e.target.value)}
                                                 style={styles.formControl}
+                                                disabled
                                             />
                                         </Form.Group>
 
@@ -348,8 +394,9 @@ const ProfilePage = () => {
                                                 type="button"
                                                 style={styles.btnSimpan}
                                                 onClick={handleSaveClick}
+                                                disabled={isLoading}
                                             >
-                                                Simpan
+                                                {isLoading ? "Menyimpan..." : "Simpan"}
                                             </Button>
                                         </div>
                                     </Form>
@@ -364,7 +411,7 @@ const ProfilePage = () => {
                                 </div>
                                 <Card.Body>
                                     <Form>
-                                    <Form.Group controlId="formNamaLengkap" className="mb-3 d-flex justify-content-between">
+                                        <Form.Group controlId="formNamaLengkap" className="mb-3 d-flex justify-content-between">
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>
                                                 Verifikasi Email
                                             </Form.Label>
@@ -397,7 +444,7 @@ const ProfilePage = () => {
                                                         cursor: 'pointer'
                                                     }}
                                                 >
-                                                    {showCurrentPassword  ? (
+                                                    {showCurrentPassword ? (
                                                         <i className="fa fa-eye" />
                                                     ) : (
                                                         <i className="fa fa-eye-slash" />
@@ -409,7 +456,7 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Password Baru</Form.Label>
                                             <div style={{ position: 'relative' }}>
                                                 <Form.Control
-                                                    type={showNewPassword  ? "text" : "password"}
+                                                    type={showNewPassword ? "text" : "password"}
                                                     value={newPassword}
                                                     onChange={(e) => setNewPassword(e.target.value)}
                                                     style={styles.formControl}
@@ -425,7 +472,7 @@ const ProfilePage = () => {
                                                         cursor: 'pointer'
                                                     }}
                                                 >
-                                                    {showNewPassword  ? (
+                                                    {showNewPassword ? (
                                                         <i className="fa fa-eye" />
                                                     ) : (
                                                         <i className="fa fa-eye-slash" />
@@ -437,7 +484,7 @@ const ProfilePage = () => {
                                             <Form.Label style={{ ...styles.formLabel, ...styles.fontBodyBold14 }}>Konfirmasi Password Baru</Form.Label>
                                             <div style={{ position: 'relative' }}>
                                                 <Form.Control
-                                                    type={showConfirmPassword  ? "text" : "password"}
+                                                    type={showConfirmPassword ? "text" : "password"}
                                                     value={confirmPassword}
                                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                                     style={styles.formControl}
@@ -453,7 +500,7 @@ const ProfilePage = () => {
                                                         cursor: 'pointer'
                                                     }}
                                                 >
-                                                    {showConfirmPassword  ? (
+                                                    {showConfirmPassword ? (
                                                         <i className="fa fa-eye" />
                                                     ) : (
                                                         <i className="fa fa-eye-slash" />
@@ -467,8 +514,9 @@ const ProfilePage = () => {
                                                 type="button"
                                                 style={styles.btnSimpan}
                                                 onClick={handlePasswordChangeClick}
-                                            >
-                                                Simpan
+                                                disabled={isLoading}
+                                                >
+                                                    {isLoading ? "Menyimpan..." : "Simpan"}
                                             </Button>
                                         </div>
                                     </Form>
@@ -478,6 +526,9 @@ const ProfilePage = () => {
                     </Col>
                 </Row>
             </Container>
+            <ToastContainer
+                theme="colored"
+            />
         </>
     );
 };

@@ -10,71 +10,189 @@ import {
   Modal,
   Row,
 } from "react-bootstrap"
-import { Link } from "react-router-dom"
-import Navbar from "../../components/Navigation/Navbar"
+
+import { Link, useNavigate } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
 
 import * as icons from "../../assets/icons"
 import * as images from "../../assets/images"
 
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
+import Pagination from "react-bootstrap/Pagination"
 import { BiSortAlt2 } from "react-icons/bi"
 import { FaArrowLeft } from "react-icons/fa"
-import { useDispatch, useSelector } from "react-redux"
+
 import { fetchFlights } from "../../redux/actions/flights"
+import { findTicket } from "../../redux/actions/ticket"
+
+import {
+  setDepartureFlightId,
+  setReturnFlightId,
+} from "../../redux/reducers/checkout"
+
+import "../styles/searchingPage.css"
 import SearchFlightsModal from "../../components/Modal/SearchFlightsModal"
+import { selectFlight } from "../../redux/reducers/flight"
 
 const SearchingPage = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  // modal show
-  const [showMyModal, setShowMyModal] = useState(false)
+  const [showModalFliter, setShowModalFilter] = useState(false)
   const [showFlightsModal, setShowFlightsModal] = useState(false)
-
-  const handleOnClose = () => setShowMyModal(false)
-
-  const [isEmpty, setIsEmpty] = useState(false)
-
+  
   const [isLoading, setIsLoading] = useState(false)
-
+  
+  const [isEmpty, setIsEmpty] = useState(false)
   const [isTiketHabis, setIsTiketHabis] = useState(false)
+  
+  const [selectedDeparture, setSelectedDeparture] = useState(null)
+  const [selectedReturn, setSelectedReturn] = useState(null)
+  const [isReturnFlightOn, setIsReturnFlightOn] = useState(false)
+  
+  const [selectedFilter, setSelectedFilter] = useState("harga_termurah")
 
-  const flightStatus = useSelector((state) => state.flights.status);
-  const error = useSelector((state) => state.flights.error);
+  const handleFilterOnClose = () => setShowModalFilter(false)
+  const handleUbahOnClose = () => setShowModalUbah(false)
+
+  const flightStatus = useSelector((state) => state.flights.status)
+  const error = useSelector((state) => state.flights.error)
   const flights = useSelector((state) => state.flights.data)
+  const statesss = useSelector((state) => state.flights)
+  console.log("ini state.flights", statesss)
+  const tickets = useSelector((state) => state.ticket)
+  console.log("ini slice nya tiket", tickets)
+  // console.log(dispatch());
+  // console.log((state)=> state);
 
   console.log("FLIGHTS NEW", flights)
-  console.log("FLIGHTS NEW", flightStatus)
-  
-  const [searchParams, setSearchParams] = useState({
-    from: "Batam",
-    to: "Tangerang",
-    departure_date: "2024-07-01",
-    total_passengers: "1",
-    seat_class: "economy",
-    return_date: ""
-  });
+  console.log("FLIGHTS STATUS", flightStatus)
 
-  const openModalSearch = () => {
-    Modal.show()
+  const urlSearch = new URLSearchParams(location.search)
+  const searchParams = tickets.userTicket
+
+  console.log("searchparams", searchParams)
+
+  const departureData = tickets.departureTicket
+  const returnData = tickets.returnTicket
+
+  const departureFlights = departureData.results || []
+  const returnFlights = returnData.results || []
+
+  console.log("dep flights", departureFlights)
+  console.log("ret flights", returnFlights)
+
+  const handlePilih = (flight, type) => {
+    if (type === "departure") {
+      setSelectedDeparture(flight)
+      setSelectedReturn(null)
+    } else {
+      setSelectedReturn(flight)
+    }
+  }
+
+  const handleFilterSelection = (filter) => {
+    setSelectedFilter(filter)
+    setShowModalFilter(false)
+  }
+
+  let pagination = []
+
+  const getFlightPrice = (flight) => {
+    switch (searchParams.seatClass) {
+      case "economy":
+        return flight.economyPrice.toLocaleString("id-ID")
+      case "firstClass":
+        return flight.firstClassPrice.toLocaleString("id-ID")
+      case "business":
+        return flight.businessPrice.toLocaleString("id-ID")
+      case "premium":
+        return flight.premiumPrice.toLocaleString("id-ID")
+      default:
+        return flight.economyPrice.toLocaleString("id-ID")
+    }
+  }
+
+  const handleGanti = (type) => {
+    if (type == "departure") {
+      setSelectedDeparture(null)
+      setSelectedReturn(null)
+    } else {
+      setSelectedReturn(null)
+    }
+  }
+
+  const handleSelectFlight = (flight, isReturnFlight) => {
+    dispatch(selectFlight(flight))
+
+    // Dispatch the setDepartureFlightId action if it's a departure flight
+    if (!isReturnFlightOn) {
+      dispatch(setDepartureFlightId(selectedDeparture.id))
+    } else {
+      dispatch(setDepartureFlightId(selectedDeparture.id))
+      dispatch(setReturnFlightId(selectedReturn.id))
+    }
+
+    // Create the flight parameters
+    const flightParams = {
+      flight_id: flight.id,
+    }
+
+    // Convert the parameters to a query string
+
+    // Navigate to the appropriate page based on the flight type
+    if (isReturnFlight) {
+      navigate(`/service`)
+    } else {
+      navigate(`/checkout`)
+    }
   }
 
   useEffect(() => {
+    dispatch(findTicket("/search", searchParams.from, searchParams.to, searchParams.departureDate, searchParams.passengers.total, searchParams.seatClass, searchParams.returnDate, searchParams.passengers.adult, searchParams.passengers.child, searchParams.passengers.baby, selectedFilter))
+
     if (flightStatus === "idle") {
-      dispatch(fetchFlights(searchParams));
+      dispatch(findTicket("/search", 
+        searchParams.from, 
+        searchParams.to, 
+        searchParams.departureDate, 
+        searchParams.passengers.total, 
+        searchParams.seatClass, searchParams.returnDate, searchParams.passengers.adult, searchParams.passengers.child, searchParams.passengers.baby, selectedFilter))
+    } else if (flightStatus === "loading") {
+      setIsLoading(true)
+      dispatch(fetchFlights(searchParams))
+    } else {
+      setIsLoading(false)
     }
-    else if (flightStatus === "loading") {
-      setIsLoading(true);
-    }
-    else {
-      setIsLoading(false);
-    }
-  }, [flightStatus, dispatch, searchParams]);
 
+    if (departureFlights.length === 0) {
+      setIsEmpty(true)
+    } else {
+      let active = 1
+      for (
+        let number = 1;
+        number <= departureData.totalPage;
+        number++
+      ) {
+        pagination.push(
+          <Pagination.Item key={number} active={number === active}>
+            {number}
+          </Pagination.Item>
+        )
+      }
+    }
 
-  const departureFlights = flights.departure_flight || []
-  const returnFlights = flights.return_flight || []
-  
+    setIsReturnFlightOn(returnFlights.length > 0)
+  }, [
+    flightStatus,
+    dispatch,
+    searchParams,
+    departureFlights,
+    returnFlights,
+    selectedFilter,
+  ])
+
   const styles = {
     customButton: {
       backgroundColor: "#7126B5",
@@ -180,6 +298,9 @@ const SearchingPage = () => {
       backgroundColor: "#ccc",
       margin: "0 1px",
     },
+    bgTransparent: {
+      backgroundColor: "transparent",
+    },
   }
 
   const formatDate = (inputDate) => {
@@ -190,9 +311,16 @@ const SearchingPage = () => {
     return formattedDate
   }
 
+  const capitalizeFirstLetter = (string) => {
+    if (typeof string === 'string' && string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    // Handle null or non-string input here. Returning an empty string as an example.
+    return '';
+  }
+
   return (
     <>
-      <Navbar />
       <Container>
         <h3 className="my-4 fw-bold">Pilih Penerbangan</h3>
         <Row className="mb-3 d-flex justify-content-between">
@@ -204,105 +332,91 @@ const SearchingPage = () => {
                 <FaArrowLeft style={{ marginRight: "10px" }} />
                 {searchParams.from} to {searchParams.to} -{" "}
                 {searchParams.total_passengers} Penumpang -{" "}
-                {searchParams.seat_class}
+                {capitalizeFirstLetter(searchParams.seatClass)}
               </Button>
             </Link>
           </Col>
           <Col className="text-right" md={3}>
-            <Button style={styles.buttonUbah} onClick={() => setShowFlightsModal(true)}>Ubah Pencarian</Button>
-          </Col>
-        </Row>
-        <Row>
-          <Col className="d-flex justify-content-between px-5">
-            {[
-              "SENIN",
-              "SELASA",
-              "RABU",
-              "KAMIS",
-              "JUMAT",
-              "SABTU",
-              "MINGGU",
-              "SENIN",
-            ].map((day, index) => (
-              <div key={index}>
-                <Card
-                  className="text-center p-2"
-                  style={styles.cardTanggal}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.style = {
-                      ...styles.cardTanggal,
-                      ...styles.cardTanggalHover,
-                    })
-                  }
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style = styles.cardTanggal)
-                  }
-                >
-                  <h6>{day}</h6>
-                  <p>01/03/2024</p>
-                </Card>
-                {index < 7 && <div style={styles.divider}></div>}
-              </div>
-            ))}
-          </Col>
-        </Row>
-        <hr />
-        <Row>
-          <Col md={10}></Col>
-          <Col className="text-right">
             <Button
-              variant=""
-              onClick={() => setShowMyModal(true)}
-              className="mb-3 text-right ml-auto w-100"
-              style={styles.outlineButton}
-              onMouseOver={(e) =>
-                (e.currentTarget.style = {
-                  ...styles.outlineButton,
-                  ...styles.outlineButtonHover,
-                })
-              }
-              onMouseOut={(e) => (e.currentTarget.style = styles.outlineButton)}
+              style={styles.buttonUbah}
+              onClick={() => setShowFlightsModal(true)}
             >
-              <BiSortAlt2 /> Termurah
+              Ubah Pencarian
             </Button>
           </Col>
         </Row>
-        <Modal show={showMyModal} onHide={handleOnClose}>
+
+        <Row>
+          <Col md={9}></Col>
+          <Col className="text-right">
+            <Button
+              variant=""
+              onClick={() => setShowModalFilter(true)}
+              className="mb-3 text-right ml-auto w-100 outline-button"
+            >
+              <BiSortAlt2 />{" "}
+              {selectedFilter.replace("_", " ").replace("_", " ")}
+            </Button>
+          </Col>
+        </Row>
+        <Modal show={showModalFliter} onHide={handleFilterOnClose}>
           <Modal.Header closeButton></Modal.Header>
           <Modal.Body className="p-0">
             <ListGroup className="m-0">
-              {[
-                "Harga - Termurah",
-                "Durasi - Terpendek",
-                "Keberangkatan - Paling Awal",
-                "Keberangkatan - Paling Akhir",
-                "Kedatangan - Paling Awal",
-                "Kedatangan - Paling Akhir",
-              ].map((text, index) => (
-                <>
-                  <ListGroup.Item
-                    key={index}
-                    style={styles.modalItem}
-                    onMouseOver={(e) =>
-                      (e.currentTarget.style = {
-                        ...styles.modalItem,
-                        ...styles.modalItemHover,
-                      })
-                    }
-                    onMouseOut={(e) =>
-                      (e.currentTarget.style = styles.modalItem)
-                    }
-                  >
-                    <b>{text.split(" - ")[0]}</b> - {text.split(" - ")[1]}
-                  </ListGroup.Item>
-                  {index < 5 && <hr className="p-0 m-0" />}
-                </>
-              ))}
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() => handleFilterSelection("harga_termurah")}
+              >
+                <b>Harga</b> - Termurah
+              </ListGroup.Item>
+              <hr className="p-0 m-0" />
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() => handleFilterSelection("durasi_terpendek")}
+              >
+                <b>Durasi</b> - Terpendek
+              </ListGroup.Item>
+              <hr className="p-0 m-0" />
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() =>
+                  handleFilterSelection("keberangkatan_paling_awal")
+                }
+              >
+                <b>Keberangkatan</b> - Paling Awal
+              </ListGroup.Item>
+              <hr className="p-0 m-0" />
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() =>
+                  handleFilterSelection("keberangkatan_paling_akhir")
+                }
+              >
+                <b>Keberangkatan</b> - Paling Akhir
+              </ListGroup.Item>
+              <hr className="p-0 m-0" />
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() => handleFilterSelection("kedatangan_paling_awal")}
+              >
+                <b>Kedatangan</b> - Paling Awal
+              </ListGroup.Item>
+              <hr className="p-0 m-0" />
+              <ListGroup.Item
+                className="modal-item"
+                onClick={() => handleFilterSelection("kedatangan_paling_akhir")}
+              >
+                <b>Kedatangan</b> - Paling Akhir
+              </ListGroup.Item>
             </ListGroup>
           </Modal.Body>
           <Modal.Footer>
-            <Button style={styles.customButton} onClick={handleOnClose}>
-              Pilih
+            <Button
+              className="custom-button"
+              style={styles.customButton}
+              onClick={handleFilterOnClose}
+            >
+              Tutup
             </Button>
           </Modal.Footer>
         </Modal>
@@ -315,23 +429,113 @@ const SearchingPage = () => {
             </Col>
           ) : (
             <>
-              <Col md={3} className="my-2">
-                <Card>
-                  <Card.Body>
-                    <Card.Title>FLIGHT SELECTION</Card.Title>
-                    <ListGroup variant="flush">
-                      <ListGroup.Item>Departure</ListGroup.Item>
-                      <ListGroup.Item>Return</ListGroup.Item>
-                      <ListGroup.Item>
-                        <Button
-                          style={styles.customButton}
-                          className="custom-button button-pilih mt-2 w-100"
-                        >
-                          Continue
-                        </Button>
-                      </ListGroup.Item>
-                    </ListGroup>
+              <Col md={3} className="mb-2">
+                <Card className="mb-4">
+                  <Card.Header className="fw-bold" style={styles.bgTransparent}>
+                    Rincian Penerbangan
+                  </Card.Header>
+                  <Card.Body className="px-3">
+                    <Card.Text>
+                      <h6 style={styles.ungu}>Berangkat</h6>
+                      <p>
+                        <b>
+                          {searchParams.from} -&gt; {searchParams.to}
+                        </b>
+                      </p>
+                      <p>
+                        {formatDate(searchParams.departureDate.slice(0, 10))}
+                      </p>
+                      {"\n"}
+                      {selectedDeparture ? (
+                        <>
+                          <div className="d-flex align-items-center">
+                            <Col md={2} className="mx-2">
+                              <Image
+                                src={selectedDeparture.Airline.imgUrl}
+                                height="10"
+                                className="mr-2"
+                              />
+                            </Col>
+                            <Col>
+                              <p className="mx-1 fw-bold">
+                                {selectedDeparture.Airline.name}
+                              </p>
+                              <p className=" mx-1 fw-bold">
+                                ({selectedDeparture.Airline.code})
+                              </p>
+                            </Col>
+                          </div>
+                          <p>
+                            {selectedDeparture.departureTime.slice(11, 16)} -{" "}
+                            {selectedDeparture.arrivalTime.slice(11, 16)}
+                          </p>
+                          <Button
+                            className="custom-button button-pilih mt-2 w-100"
+                            onClick={handleGanti("departure")}
+                          >
+                            Ganti pilihan
+                          </Button>
+                        </>
+                      ) : (
+                        "Belum dipilih"
+                      )}
+                    </Card.Text>
+                    {isReturnFlightOn ? (
+                      <Card.Text>
+                        <br />
+                        <h6 style={styles.ungu}>Pulang</h6>
+                        <p>
+                          <b>
+                            {searchParams.to} -&gt; {searchParams.from}
+                          </b>
+                        </p>
+                        <p>
+                          {formatDate(searchParams.returnDate.slice(0, 10))}
+                        </p>
+                        {"\n"}
+                        {selectedReturn ? (
+                          <>
+                            <div className="d-flex align-items-center">
+                              <Col md={2} className="mx-2">
+                                <Image
+                                  src={selectedReturn.Airline.imgUrl}
+                                  height="10"
+                                  className="mr-2"
+                                />
+                              </Col>
+                              <Col>
+                                <p className="mx-1 fw-bold">
+                                  {selectedReturn.Airline.name}
+                                </p>
+                                <p className=" mx-1 fw-bold">
+                                  ({selectedReturn.Airline.code})
+                                </p>
+                              </Col>
+                            </div>
+                            <p>
+                              {selectedReturn.departureTime.slice(11, 16)} -{" "}
+                              {selectedReturn.arrivalTime.slice(11, 16)}
+                            </p>
+                            <Button
+                              className="custom-button button-pilih mt-2 w-100"
+                              onClick={handleGanti("return")}
+                            >
+                              Ganti pilihan
+                            </Button>
+                          </>
+                        ) : (
+                          "Belum dipilih"
+                        )}
+                      </Card.Text>
+                    ) : (
+                      <></>
+                    )}
                   </Card.Body>
+                  <Card.Footer style={styles.bgTransparent}>
+                    <Button className="custom-button button-pilih mt-2 w-100">
+                      Continue
+                    </Button>
+                  </Card.Footer>
                 </Card>
               </Col>
               <Col md={9} className="text-center">
@@ -427,14 +631,13 @@ const SearchingPage = () => {
                                           style={styles.ungu}
                                         >
                                           <h6 className="fw-bold">
-                                            IDR{" "}
-                                            {flight.economyPrice.toLocaleString(
-                                              "id-ID"
-                                            )}
+                                            IDR {getFlightPrice(flight)}
                                           </h6>
                                           <Button
-                                            style={styles.customButton}
                                             className="custom-button button-pilih mt-2"
+                                            onClick={() =>
+                                              handlePilih(flight, "departure")
+                                            }
                                           >
                                             Pilih
                                           </Button>
@@ -454,15 +657,18 @@ const SearchingPage = () => {
                                       <Row>
                                         <Col md="9">
                                           <h5 className="fw-bold">
-                                            {flight.departureTime.slice(11, 16)}
+                                            {flight?.departureTime?.slice(11, 16)}
                                           </h5>
                                           <h6 className="fw-bold">
                                             {formatDate(
-                                              flight.departureTime.slice(0, 10)
+                                              flight?.departureTime?.slice(0, 10)
                                             )}
                                           </h6>
                                           <h5 className="fw-bold">
-                                            {flight.departureAirport_respon.name}
+                                            {
+                                              flight?.departureAirport_respon
+                                                ?.name
+                                            }
                                           </h5>
                                         </Col>
                                         <Col>
@@ -475,43 +681,44 @@ const SearchingPage = () => {
                                       <Row>
                                         <Col md="1" className="mx-0 m-auto">
                                           <Image
-                                            src={flight.Airline.imgUrl}
+                                            src={flight?.Airline.imgUrl}
                                             fluid
                                           />
                                         </Col>
                                         <Col>
                                           <p className="fw-bold mb-0">
-                                            {flight.Airline.name} -{" "}
-                                            {searchParams.seat_class}
+                                            {flight?.Airline?.name} -{" "}
+                                            {capitalizeFirstLetter(
+                                              searchParams.seatClass
+                                            )}
                                           </p>
                                           <p className="fw-bold mb-0">
-                                            {flight.Airline.code}
+                                            {flight?.Airline?.code}
                                           </p>
                                           <br />
                                           <h6 className="fw-bold">Informasi:</h6>
                                           <p className="mb-0">
-                                            Baggage {flight.Airline.baggage} kg
+                                            Baggage {flight?.Airline?.baggage} kg
                                           </p>
                                           <p className="mb-0">
                                             Cabin baggage{" "}
-                                            {flight.Airline.cabinBaggage} kg
+                                            {flight?.Airline?.cabinBaggage} kg
                                           </p>
-                                          <p>In Flight Entertainment</p>
                                         </Col>
                                       </Row>
                                       <hr />
                                       <Row>
                                         <Col md="9">
                                           <h5 className="fw-bold">
-                                            {flight.arrivalTime.slice(11, 16)}
+                                            {flight?.arrivalTime?.slice(11, 16)}
                                           </h5>
                                           <h6 className="fw-bold">
                                             {formatDate(
-                                              flight.arrivalTime.slice(0, 10)
+                                              flight?.arrivalTime?.slice(0, 10)
                                             )}
                                           </h6>
                                           <h5 className="fw-bold">
-                                            {flight.arrivalAirport_respon.name}
+                                            {flight?.arrivalAirport_respon?.name}
                                           </h5>
                                         </Col>
                                         <Col>
@@ -527,6 +734,7 @@ const SearchingPage = () => {
                             </Accordion>
                           </>
                         ))}
+                        <Pagination>{pagination}</Pagination>
                       </>
                     )}
                   </>

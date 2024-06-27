@@ -5,7 +5,7 @@ import { setToken, setUser } from "../reducers/auth";
 export const getProfile =
     (navigate, successRedirect, errorRedirect) =>
         async (dispatch, getState) => {
-            const { token }  = getState().auth;
+            const { token } = getState().auth;
 
             if (!token) {
                 // because token is not valid, we will delete it from local storage
@@ -56,48 +56,48 @@ export const getProfile =
             }
         };
 
-export const putProfile = (navigate, successRedirect, errorRedirect, formData) => 
-async (dispatch, getState) => {
-    const { token } = getState().auth;
+export const putProfile = (navigate, successRedirect, errorRedirect, formData) =>
+    async (dispatch, getState) => {
+        const { token } = getState().auth;
 
-    if (!token) {
-        dispatch(logout());
-        if (navigate && errorRedirect) {
-            navigate(errorRedirect);
+        if (!token) {
+            dispatch(logout());
+            if (navigate && errorRedirect) {
+                navigate(errorRedirect);
+            }
+            return;
         }
-        return;
-    }
 
-    let config = {
-        method: 'put',
-        url: `${import.meta.env.VITE_BACKEND_API}/api/auth`,
-        headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-        },
-        data: formData,
+        let config = {
+            method: 'put',
+            url: `${import.meta.env.VITE_BACKEND_API}/api/auth`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
+            },
+            data: formData,
+        };
+
+        try {
+            const response = await axios.request(config);
+            const { data } = response.data;
+
+            dispatch(setUser(data));
+            toast.success('Update Success');
+
+            if (navigate && successRedirect) {
+                navigate(successRedirect);
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message || 'Profile update failed');
+            if (navigate && errorRedirect) {
+                navigate(errorRedirect);
+            }
+        }
     };
 
-    try {
-        const response = await axios.request(config);
-        const { data } = response.data;
 
-        dispatch(setUser(data));
-        toast.success('Update Success');
-
-        if (navigate && successRedirect) {
-            navigate(successRedirect);
-        }
-    } catch (error) {
-        toast.error(error?.response?.data?.message || 'Profile update failed');
-        if (navigate && errorRedirect) {
-            navigate(errorRedirect);
-        }
-    }
-};
-    
-
-export const changePassword = (navigate, successRedirect, errorRedirect, formData) => 
+export const changePassword = (navigate, successRedirect, errorRedirect, formData) =>
     async (dispatch, getState) => {
         const { token } = getState().auth;
 
@@ -135,3 +135,8 @@ export const changePassword = (navigate, successRedirect, errorRedirect, formDat
             }
         }
     };
+
+export const logout = () => (dispatch) => {
+    dispatch(setToken(null))
+    dispatch(setUser(null))
+}
