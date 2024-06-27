@@ -11,7 +11,6 @@ import {
   Row,
 } from "react-bootstrap"
 import { Link, useNavigate } from "react-router-dom"
-import Navbar from "../../components/Navigation/Navbar"
 
 import * as icons from "../../assets/icons"
 import * as images from "../../assets/images"
@@ -44,7 +43,6 @@ const SearchingPage = () => {
   const [showReturnFlights, setShowReturnFlights] = useState(false)
   const [isReturnFlightOn, setIsReturnFlightOn] = useState(false)
   const [selectedFilter, setSelectedFilter] = useState("harga_termurah")
-  
 
   const handleFilterOnClose = () => setShowModalFilter(false)
   const handleUbahOnClose = () => setShowModalUbah(false)
@@ -53,17 +51,8 @@ const SearchingPage = () => {
   const navigate = useNavigate()
 
   const ticketStatus = useSelector((state) => state.ticket.status)
-  const error = useSelector((state) => state.flights.error)
-  const flights = useSelector((state) => state.flights.data)
-  const statesss = useSelector((state) => state.flights)
-  console.log("ini state.flights", statesss)
   const tickets = useSelector((state) => state.ticket)
-  console.log("tiketSlice", tickets)
 
-  console.log("FLIGHTS NEW", flights)
-  console.log("TICKET STATUS", ticketStatus)
-
-  const urlSearch = new URLSearchParams(location.search)
   const searchParams = tickets.data.userTicket
 
   console.log("searchparams", searchParams)
@@ -80,7 +69,6 @@ const SearchingPage = () => {
   const handlePilih = (flight, type) => {
     if (type === "departure") {
       setSelectedDeparture(flight)
-      console.log("selected departure: ", selectedDeparture)
       setSelectedReturn(null)
       if (isReturnFlightOn) {
         setShowReturnFlights(true)
@@ -140,7 +128,7 @@ const SearchingPage = () => {
     }
 
     // Convert the parameters to a query string
-    const searchParams = new URLSearchParams(flightParams);
+    const searchParams = new URLSearchParams(flightParams)
 
     // Navigate to the appropriate page based on the flight type
     if (isReturnFlight) {
@@ -153,7 +141,7 @@ const SearchingPage = () => {
           selectedReturn.id,
           searchParams.seatClass,
           searchParams.passengers.adult,
-          searchParams.passengers.child,
+          searchParams.passengers.child
         )
       )
       navigate(`/checkout`)
@@ -213,11 +201,7 @@ const SearchingPage = () => {
       setIsEmpty(true)
     } else {
       let active = 1
-      for (
-        let number = 1;
-        number <= departureData.totalPage;
-        number++
-      ) {
+      for (let number = 1; number <= departureData.totalPage; number++) {
         pagination.push(
           <Pagination.Item key={number} active={number === active}>
             {number}
@@ -225,7 +209,6 @@ const SearchingPage = () => {
         )
       }
     }
-
   }, [
     ticketStatus,
     dispatch,
@@ -366,7 +349,6 @@ const SearchingPage = () => {
 
   return (
     <div>
-      <Navbar />
       <Container>
         <h3 className="my-4 fw-bold">Pilih Penerbangan</h3>
         <Row className="mb-3 d-flex justify-content-between">
@@ -601,8 +583,9 @@ const SearchingPage = () => {
                     )}
                   </Card.Body>
                   <Card.Footer style={styles.bgTransparent}>
-                    <Button className="custom-button button-pilih mt-2 w-100" 
-                    // onClick={handleSelectFlight}
+                    <Button
+                      className="custom-button button-pilih mt-2 w-100"
+                      // onClick={handleSelectFlight}
                     >
                       Continue
                     </Button>
@@ -610,7 +593,7 @@ const SearchingPage = () => {
                 </Card>
               </Col>
               <Col md={9} className="text-center">
-              {/* loading not working anymore bcs of the new redux */}
+                {/* loading not working anymore bcs of the new redux */}
                 {isLoading ? (
                   <>
                     <p className="my-3" style={styles.textAbu}>
@@ -628,7 +611,7 @@ const SearchingPage = () => {
                       </>
                     ) : (
                       <>
-                      {/* logic: if return flight is on and user has selected departure, show return flights, else show departure flights */}
+                        {/* logic: if return flight is on and user has selected departure, show return flights, else show departure flights */}
                         {selectedDeparture && isReturnFlightOn ? (
                           <>
                             {returnFlights.map((flight) => (

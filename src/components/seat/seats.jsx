@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Seat = ({ seat, onSeatSelect, isSelected, isSaved }) => {
     const handleClick = () => {
         if (!seat.booked && !isSaved) {
