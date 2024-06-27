@@ -18,7 +18,7 @@ export const findTicket =
 
     let config = {
       method: 'post',
-      url: `${import.meta.env.VITE_BACKEND_API}/api/findTickets?page=1&limit=10`,
+      url: `${import.meta.env.VITE_BACKEND_API}/api/findTickets`,
       data : data
     };
 

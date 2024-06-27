@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card, Button, Container, Form, Row, Col, Image } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,6 +20,8 @@ const CheckoutPage = () => {
     const selectedFlightReturn = useSelector((state) => state.flights.selectedFlightReturn);
     const checkout = useSelector((state) => state.checkout);
 
+
+    
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [time, setTime] = useState("");
