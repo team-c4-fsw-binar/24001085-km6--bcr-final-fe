@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchBookings } from "../../redux/reducers/booking"
-import { useNavigate } from "react-router-dom"
+
 import DetailPesanan from "./DetailPesanan"
 import {
   Card,
@@ -22,7 +22,6 @@ import "../styles/history/riwayat.css"
 
 const MainComponent = ({ startDate, endDate, searchInput }) => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const bookingData = useSelector((state) => state.bookings.data)
   const bookingStatus = useSelector((state) => state.bookings.status)
   const [hoverIndex, setHoverIndex] = useState(null)
@@ -30,10 +29,11 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
   const [isCardClicked, setIsCardClicked] = React.useState(false)
   const [selectedCardIndex, setSelectedCardIndex] = React.useState(null)
   const bookingsData = bookingData?.data?.results
-
   const token = useSelector((state) => state.auth.token)
+
   const handleMouseEnter = (index) => setHoverIndex(index)
   const handleMouseLeave = () => setHoverIndex(null)
+
   const handleCardClick = (index) => {
     setClickedIndex(index)
     setSelectedCardIndex(index)
@@ -55,8 +55,11 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
 
   if (bookingStatus === "loading") {
     return (
-      <div className="row col-12 d-flex justify-content-center">
-        <Spinner animation="border" className="d-flex justify-content-center" />
+      <div className="row col-12 d-flex justify-content-center ">
+        <Spinner
+          animation="border"
+          className="d-flex justify-content-center m-5"
+        />
       </div>
     )
   }
@@ -158,16 +161,14 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
 
   const styles = {
     riwayatCard: {
-      // Adjust background color as needed
       borderColor: "grey",
       borderWidth: "0px",
-      boxShadow: "0 5px 5px rgba(0, 0, 0, 0.2)", // Default shadow
-      transition: "all 0.2s ease-in-out", // Smooth transition for hover effect
+      boxShadow: "0 5px 5px rgba(0, 0, 0, 0.2)",
+      transition: "all 0.2s ease-in-out",
       cursor: "pointer",
     },
     riwayatCardHover: {
-      // boxShadow: "0px 20px 50px rgba(160, 110, 206, 1)", // Change shadow color
-      transform: "translateY(-3px)", // Simulate a slight "pop" effect
+      transform: "translateY(-3px)",
       borderStyle: "solid",
       borderWidth: "3px",
       borderColor: "#a06ece",
@@ -181,9 +182,8 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
     },
     overflowHistory: {
       overflowY: "auto",
-      maxHeight: "1000px",
+      maxHeight: "800px",
       paddingRight: "15px",
-      boxSizing: "content-box",
     },
   }
 
@@ -223,7 +223,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       .replace("Rp", "IDR")
   }
   return (
-    <div className="container">
+    <div className="" style={styles.overflowHistory}>
       {bookingsData && bookingsData.length > 0 ? (
         bookingsData.map((booking, index) => {
           //   const payment = getPaymentForBooking(booking.id)

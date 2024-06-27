@@ -7,7 +7,7 @@ import {
   Image,
   StyleSheet,
 } from "@react-pdf/renderer"
-// import { logoTerbangAja } from "../../assets/images"
+import { logoTerbangAjaTiket } from "../../assets/images"
 const styles = StyleSheet.create({
   page: {
     padding: 30,
@@ -15,8 +15,7 @@ const styles = StyleSheet.create({
     color: "#555",
   },
   logo: {
-    height: "20px",
-    width: "20px",
+    width: "150px",
     marginBottom: 20,
   },
   heading: {
@@ -85,7 +84,7 @@ const TiketPDF = ({
   <Document>
     <Page style={styles.page}>
       <View>
-        <Image src={logoTerbangAja} style={styles.logo} />
+        <Image src={logoTerbangAjaTiket} style={styles.logo} />
         <Text style={styles.heading}>E-Tiket TerbangAja</Text>
       </View>
 

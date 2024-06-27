@@ -1,24 +1,30 @@
 import { Row, Col, Container, Button, Image } from "react-bootstrap"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+
+import { fetchBookings } from "../../redux/reducers/booking"
+import { useDispatch, useSelector } from "react-redux"
 
 import { BsArrowLeft, BsFunnel } from "react-icons/bs"
 import "../styles/historyPage.css"
 import MainComponent from "../../components/History/RiwayatCore"
 import PopupCard from "../../components/Modal/searchHistory"
 import Datepicker from "../../components/Modal/DatepickerModalHistory"
-
+import RiwayatNotfound from "../../components/History/riwayatNotfound"
 import * as icons from "../../assets/icons"
 
 const HistoryPage = () => {
   const navigate = useNavigate()
-
+  const dispatch = useDispatch()
   const [modalShowCari, setModalShowCari] = useState(false)
   const [modalShowDate, setModalShowDate] = useState(false)
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
   const [lastSearch, setLastSearch] = useState("")
   const [searchInput, setSearchInput] = useState("")
+  const token = useSelector((state) => state.auth.token)
+  const notFound = useSelector((state) => state.bookings.notFound)
+
   // const formatDate = (date) => {
   //   return date.toISOString().split("T")[0]
   // }
@@ -27,22 +33,40 @@ const HistoryPage = () => {
     setLastSearch(search)
     setModalShowCari(false) // Close the modal after search
   }
-  const formatDate = (date) => {
-    const d = new Date(date)
-    let month = "" + (d.getMonth() + 1)
-    let day = "" + d.getDate()
-    const year = d.getFullYear()
+  // const formatDatePick = (date) => {
+  //   const d = new Date(date)
+  //   let month = "" + (d.getMonth() + 1)
+  //   let day = "" + d.getDate()
+  //   const year = d.getFullYear()
 
-    if (month.length < 2) month = "0" + month
-    if (day.length < 2) day = "0" + day
+  //   if (month.length < 2) month = "0" + month
+  //   if (day.length < 2) day = "0" + day
 
-    return [year, month, day].join("-")
+  //   return [year, month, day].join("-")
+  // }
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "pad", day: "pad" }
+    const date = new Date(dateString)
+
+    // Year
+    const year = date.getFullYear().toString()
+
+    // Month (zero-padded for consistent format)
+    const month = String(date.getMonth() + 1).padStart(2, "0")
+
+    // Day (zero-padded for consistent format)
+    const day = String(date.getDate()).padStart(2, "0")
+
+    // Return formatted date string
+    return `${year}-${month}-${day}`
   }
   const BerandaClick = () => {
     // Mengarahkan ke halaman beranda
     navigate("/")
   }
-
+  useEffect(() => {
+    dispatch(fetchBookings({ token, startDate, endDate, searchInput }))
+  }, [dispatch, token, startDate, endDate, searchInput])
   return (
     <>
       <div className="shadow" style={{ height: "140px" }}>
@@ -116,12 +140,15 @@ const HistoryPage = () => {
           />
         </div>
       </div>
-
-      <MainComponent
-        startDate={startDate ? formatDate(startDate) : ""}
-        endDate={endDate ? formatDate(endDate) : ""}
-        searchInput={searchInput}
-      />
+      {notFound ? (
+        <RiwayatNotfound />
+      ) : (
+        <MainComponent
+          startDate={startDate ? formatDate(startDate) : ""}
+          endDate={endDate ? formatDate(endDate) : ""}
+          searchInput={searchInput}
+        />
+      )}
     </>
   )
 }

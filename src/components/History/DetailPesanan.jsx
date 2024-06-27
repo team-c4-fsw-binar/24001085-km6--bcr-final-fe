@@ -10,7 +10,6 @@ import TikePDF from "./tiket"
 
 const DetailPesanan = ({
   booking,
-
   payment,
   priceAdult,
   handlePaymentRedirect,
@@ -99,7 +98,9 @@ const DetailPesanan = ({
         >
           <Row>
             <Col md={9}>
-              <Card.Title as="h5">Detail Pemesanan</Card.Title>
+              <Card.Title as="h5" style={{ fontWeight: "700" }}>
+                Detail Pesanan
+              </Card.Title>
             </Col>
             <Col md={3} className="d-flex justify-content-end ">
               <p className="p-2">{getPaymentStatus(payment)}</p>
