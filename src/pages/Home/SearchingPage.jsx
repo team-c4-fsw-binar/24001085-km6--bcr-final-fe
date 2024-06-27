@@ -33,7 +33,7 @@ import {
 
 import "../styles/searchingPage.css"
 import SearchFlightsModal from "../../components/Modal/SearchFlightsModal"
-import { selectFlight } from "../../redux/reducers/flight"
+// import { selectFlight } from "../../redux/reducers/flight"
 
 const SearchingPage = () => {
   const dispatch = useDispatch()
@@ -123,31 +123,31 @@ const SearchingPage = () => {
     }
   }
 
-  const handleSelectFlight = (flight, isReturnFlight) => {
-    dispatch(selectFlight(flight))
+  // const handleSelectFlight = (flight, isReturnFlight) => {
+  //   dispatch(selectFlight(flight))
 
-    // Dispatch the setDepartureFlightId action if it's a departure flight
-    if (!isReturnFlightOn) {
-      dispatch(setDepartureFlightId(selectedDeparture.id))
-    } else {
-      dispatch(setDepartureFlightId(selectedDeparture.id))
-      dispatch(setReturnFlightId(selectedReturn.id))
-    }
+  //   // Dispatch the setDepartureFlightId action if it's a departure flight
+  //   if (!isReturnFlightOn) {
+  //     dispatch(setDepartureFlightId(selectedDeparture.id))
+  //   } else {
+  //     dispatch(setDepartureFlightId(selectedDeparture.id))
+  //     dispatch(setReturnFlightId(selectedReturn.id))
+  //   }
 
-    // Create the flight parameters
-    const flightParams = {
-      flight_id: flight.id,
-    }
+  //   // Create the flight parameters
+  //   const flightParams = {
+  //     flight_id: flight.id,
+  //   }
 
-    // Convert the parameters to a query string
+  //   // Convert the parameters to a query string
 
-    // Navigate to the appropriate page based on the flight type
-    if (isReturnFlight) {
-      navigate(`/service`)
-    } else {
-      navigate(`/checkout`)
-    }
-  }
+  //   // Navigate to the appropriate page based on the flight type
+  //   if (isReturnFlight) {
+  //     navigate(`/service`)
+  //   } else {
+  //     navigate(`/checkout`)
+  //   }
+  // }
 
   useEffect(() => {
     dispatch(findTicket("/search", searchParams.from, searchParams.to, searchParams.departureDate, searchParams.passengers.total, searchParams.seatClass, searchParams.returnDate, searchParams.passengers.adult, searchParams.passengers.child, searchParams.passengers.baby, selectedFilter))

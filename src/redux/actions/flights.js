@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios"
-import { toast } from "react-toastify"
 
 export const fetchFlights = createAsyncThunk(
   "flights/fetchFlights",
@@ -30,7 +29,7 @@ export const fetchFlights = createAsyncThunk(
       )
       return response.data.data
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message)
+      // toast.error(error.response?.data?.message || error.message)
       return rejectWithValue(error.response?.data?.message || error.message)
     }
   }
