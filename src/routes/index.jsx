@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom"
 import {
   HomePage,
   LoginPage,
@@ -15,8 +15,6 @@ import {
   ResetPasswordPage,
   HistoryPage,
 } from "../pages"
-
-// components
 import UserProtected from "../components/Protected/Protected"
 import NonProtected from "../components/Protected/NonProtected"
 import NavbarComponent from "../components/Navigation/Navbar"

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchBookings } from "../../redux/reducers/booking"
-import { useNavigate } from "react-router-dom"
+
 import DetailPesanan from "./DetailPesanan"
 import {
   Card,
@@ -22,7 +22,6 @@ import "../styles/history/riwayat.css"
 
 const MainComponent = ({ startDate, endDate, searchInput }) => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const bookingData = useSelector((state) => state.bookings.data)
   const bookingStatus = useSelector((state) => state.bookings.status)
   const [hoverIndex, setHoverIndex] = useState(null)
@@ -30,10 +29,11 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
   const [isCardClicked, setIsCardClicked] = React.useState(false)
   const [selectedCardIndex, setSelectedCardIndex] = React.useState(null)
   const bookingsData = bookingData?.data?.results
-
   const token = useSelector((state) => state.auth.token)
+
   const handleMouseEnter = (index) => setHoverIndex(index)
   const handleMouseLeave = () => setHoverIndex(null)
+
   const handleCardClick = (index) => {
     setClickedIndex(index)
     setSelectedCardIndex(index)
@@ -55,8 +55,11 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
 
   if (bookingStatus === "loading") {
     return (
-      <div className="row col-12 d-flex justify-content-center">
-        <Spinner animation="border" className="d-flex justify-content-center" />
+      <div className="row col-12 d-flex justify-content-center ">
+        <Spinner
+          animation="border"
+          className="d-flex justify-content-center m-5"
+        />
       </div>
     )
   }
@@ -72,48 +75,65 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "green",
+          backgroundColor: "#00FF00",
           color: "white",
           width: "68px",
           height: "28px",
         }}
       >
         <p
-          className="d-flex justify-content-center align-center mt-1"
+          className="d-flex justify-content-center align-center p-1"
           style={{ fontSize: "14px" }}
         >
           Issued
         </p>
       </div>
-    ) : payment.status === "Pending" || payment.status === "Need Method" ? (
+    ) : payment.status === "Pending" ? (
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "red",
+          backgroundColor: "#FFC107",
           color: "white",
           width: "68px",
           height: "28px",
         }}
       >
         <p
-          className="d-flex justify-content-center align-center mt-1"
+          className="d-flex justify-content-center align-center p-1"
           style={{ fontSize: "14px" }}
         >
           Unpaid
         </p>
       </div>
-    ) : payment.status === "Expire" ? (
+    ) : payment.status === "Need Method" ? (
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "grey",
+          backgroundColor: "#00B0FF",
+          color: "white",
+          width: "110px",
+          height: "28px",
+        }}
+      >
+        <p
+          className="d-flex justify-content-center align-center p-1"
+          style={{ fontSize: "14px" }}
+        >
+          Need Method
+        </p>
+      </div>
+    ) : payment.status === "Expired" ? (
+      <div
+        className=" rounded-4 "
+        style={{
+          backgroundColor: "#808080",
           color: "white",
           width: "80px",
           height: "28px",
         }}
       >
         <p
-          className="d-flex justify-content-center align-center mt-1"
+          className="d-flex justify-content-center align-center p-1"
           style={{ fontSize: "14px" }}
         >
           Expired
@@ -123,14 +143,14 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       <div
         className=" rounded-4 "
         style={{
-          backgroundColor: "grey",
+          backgroundColor: "#FF0000",
           color: "white",
           width: "80px",
           height: "28px",
         }}
       >
         <p
-          className="d-flex justify-content-center align-center mt-1"
+          className="d-flex justify-content-center align-center p-1"
           style={{ fontSize: "14px" }}
         >
           Failed
@@ -141,16 +161,14 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
 
   const styles = {
     riwayatCard: {
-      // Adjust background color as needed
       borderColor: "grey",
       borderWidth: "0px",
-      boxShadow: "0 5px 5px rgba(0, 0, 0, 0.2)", // Default shadow
-      transition: "all 0.2s ease-in-out", // Smooth transition for hover effect
+      boxShadow: "0 5px 5px rgba(0, 0, 0, 0.2)",
+      transition: "all 0.2s ease-in-out",
       cursor: "pointer",
     },
     riwayatCardHover: {
-      // boxShadow: "0px 20px 50px rgba(160, 110, 206, 1)", // Change shadow color
-      transform: "translateY(-3px)", // Simulate a slight "pop" effect
+      transform: "translateY(-3px)",
       borderStyle: "solid",
       borderWidth: "3px",
       borderColor: "#a06ece",
@@ -162,7 +180,13 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
     customLg: {
       width: "990px",
     },
+    overflowHistory: {
+      overflowY: "auto",
+      maxHeight: "800px",
+      paddingRight: "15px",
+    },
   }
+
   const formatDate = (dateString) => {
     const options = { day: "numeric", month: "long", year: "numeric" }
     return new Date(dateString).toLocaleDateString("id-ID", options)
@@ -199,11 +223,12 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       .replace("Rp", "IDR")
   }
   return (
-    <div className="container">
+    <div className="" style={styles.overflowHistory}>
       {bookingsData && bookingsData.length > 0 ? (
         bookingsData.map((booking, index) => {
           //   const payment = getPaymentForBooking(booking.id)
           const payment = booking?.Payment
+
           //   const flight = getFlightForBooking(booking.departure_flight_id)
           let cardStyle = styles.riwayatCard
           if (clickedIndex === index || hoverIndex === index) {
@@ -215,6 +240,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
           const seatClasses = booking.BookingSeats.map(
             (bookingSeat) => bookingSeat.Seat.seat_class
           )
+
           let priceAdult = 0
           if (seatClasses[0] === "economy") {
             priceAdult = booking.departureFlight_respon.economyPrice
@@ -230,7 +256,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
           }
 
           return (
-            <div className="container" key={booking.id} fluid>
+            <div className="container" key={booking.id}>
               <div className="row">
                 <Col
                   md={7}
@@ -244,7 +270,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
                     <Card
                       key={booking.id}
                       id="riwayat-card"
-                      className="p-3 mx-2 rounded-3 m-2"
+                      className="p-4 mx-2 rounded-3 m-2"
                       style={cardStyle}
                       onMouseEnter={() => handleMouseEnter(index)}
                       onMouseLeave={handleMouseLeave}
@@ -409,21 +435,25 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
                       )}
                       <div className="border my-3"></div>
                       <Row>
-                        <Col>
+                        <Col md={4} sm={5}>
                           <p className="m-0 fw-bold">Booking Code : </p>
                           <p className="ellipsis m-0">{booking.code}</p>
                         </Col>
-                        <Col>
+                        <Col md={4} sm={3}>
                           <p className="m-0 fw-bold">Class :</p>
                           <p className="m-0">{seatClasses[0]}</p>
                         </Col>
-                        <Col>
-                          <p
-                            className=" d-flex justify-content-center fw-bold align-center m-0"
-                            style={{ color: "#A06ECE", fontSize: "15px" }}
-                          >
-                            {formatCurrency(booking.price_amount)}
-                          </p>
+                        <Col md={4} sm={4}>
+                          {payment?.status == "failed" ? (
+                            "-"
+                          ) : (
+                            <p
+                              className=" d-flex justify-content-end fw-bold align-center mx-2"
+                              style={{ color: "#A06ECE", fontSize: "15px" }}
+                            >
+                              {formatCurrency(booking.price_amount)}
+                            </p>
+                          )}
                         </Col>
                       </Row>
                     </Card>

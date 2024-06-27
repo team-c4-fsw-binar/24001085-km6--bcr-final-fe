@@ -1,10 +1,15 @@
-import React from "react"
+import React, { useRef } from "react"
 import { Card, Col, Row, Image, Button, Badge } from "react-bootstrap"
 import { useMediaQuery } from "react-responsive"
+import jsPDF from "jspdf"
+import html2canvas from "html2canvas"
+import "../styles/history/tiket.css"
+import { logoTerbangAja } from "../../assets/images"
+import { PDFDownloadLink } from "@react-pdf/renderer"
+import TikePDF from "./tiket"
 
 const DetailPesanan = ({
   booking,
-
   payment,
   priceAdult,
   handlePaymentRedirect,
@@ -19,25 +24,40 @@ const DetailPesanan = ({
 }) => {
   const styles = {
     detailMDnoReturn: {
+      maxHeight: "600px",
       position: "absolute",
       top: "78%",
       left: "75%",
-      transform: "translate(-50%, -50%)",
+      transform: "translate(-50%,-67%)",
       margin: "20px",
       padding: "10px",
     },
     detailMDReturn: {
+      maxHeight: "400px",
       position: "absolute",
       top: "98%",
       left: "75%",
-      transform: "translate(-50%, -50%)",
+      transform: "translate(-50%, -139%)",
       margin: "20px",
       padding: "10px",
     },
     detailSM: {
       position: "relative",
     },
+    expiredOrFailed: {
+      maxHeight: "300px",
+      position: "absolute",
+      top: "100%",
+      left: "75%",
+      transform: "translate(-50%, -190%)",
+      margin: "20px",
+      padding: "10px",
+    },
+    expiredOrFailedSM: {
+      position: "relative",
+    },
   }
+  const detailRef = useRef()
   const isMediumScreen = useMediaQuery({ query: "(min-width: 768px)" })
   let styleForCardMD
   {
@@ -47,7 +67,15 @@ const DetailPesanan = ({
   }
 
   const cardStyle = isMediumScreen ? styleForCardMD : styles.detailSM
+  const conditionalCardStyle =
+    (isMediumScreen && payment?.status === "Expired") ||
+    (isMediumScreen && payment?.status === "Failed")
+      ? styles.expiredOrFailed
+      : cardStyle
 
+  const handleCetakTiket = () => {
+    downloadPdf()
+  }
   return (
     isCardClicked &&
     index === selectedCardIndex && (
@@ -56,7 +84,7 @@ const DetailPesanan = ({
         sm={12}
         className="mt-4 p-3"
         id="detail-pesanan"
-        style={cardStyle}
+        style={conditionalCardStyle}
       >
         <Card
           fluid
@@ -70,10 +98,12 @@ const DetailPesanan = ({
         >
           <Row>
             <Col md={9}>
-              <Card.Title as="h5">Detail Pemesanan</Card.Title>
+              <Card.Title as="h5" style={{ fontWeight: "700" }}>
+                Detail Pesanan
+              </Card.Title>
             </Col>
-            <Col md={3} className="align-middle d-flex justify-content-end">
-              <p className="m-0">{getPaymentStatus(payment)}</p>
+            <Col md={3} className="d-flex justify-content-end ">
+              <p className="p-2">{getPaymentStatus(payment)}</p>
             </Col>
           </Row>
           <div className="d-flex">
@@ -107,45 +137,55 @@ const DetailPesanan = ({
             {booking?.departureFlight_respon?.departureAirport_respon?.name}
           </p>
           <div className="border my-2"></div>
-          <Row className="fw-bold">
-            <div className="col-1"></div>
-            <Col>
-              <p className="my-0 mx-1">
-                {booking?.departureFlight_respon?.Airline?.name}
-                {/*Airline*/}{" "}
-              </p>
-              <p>{booking?.departureFlight_respon?.Airline?.code}</p>
-            </Col>
-            <Col md={7}>
-              <p className=" mx-1">{seatClasses[0]}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={1} className="mt-3">
-              <Image
-                src={booking?.departureFlight_respon?.Airline?.imgUrl}
-                style={{ weight: "20px", height: "20px" }}
-              />
-            </Col>
-            <Col className="">
-              <p className="fw-bold m-0">Informasi :</p>
-              {booking.BookingPassengers?.map((passenger, idx) => (
-                <div key={idx}>
-                  <p
-                    className="m-0"
+          {payment?.status === "Expired" || payment?.status === "Failed" ? (
+            ""
+          ) : (
+            <>
+              {" "}
+              <Row className="fw-bold">
+                <p className="">
+                  {booking?.departureFlight_respon?.Airline?.name} -{" "}
+                  {seatClasses[0]}
+                </p>
+                <p className="">
+                  {booking?.departureFlight_respon?.Airline?.code}
+                </p>
+              </Row>
+              <Row>
+                <Col md={6} sm={6}>
+                  <Image
+                    className="col-md-6 col-sm-6"
+                    src={booking?.departureFlight_respon?.Airline?.imgUrl}
                     style={{
-                      color: " #A06ECE",
-                      fontWeight: "500",
+                      weight: "20%",
+                      height: "auto",
                     }}
-                  >
-                    {`Penumpang ${idx + 1}: ${passenger.Passenger.name}`}
-                  </p>
-                  <p className="m-0">{`ID: ${passenger.Passenger.identity_number}`}</p>
-                </div>
-              ))}
-            </Col>
-            <div className="border my-2"></div>
-          </Row>
+                  />
+                </Col>
+                <Col md={6}></Col>
+              </Row>
+              <Row>
+                <p className="fw-bold m-0">Informasi :</p>
+                {booking.BookingPassengers?.map((passenger, idx) => (
+                  <div key={idx}>
+                    <p
+                      className="m-0"
+                      style={{
+                        color: " #A06ECE",
+                        fontWeight: "500",
+                      }}
+                    >
+                      {`Penumpang ${idx + 1}: ${passenger.Passenger.name}`}
+                    </p>
+                    <p className="m-0">{`ID: ${passenger.Passenger.identity_number}`}</p>
+                  </div>
+                ))}
+
+                <div className="border my-2"></div>
+              </Row>
+            </>
+          )}
+
           <Row className="d-flex mb-0">
             <p className="fw-bold col-6 mb-0">
               {formatTime(booking?.departureFlight_respon?.arrivalTime)}
@@ -188,45 +228,55 @@ const DetailPesanan = ({
                 {booking?.departureFlight_respon?.departureAirport_respon?.name}
               </p>
               <div className="border my-2"></div>
-              <Row className="fw-bold">
-                <div className="col-1"></div>
-                <Col>
-                  <p className="my-0 mx-1">
-                    {booking.returnFlight_respon?.Airline?.name}
-                    {/*Airline*/}{" "}
-                  </p>
-                  <p>{booking.returnFlight_respon?.Airline?.code}</p>
-                </Col>
-                <Col md={7}>
-                  <p className=" mx-1">{seatClasses[0]}</p>
-                </Col>
-              </Row>
-              <Row>
-                <Col md={1} className="mt-3">
-                  <Image
-                    src={booking.returnFlight_respon?.Airline?.imgUrl}
-                    style={{ weight: "20px", height: "20px" }}
-                  />
-                </Col>
-                <Col className="">
-                  <p className="fw-bold m-0">Informasi :</p>
-                  {booking.BookingPassengers?.map((passenger, idx) => (
-                    <div key={idx}>
-                      <p
-                        className="m-0"
+              {payment?.status === "Expired" || payment?.status === "Failed" ? (
+                ""
+              ) : (
+                <>
+                  <Row className="fw-bold">
+                    <p className="">
+                      {booking.returnFlight_respon?.Airline?.name} -{" "}
+                      {seatClasses[0]}
+                      {/*Airline*/}{" "}
+                    </p>
+                    <p className="">
+                      {booking.returnFlight_respon?.Airline?.code}
+                    </p>
+                  </Row>
+                  <Row>
+                    <Col md={6} sm={6}>
+                      <Image
+                        className="col-md-6 col-sm-6"
+                        src={booking?.departureFlight_respon?.Airline?.imgUrl}
                         style={{
-                          color: " #A06ECE",
-                          fontWeight: "500",
+                          weight: "20%",
+                          height: "auto",
                         }}
-                      >
-                        {`Penumpang ${idx + 1}: ${passenger.Passenger.name}`}
-                      </p>
-                      <p className="m-0">{`ID: ${passenger.Passenger.identity_number}`}</p>
-                    </div>
-                  ))}
-                </Col>
-                <div className="border my-2"></div>
-              </Row>
+                      />
+                    </Col>
+                    <Col md={6}></Col>
+                  </Row>
+                  <Row>
+                    <p className="fw-bold m-0">Informasi :</p>
+                    {booking.BookingPassengers?.map((passenger, idx) => (
+                      <div key={idx}>
+                        <p
+                          className="m-0"
+                          style={{
+                            color: " #A06ECE",
+                            fontWeight: "500",
+                          }}
+                        >
+                          {`Penumpang ${idx + 1}: ${passenger.Passenger.name}`}
+                        </p>
+                        <p className="m-0">{`ID: ${passenger.Passenger.identity_number}`}</p>
+                      </div>
+                    ))}
+
+                    <div className="border my-2"></div>
+                  </Row>
+                </>
+              )}
+
               <Row className="d-flex mb-0">
                 <p className="fw-bold col-6 mb-0">
                   {formatTime(booking.returnFlight_respon?.arrivalTime)}
@@ -251,76 +301,116 @@ const DetailPesanan = ({
           ) : (
             ""
           )}
-          <div>
-            <p className="fw-bold col-6 mb-0">Rincian Harga</p>
-          </div>
-          <Row>
-            <p className="col">
-              {booking.adultCount} {booking.adultCount > 1 ? "Adults" : "Adult"}
-            </p>
-            <p className="col d-flex justify-content-end">
-              {formatCurrency(priceAdult)}
-            </p>
-          </Row>
-          {booking.childCount > 0 ? (
-            <Row>
-              <p className="col">
-                {booking.childCount}{" "}
-                {booking.childCount > 1 ? "Childs" : "Child"}
-              </p>
-              <p className="col d-flex justify-content-end">
-                {formatCurrency(priceAdult)}
-              </p>
-            </Row>
-          ) : (
+          {payment?.status === "Expired" || payment?.status === "Failed" ? (
             ""
-          )}
-          {booking.babyCount != 0 ? (
-            <Row>
-              <p className="col">
-                {" "}
-                {booking.babyCount} {booking.babyCount > 1 ? "Babies" : "Baby"}
-              </p>
-              <p className="col d-flex justify-content-end">IDR 0</p>
-            </Row>
           ) : (
-            ""
+            <>
+              <div>
+                <p className="fw-bold col-6 mb-0">Rincian Harga</p>
+              </div>
+
+              <Row>
+                <p className="col">
+                  {booking.adultCount}{" "}
+                  {booking.adultCount > 1 ? "Adults" : "Adult"}
+                </p>
+                <p className="col d-flex justify-content-end">
+                  {formatCurrency(booking.adultCount * priceAdult)}
+                </p>
+              </Row>
+              {booking.childCount > 0 ? (
+                <Row>
+                  <p className="col">
+                    {booking.childCount}{" "}
+                    {booking.childCount > 1 ? "Childs" : "Child"}
+                  </p>
+                  <p className="col d-flex justify-content-end">
+                    {formatCurrency(priceAdult)}
+                  </p>
+                </Row>
+              ) : (
+                ""
+              )}
+              {booking.babyCount != 0 ? (
+                <Row>
+                  <p className="col">
+                    {" "}
+                    {booking.babyCount}{" "}
+                    {booking.babyCount > 1 ? "Babies" : "Baby"}
+                  </p>
+                  <p className="col d-flex justify-content-end">IDR 0</p>
+                </Row>
+              ) : (
+                ""
+              )}
+              <div className="border my-2 "></div>
+
+              <Row className="my-4">
+                <p
+                  className="col-md-6 fw-bold mb-4"
+                  style={{ fontSize: "20px" }}
+                >
+                  Total
+                </p>
+                <p
+                  className="col-md-6 d-flex justify-content-end fw-bold"
+                  style={{ color: " #A06ECE", fontSize: "20px" }}
+                >
+                  {formatCurrency(booking.price_amount)}
+                </p>
+                {payment?.status === "Success" ? (
+                  <PDFDownloadLink
+                    className="custom-button rounded-4"
+                    document={
+                      <TikePDF
+                        logoTerbangAja={logoTerbangAja}
+                        booking={booking}
+                        payment={payment}
+                        priceAdult={priceAdult}
+                        handlePaymentRedirect={handlePaymentRedirect}
+                        isCardClicked={isCardClicked}
+                        selectedCardIndex={selectedCardIndex}
+                        index={index}
+                        seatClasses={seatClasses}
+                        getPaymentStatus={getPaymentStatus}
+                        formatDate={formatDate}
+                        formatTime={formatTime}
+                        formatCurrency={formatCurrency}
+                      />
+                    }
+                    fileName="Tiket_TerbangAja.pdf"
+                  >
+                    {" "}
+                    <Button
+                      className="custom-button d-flex justify-content-center"
+                      style={{ width: "800px", height: "60px" }}
+                      size="lg"
+                    >
+                      Cetak Tiket
+                    </Button>
+                  </PDFDownloadLink>
+                ) : payment?.status === "Pending" ? (
+                  <Button
+                    className="custom-button-bayar"
+                    size="lg"
+                    onClick={() => handlePaymentRedirect(payment.redirect_url)}
+                  >
+                    Lanjut Bayar
+                  </Button>
+                ) : payment?.status === "Need Method" ? (
+                  <Button
+                    className="custom-button-bayar"
+                    size="lg"
+                    onClick={() => handlePaymentRedirect(payment.redirect_url)}
+                  >
+                    Lanjut Bayar
+                  </Button>
+                ) : (
+                  ""
+                )}
+              </Row>
+            </>
           )}
-          <div className="border my-2 "></div>
-          <Row className="my-4">
-            <p className="col-md-6 fw-bold mb-4" style={{ fontSize: "20px" }}>
-              Total
-            </p>
-            <p
-              className="col-md-6 d-flex justify-content-end fw-bold"
-              style={{ color: " #A06ECE", fontSize: "20px" }}
-            >
-              {formatCurrency(booking.price_amount)}
-            </p>
-            {payment?.status === "Success" ? (
-              <Button className="custom-button" size="lg">
-                Cetak Tiket
-              </Button>
-            ) : payment?.status === "Pending" ? (
-              <Button
-                className="custom-button-bayar"
-                size="lg"
-                onClick={() => handlePaymentRedirect(payment.redirect_url)}
-              >
-                Lanjut Bayar
-              </Button>
-            ) : payment?.status === "Need Method" ? (
-              <Button
-                className="custom-button-bayar"
-                size="lg"
-                onClick={() => handlePaymentRedirect(payment.redirect_url)}
-              >
-                Lanjut Bayar
-              </Button>
-            ) : (
-              ""
-            )}
-          </Row>
         </Card>
       </Col>
     )

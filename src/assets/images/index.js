@@ -12,7 +12,7 @@ import paypalPayment from "./paypal.svg"
 import visaPayment from "./visa.svg"
 import amexPayment from "./amex.svg"
 import finishedPage from "./finished.svg"
-
+import logoTerbangAjaTiket from "./LogoTerbangAja2.png"
 export {
   bannerImg,
   flower,
@@ -27,5 +27,6 @@ export {
   paypalPayment,
   visaPayment,
   amexPayment,
-  finishedPage
+  finishedPage,
+  logoTerbangAjaTiket,
 }

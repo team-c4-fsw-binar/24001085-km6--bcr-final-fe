@@ -1,7 +1,9 @@
-import React, { useState } from "react"
-import { Modal, Form, Button, ListGroup } from "react-bootstrap"
+import React, { useState, useEffect } from "react"
+import { Modal, Row, Form, Button, ListGroup } from "react-bootstrap"
 import "react-datepicker/dist/react-datepicker.css"
 import "../styles/history/datepicker.css"
+import { fetchBookings } from "../../redux/reducers/booking"
+import { useDispatch, useSelector } from "react-redux"
 
 const DatepickerModalHistory = ({
   show,
@@ -10,7 +12,9 @@ const DatepickerModalHistory = ({
   searchInput,
   setSearchInput,
 }) => {
-  const [searchHistory, setSearchHistory] = useState(["9Bsad"])
+  const dispatch = useDispatch()
+  const [searchHistory, setSearchHistory] = useState(["9Bsadhg"])
+  const token = useSelector((state) => state.auth.token)
 
   const handleClearHistory = () => setSearchHistory([])
 
@@ -18,8 +22,18 @@ const DatepickerModalHistory = ({
     if (searchInput) {
       const newHistory = [searchInput, ...searchHistory]
       setSearchHistory(newHistory)
-      onSubmitSearch(searchInput) // Mengirim hasil pencarian ke komponen induk
-      setSearchInput("") // Mengosongkan input setelah submit
+      onSubmitSearch(searchInput)
+    }
+  }
+
+  useEffect(() => {
+    dispatch(fetchBookings({ token, searchInput }))
+  }, [dispatch, token, searchInput])
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      handleSearchSubmit()
     }
   }
 
@@ -33,21 +47,35 @@ const DatepickerModalHistory = ({
             placeholder="Cari Code Booking"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
-          <Button variant="primary" onClick={handleSearchSubmit}>
-            Submit
-          </Button>
         </Form.Group>
+        <Row className=" m-0">
+          <p className="col-md-9 mt-2 mb-0 d-flex align-items-start">
+            Pencarian Terkini
+          </p>{" "}
+          <Button
+            variant="link"
+            onClick={handleClearHistory}
+            className="col-md-6 d-flex justify-content-end"
+            style={{ width: "100px", color: "red", height: "20px" }}
+          >
+            Hapus
+          </Button>
+        </Row>
+
         <ListGroup className="mt-3">
           {searchHistory.map((item, index) => (
             <ListGroup.Item
               key={index}
               className="d-flex justify-content-between align-items-center"
+              onClick={() => setSearchInput(item)}
             >
               {item}
               <Button
                 variant="light"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation()
                   const newHistory = searchHistory.filter((_, i) => i !== index)
                   setSearchHistory(newHistory)
                 }}
@@ -57,13 +85,6 @@ const DatepickerModalHistory = ({
             </ListGroup.Item>
           ))}
         </ListGroup>
-        <Button
-          variant="link"
-          onClick={handleClearHistory}
-          className="text-danger mt-2"
-        >
-          Hapus
-        </Button>
       </Modal.Body>
     </Modal>
   )
