@@ -172,7 +172,6 @@ const SearchFlightsComponents = () => {
                   placeholder="Select a City Here"
                   isSearchable={true}
                   isClearable={true}
-                  aria-label="Select a departure city"
                 />
                 
               </div>
@@ -217,7 +216,7 @@ const SearchFlightsComponents = () => {
                   options={cityOptions}
                   placeholder="Select a City Here"
                   isSearchable={true}
-                  isClearable={false}
+                  isClearable={true}
                 />
                 
               </div>
