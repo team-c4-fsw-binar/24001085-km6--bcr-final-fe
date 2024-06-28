@@ -384,27 +384,27 @@ const CheckoutPage = () => {
         allFieldsFilled = false;
       }
       if (!passenger.name) {
-        toast.error(`Mohon lengkapi nama untuk penumpang ${i + 1}.`);
+        toast.error(`Mohon lengkapi nama untuk penumpang ${i + 1}`);
         allFieldsFilled = false;
       }
       if (!passenger.born_date) {
-        toast.error(`Mohon lengkapi tanggal lahir untuk penumpang ${i + 1}.`);
+        toast.error(`Mohon lengkapi tanggal lahir untuk penumpang ${i + 1}`);
         allFieldsFilled = false;
       }
       if (!passenger.citizenship) {
-        toast.error(`Mohon lengkapi kewarganegaraan untuk penumpang ${i + 1}.`);
+        toast.error(`Mohon lengkapi kewarganegaraan untuk penumpang ${i + 1}`);
         allFieldsFilled = false;
       }
       if (!passenger.identity_number) {
-        toast.error(`Mohon lengkapi nomor identitas untuk penumpang ${i + 1}.`);
+        toast.error(`Mohon lengkapi nomor identitas untuk penumpang ${i + 1}`);
         allFieldsFilled = false;
       }
       if (!passenger.publisher_country) {
-        toast.error(`Mohon lengkapi negara penerbit identitas untuk penumpang ${i + 1}.`);
+        toast.error(`Mohon lengkapi negara penerbit identitas untuk penumpang ${i + 1}`);
         allFieldsFilled = false;
       }
       if (!passenger.identity_expire_date) {
-        toast.error(`Mohon lengkapi masa berlaku identitas untuk penumpang ${i + 1}.`);
+        toast.error(`Mohon lengkapi masa berlaku identitas untuk penumpang ${i + 1}`);
         allFieldsFilled = false;
       }
     });
