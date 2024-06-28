@@ -227,42 +227,41 @@ const CheckoutPage = () => {
   }
 
   const handleSeatSelect = (seat, isDeparture, isReturn) => {
-    let selectedSeats
-
+    let selectedSeats;
+  
     // Tentukan array kursi yang dipilih berdasarkan isDeparture dan isReturn
     if (isDeparture) {
-      selectedSeats = selectedDepartureSeats
+      selectedSeats = selectedDepartureSeats;
     } else if (isReturn) {
-      selectedSeats = selectedReturnSeats
+      selectedSeats = selectedReturnSeats;
     } else {
-      selectedSeats = []
+      selectedSeats = [];
     }
-
-    // Hitung jumlah total kursi yang dipilih untuk pergi dan pulang
-    const totalSelectedSeats =
-      selectedDepartureSeats.length + selectedReturnSeats.length
-
-    // Batasi jumlah kursi yang dapat dipilih berdasarkan jumlah penumpang
-    if (totalSelectedSeats >= totalPassengers * 2) {
-      toast.error("Anda hanya bisa memilih kursi sejumlah total penumpang")
-      return
+  
+    // Hitung jumlah kursi yang dipilih saat ini untuk pergi atau pulang
+    const selectedSeatsCount = selectedSeats.length;
+  
+    // Batasi jumlah kursi yang dapat dipilih berdasarkan jumlah penumpang untuk perjalanan yang sesuai
+    if (selectedSeatsCount >= totalPassengers) {
+      toast.error("Anda hanya bisa memilih kursi sejumlah total penumpang");
+      return;
     }
-
+  
     // Perbarui array kursi yang dipilih dengan kursi baru
-    const updatedSelectedSeats = [...selectedSeats, seat]
-
+    const updatedSelectedSeats = [...selectedSeats, seat];
+  
     // Set array kursi yang diperbarui ke state yang sesuai
     if (isDeparture) {
-      setSelectedDepartureSeats(updatedSelectedSeats)
+      setSelectedDepartureSeats(updatedSelectedSeats);
     } else if (isReturn) {
-      setSelectedReturnSeats(updatedSelectedSeats)
+      setSelectedReturnSeats(updatedSelectedSeats);
     }
-
+  
     // Update state global dengan ID dari kursi yang dipilih untuk kedua perjalanan
-    const allSelectedSeats = [...selectedDepartureSeats, ...selectedReturnSeats]
-    const updatedAllSelectedSeats = [...allSelectedSeats, seat]
-    dispatch(setSeatsId(updatedAllSelectedSeats.map((s) => s.id)))
-  }
+    const allSelectedSeats = [...selectedDepartureSeats, ...selectedReturnSeats];
+    const updatedAllSelectedSeats = [...allSelectedSeats, seat];
+    dispatch(setSeatsId(updatedAllSelectedSeats.map((s) => s.id)));
+  };  
 
   const seatClass = useSelector((state) => state.checkout.seatClass)
   const [departureSeats, setDepartureSeats] = useState([])

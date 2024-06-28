@@ -30,9 +30,9 @@ const checkoutSlice = createSlice({
             publisher_country: '', identity_expire_date: ''
         }],
         seatClass: '',
-        adultCount: 1,
-        childCount: 0,
-        babyCount: 0,
+        adultCount: null,
+        childCount: null,
+        babyCount: null,
         ticketDetails: {},
         error: null,
     },
