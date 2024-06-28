@@ -21,12 +21,16 @@ import Pagination from "react-bootstrap/Pagination"
 import { BiSortAlt2 } from "react-icons/bi"
 import { FaArrowLeft } from "react-icons/fa"
 import { useDispatch, useSelector } from "react-redux"
-import SearchFlightsComponents from "../../components/Home/SearchFlights"
+
+import SearchFlightsModal from "../../components/Modal/SearchFlightsModal"
+
 import { fetchFlights } from "../../redux/actions/flights"
 import { findTicket } from "../../redux/actions/ticket"
 import { setDepartureFlightId, setReturnFlightId, setSeatClass } from "../../redux/reducers/checkout"
+
+import { findTicketsDetail } from "../../redux/actions/checkout"
+
 import {
-  findTicketsDetail,
   selectFlightDeparture, selectFlightReturn,
   setHomeData
 } from "../../redux/reducers/flight"
@@ -40,7 +44,7 @@ const SearchingPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isTiketHabis, setIsTiketHabis] = useState(false)
   const [selectedDeparture, setSelectedDeparture] = useState(null)
-  const [selectedReturn, setSelectedReturn] = useState(null)
+  const [selectedReturn, setSelectedReturn] = useState('')
   const [showReturnFlights, setShowReturnFlights] = useState(false)
   const [isReturnFlightOn, setIsReturnFlightOn] = useState(false)
   const [selectedFilter, setSelectedFilter] = useState("harga_termurah")
@@ -54,8 +58,6 @@ const SearchingPage = () => {
   const ticketStatus = useSelector((state) => state.ticket.status)
   const tickets = useSelector((state) => state.ticket)
   const homeData = useSelector((state) => state.flights.homeData)
-
-  console.log("homeData di searchpage", homeData)
 
   const searchParams = tickets.data.userTicket
 
@@ -74,7 +76,7 @@ const SearchingPage = () => {
     if (type === "departure") {
       setSelectedDeparture(flight)
       setSelectedReturn(null)
-      if (isReturnFlightOn) {
+      if (isReturnFlightOn == true) {
         setShowReturnFlights(true)
       }
     } else {
@@ -91,7 +93,7 @@ const SearchingPage = () => {
   let pagination = []
 
   const getFlightPrice = (flight) => {
-    switch (searchParams.seatClass) {
+    switch (homeData.seat_class) {
       case "economy":
         return flight.economyPrice.toLocaleString("id-ID")
       case "firstClass":
@@ -149,13 +151,13 @@ const SearchingPage = () => {
 
     dispatch(
       fetchFlights(
-        searchParams.from,
-        searchParams.to,
-        searchParams.departureDate,
-        searchParams.passengers.total,
-        searchParams.seatClass,
-        searchParams.returnDate,
-        searchParams.filter
+        homeData.from,
+        homeData.to,
+        homeData.departure_date,
+        homeData.total_passengers,
+        homeData.seat_class,
+        homeData.return_date,
+        homeData.filter
       )
     );
 
@@ -172,7 +174,7 @@ const SearchingPage = () => {
     if (ticketStatus === "idle") {
       dispatch(
         findTicket(
-          navigate("/search"),
+          navigate,
           searchParams.from,
           searchParams.to,
           searchParams.departureDate.slice(0, 10),
@@ -185,7 +187,9 @@ const SearchingPage = () => {
           selectedFilter
         )
       )
-      setIsReturnFlightOn(searchParams.returnDate !== null)
+      
+      setIsReturnFlightOn(homeData.return_date != '')
+
     } else if (ticketStatus === "loading") {
       setIsLoading(true)
       dispatch(fetchFlights(searchParams))
@@ -197,7 +201,7 @@ const SearchingPage = () => {
     if (gantiFilter) {
       dispatch(
         findTicket(
-          navigate("/search"),
+          navigate,
           searchParams.from,
           searchParams.to,
           searchParams.departureDate.slice(0, 10),
@@ -210,7 +214,9 @@ const SearchingPage = () => {
           selectedFilter
         )
       )
+
       setGantiFilter(true)
+
       console.log("ganti filter udah false", gantiFilter)
     }
 
@@ -376,9 +382,9 @@ const SearchingPage = () => {
                 style={{ ...styles.customButton, ...styles.buttonKembali }}
               >
                 <FaArrowLeft style={{ marginRight: "10px" }} />
-                {searchParams.from} to {searchParams.to} -{" "}
-                {searchParams.total_passengers} Penumpang -{" "}
-                {capitalizeFirstLetter(searchParams.seatClass)}
+                {homeData.from} to {homeData.to} -{" "}
+                {homeData.total_passengers} Penumpang -{" "}
+                {capitalizeFirstLetter(homeData.seat_class)}
               </Button>
             </Link>
           </Col>
@@ -391,22 +397,7 @@ const SearchingPage = () => {
             </Button>
           </Col>
         </Row>
-        <Modal show={showModalUbah} centered onHide={handleUbahOnClose}>
-          <Modal.Header closeButton />
-          <Modal.Body className="p-2">
-            <SearchFlightsComponents />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              className="custom-button"
-              style={styles.customButton}
-              onClick={handleUbahOnClose}
-            >
-              Batal
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <hr />
+        
         <Row>
           <Col md={9}></Col>
           <Col className="text-right">
@@ -508,11 +499,11 @@ const SearchingPage = () => {
                       <h6 style={styles.ungu}>Berangkat</h6>
                       <p>
                         <b>
-                          {searchParams.from} -&gt; {searchParams.to}
+                          {homeData.from} -&gt; {homeData.to}
                         </b>
                       </p>
                       <p>
-                        {formatDate(searchParams.departureDate.slice(0, 10))}
+                        {formatDate(homeData.departure_date.slice(0, 10))}
                       </p>
                       {"\n"}
                       {selectedDeparture ? (
@@ -555,11 +546,11 @@ const SearchingPage = () => {
                         <h6 style={styles.ungu}>Pulang</h6>
                         <p>
                           <b>
-                            {searchParams.to} -&gt; {searchParams.from}
+                            {homeData.to} -&gt; {homeData.from}
                           </b>
                         </p>
                         <p>
-                          {formatDate(searchParams.returnDate.slice(0, 10))}
+                          {formatDate(homeData.return_date.slice(0, 10))}
                         </p>
                         {"\n"}
                         {selectedReturn ? (
@@ -603,7 +594,7 @@ const SearchingPage = () => {
                   <Card.Footer style={styles.bgTransparent}>
                     <Button
                       className="custom-button button-pilih mt-2 w-100"
-                      onClick={handleCheckout(isReturnFlightOn)}
+                      onClick={() => handleCheckout(isReturnFlightOn)}
                     >
                       Checkout
                     </Button>
@@ -633,429 +624,433 @@ const SearchingPage = () => {
                         {selectedDeparture && isReturnFlightOn ? (
                           <>
                             {returnFlights.map((flight) => (
-                              <Accordion
-                                className="mb-2 accordion"
-                                style={{ borderColor: "#7126b5" }}
-                              >
-                                <Accordion.Item
-                                  eventKey={flight.id}
-                                  key={flight.id}
+                              <>
+                                <Accordion
+                                  className="mb-2 accordion"
+                                  style={{ borderColor: "#7126b5" }}
                                 >
-                                  <Accordion.Header
-                                    style={{
-                                      backgroundColor: "transparent",
-                                      borderColor: "#7126b5",
-                                    }}
+                                  <Accordion.Item
+                                    eventKey={flight.id}
+                                    key={flight.id}
                                   >
-                                    <div className="d-flex justify-content-between w-100">
-                                      <div className="w-100">
-                                        <div className="d-flex align-items-center">
-                                          <div className="mx-2">
-                                            <Image
-                                              src={flight.Airline.imgUrl}
-                                              height="20"
-                                              className="mr-2"
-                                            />
-                                          </div>
-                                          <h5 className="ml-2 fw-bold">
-                                            {flight.Airline.name}
-                                          </h5>
-                                        </div>
-                                        <Row className="d-flex justify-content-between mt-3 mx-0">
-                                          <Col
-                                            md="1"
-                                            className="d-flex flex-column align-items-center"
-                                          >
-                                            <h6 className="fw-bold">
-                                              {flight.departureTime.slice(
-                                                11,
-                                                16
-                                              )}
-                                            </h6>
-                                            <p>
-                                              {
-                                                flight.departureAirport_respon
-                                                  .city
-                                              }
-                                            </p>
-                                          </Col>
-                                          <Col
-                                            md="5"
-                                            className="d-flex flex-column align-items-center"
-                                          >
-                                            <p className="my-0">
-                                              {msToTime(
-                                                flight.departureTime,
-                                                flight.arrivalTime
-                                              )}
-                                            </p>
-                                            <div className="arrow-pic p-0">
-                                              <Image src={icons.longArrow} />
+                                    <Accordion.Header
+                                      style={{
+                                        backgroundColor: "transparent",
+                                        borderColor: "#7126b5",
+                                      }}
+                                    >
+                                      <div className="d-flex justify-content-between w-100">
+                                        <div className="w-100">
+                                          <div className="d-flex align-items-center">
+                                            <div className="mx-2">
+                                              <Image
+                                                src={flight.Airline.imgUrl}
+                                                height="20"
+                                                className="mr-2"
+                                              />
                                             </div>
-                                            <p>direct</p>
-                                          </Col>
-                                          <Col
-                                            md="1"
-                                            className="d-flex flex-column align-items-center p-0"
-                                          >
-                                            <h6 className="fw-bold">
-                                              {flight.arrivalTime.slice(11, 16)}
-                                            </h6>
-                                            <p>
-                                              {
-                                                flight.arrivalAirport_respon
-                                                  .city
-                                              }
-                                            </p>
-                                          </Col>
-                                          <Col
-                                            md="1"
-                                            className="d-flex flex-column align-items-center"
-                                          >
-                                            <Image src={icons.baggageDelay} />
-                                          </Col>
-                                          <Col
-                                            md="2"
-                                            className="d-flex flex-column px-0"
-                                            style={styles.ungu}
-                                          >
-                                            <h6 className="fw-bold">
-                                              IDR {getFlightPrice(flight)}
-                                            </h6>
-                                            <Button
-                                              className="custom-button button-pilih mt-2"
-                                              onClick={() =>
-                                                handlePilih(flight, "return")
-                                              }
+                                            <h5 className="ml-2 fw-bold">
+                                              {flight.Airline.name}
+                                            </h5>
+                                          </div>
+                                          <Row className="d-flex justify-content-between mt-3 mx-0">
+                                            <Col
+                                              md="1"
+                                              className="d-flex flex-column align-items-center"
                                             >
-                                              Pilih
-                                            </Button>
-                                          </Col>
-                                        </Row>
+                                              <h6 className="fw-bold">
+                                                {flight.departureTime.slice(
+                                                  11,
+                                                  16
+                                                )}
+                                              </h6>
+                                              <p>
+                                                {
+                                                  flight.departureAirport_respon
+                                                    .city
+                                                }
+                                              </p>
+                                            </Col>
+                                            <Col
+                                              md="5"
+                                              className="d-flex flex-column align-items-center"
+                                            >
+                                              <p className="my-0">
+                                                {msToTime(
+                                                  flight.departureTime,
+                                                  flight.arrivalTime
+                                                )}
+                                              </p>
+                                              <div className="arrow-pic p-0">
+                                                <Image src={icons.longArrow} />
+                                              </div>
+                                              <p>direct</p>
+                                            </Col>
+                                            <Col
+                                              md="1"
+                                              className="d-flex flex-column align-items-center p-0"
+                                            >
+                                              <h6 className="fw-bold">
+                                                {flight.arrivalTime.slice(11, 16)}
+                                              </h6>
+                                              <p>
+                                                {
+                                                  flight.arrivalAirport_respon
+                                                    .city
+                                                }
+                                              </p>
+                                            </Col>
+                                            <Col
+                                              md="1"
+                                              className="d-flex flex-column align-items-center"
+                                            >
+                                              <Image src={icons.baggageDelay} />
+                                            </Col>
+                                            <Col
+                                              md="2"
+                                              className="d-flex flex-column px-0"
+                                              style={styles.ungu}
+                                            >
+                                              <h6 className="fw-bold">
+                                                IDR {getFlightPrice(flight)}
+                                              </h6>
+                                              <Button
+                                                className="custom-button button-pilih mt-2"
+                                                onClick={() =>
+                                                  handlePilih(flight, "return")
+                                                }
+                                              >
+                                                Pilih
+                                              </Button>
+                                            </Col>
+                                          </Row>
+                                        </div>
                                       </div>
-                                    </div>
-                                  </Accordion.Header>
-                                  <Accordion.Body
-                                    style={{ backgroundColor: "transparent" }}
-                                  >
-                                    <Card style={styles.cardAccor}>
-                                      <Card.Body style={styles.cardAccor}>
-                                        <h5
-                                          style={styles.ungu}
-                                          className="fw-bold"
-                                        >
-                                          Detail Penerbangan
-                                        </h5>
-                                        <Row>
-                                          <Col md="9">
-                                            <h5 className="fw-bold">
-                                              {flight?.departureTime?.slice(
-                                                11,
-                                                16
-                                              )}
-                                            </h5>
-                                            <h6 className="fw-bold">
-                                              {formatDate(
-                                                flight?.departureTime?.slice(
-                                                  0,
-                                                  10
-                                                )
-                                              )}
-                                            </h6>
-                                            <h5 className="fw-bold">
-                                              {
-                                                flight?.departureAirport_respon
-                                                  ?.name
-                                              }
-                                            </h5>
-                                          </Col>
-                                          <Col>
-                                            <h6 style={styles.unguMuda}>
-                                              Keberangkatan
-                                            </h6>
-                                          </Col>
-                                        </Row>
-                                        <hr />
-                                        <Row>
-                                          <Col md="1" className="mx-0 m-auto">
-                                            <Image
-                                              src={flight?.Airline.imgUrl}
-                                              fluid
-                                            />
-                                          </Col>
-                                          <Col>
-                                            <p className="fw-bold mb-0">
-                                              {flight?.Airline?.name} -{" "}
-                                              {capitalizeFirstLetter(
-                                                searchParams.seatClass
-                                              )}
-                                            </p>
-                                            <p className="fw-bold mb-0">
-                                              {flight?.Airline?.code}
-                                            </p>
-                                            <br />
-                                            <h6 className="fw-bold">
-                                              Informasi:
-                                            </h6>
-                                            <p className="mb-0">
-                                              Baggage {flight?.Airline?.baggage}{" "}
-                                              kg
-                                            </p>
-                                            <p className="mb-0">
-                                              Cabin baggage{" "}
-                                              {flight?.Airline?.cabinBaggage} kg
-                                            </p>
-                                          </Col>
-                                        </Row>
-                                        <hr />
-                                        <Row>
-                                          <Col md="9">
-                                            <h5 className="fw-bold">
-                                              {flight?.arrivalTime?.slice(
-                                                11,
-                                                16
-                                              )}
-                                            </h5>
-                                            <h6 className="fw-bold">
-                                              {formatDate(
-                                                flight?.arrivalTime?.slice(
-                                                  0,
-                                                  10
-                                                )
-                                              )}
-                                            </h6>
-                                            <h5 className="fw-bold">
-                                              {
-                                                flight?.arrivalAirport_respon
-                                                  ?.name
-                                              }
-                                            </h5>
-                                          </Col>
-                                          <Col>
-                                            <h6 style={styles.unguMuda}>
-                                              Kedatangan
-                                            </h6>
-                                          </Col>
-                                        </Row>
-                                      </Card.Body>
-                                    </Card>
-                                  </Accordion.Body>
-                                </Accordion.Item>
-                              </Accordion>
+                                    </Accordion.Header>
+                                    <Accordion.Body
+                                      style={{ backgroundColor: "transparent" }}
+                                    >
+                                      <Card style={styles.cardAccor}>
+                                        <Card.Body style={styles.cardAccor}>
+                                          <h5
+                                            style={styles.ungu}
+                                            className="fw-bold"
+                                          >
+                                            Detail Penerbangan
+                                          </h5>
+                                          <Row>
+                                            <Col md="9">
+                                              <h5 className="fw-bold">
+                                                {flight?.departureTime?.slice(
+                                                  11,
+                                                  16
+                                                )}
+                                              </h5>
+                                              <h6 className="fw-bold">
+                                                {formatDate(
+                                                  flight?.departureTime?.slice(
+                                                    0,
+                                                    10
+                                                  )
+                                                )}
+                                              </h6>
+                                              <h5 className="fw-bold">
+                                                {
+                                                  flight?.departureAirport_respon
+                                                    ?.name
+                                                }
+                                              </h5>
+                                            </Col>
+                                            <Col>
+                                              <h6 style={styles.unguMuda}>
+                                                Keberangkatan
+                                              </h6>
+                                            </Col>
+                                          </Row>
+                                          <hr />
+                                          <Row>
+                                            <Col md="1" className="mx-0 m-auto">
+                                              <Image
+                                                src={flight?.Airline.imgUrl}
+                                                fluid
+                                              />
+                                            </Col>
+                                            <Col>
+                                              <p className="fw-bold mb-0">
+                                                {flight?.Airline?.name} -{" "}
+                                                {capitalizeFirstLetter(
+                                                  homeData.seat_class
+                                                )}
+                                              </p>
+                                              <p className="fw-bold mb-0">
+                                                {flight?.Airline?.code}
+                                              </p>
+                                              <br />
+                                              <h6 className="fw-bold">
+                                                Informasi:
+                                              </h6>
+                                              <p className="mb-0">
+                                                Baggage {flight?.Airline?.baggage}{" "}
+                                                kg
+                                              </p>
+                                              <p className="mb-0">
+                                                Cabin baggage{" "}
+                                                {flight?.Airline?.cabinBaggage} kg
+                                              </p>
+                                            </Col>
+                                          </Row>
+                                          <hr />
+                                          <Row>
+                                            <Col md="9">
+                                              <h5 className="fw-bold">
+                                                {flight?.arrivalTime?.slice(
+                                                  11,
+                                                  16
+                                                )}
+                                              </h5>
+                                              <h6 className="fw-bold">
+                                                {formatDate(
+                                                  flight?.arrivalTime?.slice(
+                                                    0,
+                                                    10
+                                                  )
+                                                )}
+                                              </h6>
+                                              <h5 className="fw-bold">
+                                                {
+                                                  flight?.arrivalAirport_respon
+                                                    ?.name
+                                                }
+                                              </h5>
+                                            </Col>
+                                            <Col>
+                                              <h6 style={styles.unguMuda}>
+                                                Kedatangan
+                                              </h6>
+                                            </Col>
+                                          </Row>
+                                        </Card.Body>
+                                      </Card>
+                                    </Accordion.Body>
+                                  </Accordion.Item>
+                                </Accordion>
+                              </>
                             ))}
                           </>
                         ) : (
                           <>
                             {departureFlights.map((flight) => (
-                              <Accordion
-                                className="mb-2 accordion"
-                                style={{ borderColor: "#7126b5" }}
-                              >
-                                <Accordion.Item
-                                  eventKey={flight.id}
-                                  key={flight.id}
+                              <>
+                                <Accordion
+                                  className="mb-2 accordion"
+                                  style={{ borderColor: "#7126b5" }}
                                 >
-                                  <Accordion.Header
-                                    style={{
-                                      backgroundColor: "transparent",
-                                      borderColor: "#7126b5",
-                                    }}
+                                  <Accordion.Item
+                                    eventKey={flight.id}
+                                    key={flight.id}
                                   >
-                                    <div className="d-flex justify-content-between w-100">
-                                      <div className="w-100">
-                                        <div className="d-flex align-items-center">
-                                          <div className="mx-2">
-                                            <Image
-                                              src={flight.Airline.imgUrl}
-                                              height="20"
-                                              className="mr-2"
-                                            />
-                                          </div>
-                                          <h5 className="ml-2 fw-bold">
-                                            {flight.Airline.name}
-                                          </h5>
-                                        </div>
-                                        <Row className="d-flex justify-content-between mt-3 mx-0">
-                                          <Col
-                                            md="1"
-                                            className="d-flex flex-column align-items-center"
-                                          >
-                                            <h6 className="fw-bold">
-                                              {flight.departureTime.slice(
-                                                11,
-                                                16
-                                              )}
-                                            </h6>
-                                            <p>
-                                              {
-                                                flight.departureAirport_respon
-                                                  .city
-                                              }
-                                            </p>
-                                          </Col>
-                                          <Col
-                                            md="5"
-                                            className="d-flex flex-column align-items-center"
-                                          >
-                                            <p className="my-0">
-                                              {msToTime(
-                                                flight.departureTime,
-                                                flight.arrivalTime
-                                              )}
-                                            </p>
-                                            <div className="arrow-pic p-0">
-                                              <Image src={icons.longArrow} />
+                                    <Accordion.Header
+                                      style={{
+                                        backgroundColor: "transparent",
+                                        borderColor: "#7126b5",
+                                      }}
+                                    >
+                                      <div className="d-flex justify-content-between w-100">
+                                        <div className="w-100">
+                                          <div className="d-flex align-items-center">
+                                            <div className="mx-2">
+                                              <Image
+                                                src={flight.Airline.imgUrl}
+                                                height="20"
+                                                className="mr-2"
+                                              />
                                             </div>
-                                            <p>direct</p>
-                                          </Col>
-                                          <Col
-                                            md="1"
-                                            className="d-flex flex-column align-items-center p-0"
-                                          >
-                                            <h6 className="fw-bold">
-                                              {flight.arrivalTime.slice(11, 16)}
-                                            </h6>
-                                            <p>
-                                              {
-                                                flight.arrivalAirport_respon
-                                                  .city
-                                              }
-                                            </p>
-                                          </Col>
-                                          <Col
-                                            md="1"
-                                            className="d-flex flex-column align-items-center"
-                                          >
-                                            <Image src={icons.baggageDelay} />
-                                          </Col>
-                                          <Col
-                                            md="2"
-                                            className="d-flex flex-column px-0"
-                                            style={styles.ungu}
-                                          >
-                                            <h6 className="fw-bold">
-                                              IDR {getFlightPrice(flight)}
-                                            </h6>
-                                            <Button
-                                              className="custom-button button-pilih mt-2"
-                                              onClick={() =>
-                                                handlePilih(flight, "departure")
-                                              }
+                                            <h5 className="ml-2 fw-bold">
+                                              {flight.Airline.name}
+                                            </h5>
+                                          </div>
+                                          <Row className="d-flex justify-content-between mt-3 mx-0">
+                                            <Col
+                                              md="1"
+                                              className="d-flex flex-column align-items-center"
                                             >
-                                              Pilih
-                                            </Button>
-                                          </Col>
-                                        </Row>
+                                              <h6 className="fw-bold">
+                                                {flight.departureTime.slice(
+                                                  11,
+                                                  16
+                                                )}
+                                              </h6>
+                                              <p>
+                                                {
+                                                  flight.departureAirport_respon
+                                                    .city
+                                                }
+                                              </p>
+                                            </Col>
+                                            <Col
+                                              md="5"
+                                              className="d-flex flex-column align-items-center"
+                                            >
+                                              <p className="my-0">
+                                                {msToTime(
+                                                  flight.departureTime,
+                                                  flight.arrivalTime
+                                                )}
+                                              </p>
+                                              <div className="arrow-pic p-0">
+                                                <Image src={icons.longArrow} />
+                                              </div>
+                                              <p>direct</p>
+                                            </Col>
+                                            <Col
+                                              md="1"
+                                              className="d-flex flex-column align-items-center p-0"
+                                            >
+                                              <h6 className="fw-bold">
+                                                {flight.arrivalTime.slice(11, 16)}
+                                              </h6>
+                                              <p>
+                                                {
+                                                  flight.arrivalAirport_respon
+                                                    .city
+                                                }
+                                              </p>
+                                            </Col>
+                                            <Col
+                                              md="1"
+                                              className="d-flex flex-column align-items-center"
+                                            >
+                                              <Image src={icons.baggageDelay} />
+                                            </Col>
+                                            <Col
+                                              md="2"
+                                              className="d-flex flex-column px-0"
+                                              style={styles.ungu}
+                                            >
+                                              <h6 className="fw-bold">
+                                                IDR {getFlightPrice(flight)}
+                                              </h6>
+                                              <Button
+                                                className="custom-button button-pilih mt-2"
+                                                onClick={() =>
+                                                  handlePilih(flight, "departure")
+                                                }
+                                              >
+                                                Pilih
+                                              </Button>
+                                            </Col>
+                                          </Row>
+                                        </div>
                                       </div>
-                                    </div>
-                                  </Accordion.Header>
-                                  <Accordion.Body
-                                    style={{ backgroundColor: "transparent" }}
-                                  >
-                                    <Card style={styles.cardAccor}>
-                                      <Card.Body style={styles.cardAccor}>
-                                        <h5
-                                          style={styles.ungu}
-                                          className="fw-bold"
-                                        >
-                                          Detail Penerbangan
-                                        </h5>
-                                        <Row>
-                                          <Col md="9">
-                                            <h5 className="fw-bold">
-                                              {flight?.departureTime?.slice(
-                                                11,
-                                                16
-                                              )}
-                                            </h5>
-                                            <h6 className="fw-bold">
-                                              {formatDate(
-                                                flight?.departureTime?.slice(
-                                                  0,
-                                                  10
-                                                )
-                                              )}
-                                            </h6>
-                                            <h5 className="fw-bold">
-                                              {
-                                                flight?.departureAirport_respon
-                                                  ?.name
-                                              }
-                                            </h5>
-                                          </Col>
-                                          <Col>
-                                            <h6 style={styles.unguMuda}>
-                                              Keberangkatan
-                                            </h6>
-                                          </Col>
-                                        </Row>
-                                        <hr />
-                                        <Row>
-                                          <Col md="1" className="mx-0 m-auto">
-                                            <Image
-                                              src={flight?.Airline.imgUrl}
-                                              fluid
-                                            />
-                                          </Col>
-                                          <Col>
-                                            <p className="fw-bold mb-0">
-                                              {flight?.Airline?.name} -{" "}
-                                              {capitalizeFirstLetter(
-                                                searchParams.seatClass
-                                              )}
-                                            </p>
-                                            <p className="fw-bold mb-0">
-                                              {flight?.Airline?.code}
-                                            </p>
-                                            <br />
-                                            <h6 className="fw-bold">
-                                              Informasi:
-                                            </h6>
-                                            <p className="mb-0">
-                                              Baggage {flight?.Airline?.baggage}{" "}
-                                              kg
-                                            </p>
-                                            <p className="mb-0">
-                                              Cabin baggage{" "}
-                                              {flight?.Airline?.cabinBaggage} kg
-                                            </p>
-                                          </Col>
-                                        </Row>
-                                        <hr />
-                                        <Row>
-                                          <Col md="9">
-                                            <h5 className="fw-bold">
-                                              {flight?.arrivalTime?.slice(
-                                                11,
-                                                16
-                                              )}
-                                            </h5>
-                                            <h6 className="fw-bold">
-                                              {formatDate(
-                                                flight?.arrivalTime?.slice(
-                                                  0,
-                                                  10
-                                                )
-                                              )}
-                                            </h6>
-                                            <h5 className="fw-bold">
-                                              {
-                                                flight?.arrivalAirport_respon
-                                                  ?.name
-                                              }
-                                            </h5>
-                                          </Col>
-                                          <Col>
-                                            <h6 style={styles.unguMuda}>
-                                              Kedatangan
-                                            </h6>
-                                          </Col>
-                                        </Row>
-                                      </Card.Body>
-                                    </Card>
-                                  </Accordion.Body>
-                                </Accordion.Item>
-                              </Accordion>
+                                    </Accordion.Header>
+                                    <Accordion.Body
+                                      style={{ backgroundColor: "transparent" }}
+                                    >
+                                      <Card style={styles.cardAccor}>
+                                        <Card.Body style={styles.cardAccor}>
+                                          <h5
+                                            style={styles.ungu}
+                                            className="fw-bold"
+                                          >
+                                            Detail Penerbangan
+                                          </h5>
+                                          <Row>
+                                            <Col md="9">
+                                              <h5 className="fw-bold">
+                                                {flight?.departureTime?.slice(
+                                                  11,
+                                                  16
+                                                )}
+                                              </h5>
+                                              <h6 className="fw-bold">
+                                                {formatDate(
+                                                  flight?.departureTime?.slice(
+                                                    0,
+                                                    10
+                                                  )
+                                                )}
+                                              </h6>
+                                              <h5 className="fw-bold">
+                                                {
+                                                  flight?.departureAirport_respon
+                                                    ?.name
+                                                }
+                                              </h5>
+                                            </Col>
+                                            <Col>
+                                              <h6 style={styles.unguMuda}>
+                                                Keberangkatan
+                                              </h6>
+                                            </Col>
+                                          </Row>
+                                          <hr />
+                                          <Row>
+                                            <Col md="1" className="mx-0 m-auto">
+                                              <Image
+                                                src={flight?.Airline.imgUrl}
+                                                fluid
+                                              />
+                                            </Col>
+                                            <Col>
+                                              <p className="fw-bold mb-0">
+                                                {flight?.Airline?.name} -{" "}
+                                                {capitalizeFirstLetter(
+                                                  homeData.seat_class
+                                                )}
+                                              </p>
+                                              <p className="fw-bold mb-0">
+                                                {flight?.Airline?.code}
+                                              </p>
+                                              <br />
+                                              <h6 className="fw-bold">
+                                                Informasi:
+                                              </h6>
+                                              <p className="mb-0">
+                                                Baggage {flight?.Airline?.baggage}{" "}
+                                                kg
+                                              </p>
+                                              <p className="mb-0">
+                                                Cabin baggage{" "}
+                                                {flight?.Airline?.cabinBaggage} kg
+                                              </p>
+                                            </Col>
+                                          </Row>
+                                          <hr />
+                                          <Row>
+                                            <Col md="9">
+                                              <h5 className="fw-bold">
+                                                {flight?.arrivalTime?.slice(
+                                                  11,
+                                                  16
+                                                )}
+                                              </h5>
+                                              <h6 className="fw-bold">
+                                                {formatDate(
+                                                  flight?.arrivalTime?.slice(
+                                                    0,
+                                                    10
+                                                  )
+                                                )}
+                                              </h6>
+                                              <h5 className="fw-bold">
+                                                {
+                                                  flight?.arrivalAirport_respon
+                                                    ?.name
+                                                }
+                                              </h5>
+                                            </Col>
+                                            <Col>
+                                              <h6 style={styles.unguMuda}>
+                                                Kedatangan
+                                              </h6>
+                                            </Col>
+                                          </Row>
+                                        </Card.Body>
+                                      </Card>
+                                    </Accordion.Body>
+                                  </Accordion.Item>
+                                </Accordion>
+                              </>
                             ))}
                           </>
                         )}
@@ -1070,6 +1065,9 @@ const SearchingPage = () => {
           )}
         </Row>
       </Container>
+
+      <SearchFlightsModal show={showModalUbah} onHide={() => setShowModalUbah(false)}/>
+
     </div>
   )
 }

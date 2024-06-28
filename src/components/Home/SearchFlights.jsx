@@ -85,12 +85,13 @@ const SearchFlightsComponents = () => {
           from: selectedFrom.label,
           to: selectedTo.label,
           departure_date: departureDate.toISOString(),
-          return_date: returnDate?.toISOString(),
+          return_date: returnDate?.toISOString() || (''),
           adultCount: adultPassenger,
           childCount: childPassenger,
           babyCount: babyPassenger,
           total_passengers: totalPassenger,
           seat_class: seatClass,
+          filter : "harga_termurah",
         })
       )
 
@@ -109,8 +110,6 @@ const SearchFlightsComponents = () => {
         )
       )
     }
-    console.log("PER DATA", selectedFrom.label, selectedTo.label, departureDate, totalPassenger, seatClass, returnDate, adultPassenger, childPassenger, babyPassenger)
-    console.log(homeData)
   
     setValidated(true);
 
@@ -125,6 +124,7 @@ const SearchFlightsComponents = () => {
       border: "none",
       borderRadius: '0',
       borderBottom: '1px solid #d0d0d0',
+      fontWeight: 'bold',
     },
 
     customButton: {
@@ -235,7 +235,7 @@ const SearchFlightsComponents = () => {
           <Col xs={12} className="d-md-none mb-3">
           <div className='d-flex justify-content-between align-items-center'>
               <div className='d-flex align-items-center gap-1'>
-                <p style={styles.fontTitleRegular16} className='mb-0 pe-2'>Pulang-Pergi?</p>
+                <p style={styles.fontTitleRegular16} className='mb-0 pe-2 fw-bold'>Pulang-Pergi?</p>
               </div>
               <Form.Check
                 type="switch"

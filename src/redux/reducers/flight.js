@@ -5,7 +5,7 @@ export const fetchFlights = createAsyncThunk(
   "flights/fetchFlights",
   async () => {
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_API}/api/flights`,
+      `${import.meta.env.VITE_BACKEND_API}/api/flights/`,
       {
         headers: {},
       }
@@ -82,7 +82,7 @@ const flightsSlice = createSlice({
       .addCase(findTicketsDetail.pending, (state) => {
         state.status = "loading"
       })
-      .addCase(findTicketsDetail.fulfilled, (state) => {
+      .addCase(findTicketsDetail.fulfilled, (state, action) => {
         state.status = "succeeded"
       })
       .addCase(findTicketsDetail.rejected, (state, action) => {
