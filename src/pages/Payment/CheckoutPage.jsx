@@ -14,7 +14,8 @@ import {
 import {
     fetchCheckout,
     setPassengerDetails,
-    setSeatsId
+    setSeatsId,
+    updatePassengerCounts
 } from "../../redux/reducers/checkout"
 
 const CheckoutPage = () => {
@@ -55,6 +56,15 @@ const CheckoutPage = () => {
       ...initialPassengerDetails,
     }))
   )
+  useEffect(() => {
+    if (homeData) {
+      dispatch(updatePassengerCounts({
+        adultCount: homeData.adultCount || 0,
+        childCount: homeData.childCount || 0,
+        babyCount: homeData.babyCount || 0
+      }))
+    }
+  }, [dispatch, homeData])
 
   useEffect(() => {
     if (!selectedFlightReturn) {

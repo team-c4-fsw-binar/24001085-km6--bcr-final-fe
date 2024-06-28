@@ -116,27 +116,36 @@ const SearchingPage = () => {
 
   // select flight mba wulan (masih pake flight id lewat url)
   const handleCheckout = (isReturnFlight) => {
+    if (!selectedDeparture) {
+      console.error("Selected departure flight is null");
+      return;
+    }
+  
+    if (isReturnFlight && !selectedReturn) {
+      console.error("Selected return flight is null");
+      return;
+    }
 
     if (isReturnFlight) {
-      dispatch(setReturnFlightId(selectedReturn.id))
-      dispatch(selectFlightReturn(selectedReturn))
+      dispatch(setReturnFlightId(selectedReturn.id));
+      dispatch(selectFlightReturn(selectedReturn));
     }
 
     dispatch(
       findTicketsDetail({
         departure_flight_id: selectedDeparture?.id,
-        return_flight_id: selectedReturn?.id,
+        return_flight_id: selectedReturn ? selectedReturn.id : '',
         seat_class: searchParams.seatClass,
         adultCount: searchParams.passengers.adult,
-        childCount: searchParams.passengers.child
+        childCount: searchParams.passengers.child,
       })
     )
 
     console.log((state) => state.checkout.ticketDetails)
 
-    dispatch(setDepartureFlightId(selectedDeparture?.id))
-    dispatch(setSeatClass(searchParams.seatClass))
-    dispatch(selectFlightDeparture(selectedDeparture))
+    dispatch(setDepartureFlightId(selectedDeparture.id));
+    dispatch(setSeatClass(searchParams.seatClass));
+    dispatch(selectFlightDeparture(selectedDeparture));
 
     dispatch(
       fetchFlights(
@@ -148,10 +157,10 @@ const SearchingPage = () => {
         searchParams.returnDate,
         searchParams.filter
       )
-    )
+    );
 
-    dispatch(setHomeData(homeData))
-    console.log("homeData", homeData)
+    dispatch(setHomeData(homeData));
+    console.log("homeData", homeData);
 
     navigate(`/checkout`)
   }
