@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Image, Modal, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Modal, Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotification, putNotification } from "../../redux/actions/notification";
 import * as icons from "../../assets/icons";
 import * as images from "../../assets/images";
 import { ToastContainer } from 'react-toastify';
+import { BsFunnel } from "react-icons/bs";
 
 const NotificationPage = () => {
     const [notifications, setNotifications] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentNotification, setCurrentNotification] = useState(null);
+    const [filter, setFilter] = useState('all');
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const token = useSelector((state) => state.auth.token);
-
-
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -53,6 +53,12 @@ const NotificationPage = () => {
         setCurrentNotification(null);
     };
 
+    const filteredNotifications = notifications.filter((notification) => {
+        if (filter === 'all') return true;
+        if (filter === 'read') return notification.isRead;
+        if (filter === 'unread') return !notification.isRead;
+    });
+
     const styles = {
         fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
         fontBodyRegular12: { fontWeight: 400, fontSize: '12px' },
@@ -82,10 +88,6 @@ const NotificationPage = () => {
             cursor: 'pointer',
         },
 
-        // cardBody: {
-        //     borderBottom: '1px solid #E5E5E5',
-        // },
-
         // button beranda
         bgBeranda: {
             backgroundColor: '#A06ECE',
@@ -101,6 +103,12 @@ const NotificationPage = () => {
         bgNoread: {
             backgroundColor: '#a06ece2f',
         },
+        btnOutlinePurple: {
+            backgroundColor: 'transparent',
+            color: '#7126B5',
+            border: '1px solid #7126B5',
+        },
+
     };
 
     return (
@@ -119,18 +127,27 @@ const NotificationPage = () => {
                                 </Link>
                             </div>
                         </div>
-                        {/* <Link to="/filter">
-                            <Image src={icons.filterButton} alt="filter" />
-                        </Link>
+                        <DropdownButton
+                            id="dropdown-basic-button"
+                            title={<BsFunnel />}
+                            variant=""
+                            className="rounded-3 m-0"
+                            style={styles.btnOutlinePurple}
+                            onSelect={(e) => setFilter(e)}
+                        >
+                            <Dropdown.Item eventKey="all">Semua</Dropdown.Item>
+                            <Dropdown.Item eventKey="read">Sudah dibaca</Dropdown.Item>
+                            <Dropdown.Item eventKey="unread">Belum dibaca</Dropdown.Item>
+                        </DropdownButton>
                         <Link to="/search">
                             <Image src={icons.searchIcon} alt="search" />
-                        </Link> */}
+                        </Link>
                     </div>
                 </Container>
             </div>
             <Container className="py-5">
-                {notifications && notifications.length > 0 ? (
-                    notifications.map((notification) => (
+                {filteredNotifications && filteredNotifications.length > 0 ? (
+                    filteredNotifications.map((notification) => (
                         <Card
                             key={notification.id}
                             className="mb-2"
