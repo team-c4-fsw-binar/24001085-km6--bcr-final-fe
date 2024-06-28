@@ -38,6 +38,7 @@ const CheckoutPage = () => {
   const [expired, setExpired] = useState(Date.now() + 15 * 60 * 1000)
   const [isExpired, setIsExpired] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [isReturn, setIsReturn] = useState(true)
   const [lanjutBayar, setLanjutBayar] = useState("")
   const initialPassengerDetails = {
@@ -349,7 +350,7 @@ const CheckoutPage = () => {
         return checkout.ticketDetails?.departure_flight?.detail
           ?.numberOfFirstClassSeatsLeft
       default:
-        return "N/A" // Or handle the default case as you see fit
+        return "N/A"
     }
   }
 
@@ -368,7 +369,7 @@ const CheckoutPage = () => {
         return checkout.ticketDetails?.return_flight?.detail
           ?.numberOfFirstClassSeatsLeft
       default:
-        return "N/A" // Or handle the default case as you see fit
+        return "N/A"
     }
   }
 
@@ -424,6 +425,8 @@ const CheckoutPage = () => {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const bookingData = {
         departureFlightId: checkout.departure_flight_id,
@@ -435,13 +438,15 @@ const CheckoutPage = () => {
         childCount: checkout.childCount,
         babyCount: checkout.babyCount,
       }
-      const response = await dispatch(postBooking(bookingData))
-      console.log(response)
-      setIsSaved(true)
-      setSuccess("Data Anda berhasil tersimpan!")
-      setLanjutBayar(response.data.redirect_url)
+      const response = await dispatch(postBooking(bookingData));
+      console.log(response);
+      setIsSaved(true);
+      setSuccess("Data Anda berhasil tersimpan!");
+      setLanjutBayar(response.data.redirect_url);
     } catch (err) {
-      setError("Data gagal disimpan!")
+      setError("Data gagal disimpan!");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -1055,7 +1060,7 @@ const CheckoutPage = () => {
                   type="submit"
                   variant=""
                 >
-                  Simpan
+                  {isLoading ? "Menyimpan..." : "Simpan"}
                 </Button>
               </div>
             </Col>
