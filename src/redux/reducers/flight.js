@@ -5,7 +5,7 @@ export const fetchFlights = createAsyncThunk(
   "flights/fetchFlights",
   async () => {
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_API}/api/flights`,
+      `${import.meta.env.VITE_BACKEND_API}/api/flights/`,
       {
         headers: {},
       }
@@ -16,7 +16,13 @@ export const fetchFlights = createAsyncThunk(
 
 export const findTicketsDetail = createAsyncThunk(
   "flights/findTicketsDetail",
-  async ({ departure_flight_id, return_flight_id, seat_class, adultCount, childCount }) => {
+  async ({
+    departure_flight_id,
+    return_flight_id,
+    seat_class,
+    adultCount,
+    childCount,
+  }) => {
     const response = await axios.post(
       `${import.meta.env.VITE_BACKEND_API}/api/findTickets/detail`,
       {
@@ -48,16 +54,16 @@ const flightsSlice = createSlice({
   },
   reducers: {
     setHomeData: (state, action) => {
-      state.homeData = action.payload;
+      state.homeData = action.payload
     },
     setFlights: (state, action) => {
-      state.data = action.payload;
+      state.data = action.payload
     },
     selectFlightDeparture: (state, action) => {
-      state.selectedFlightDeparture = action.payload;
+      state.selectedFlightDeparture = action.payload
     },
     selectFlightReturn: (state, action) => {
-      state.selectedFlightReturn = action.payload;
+      state.selectedFlightReturn = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -76,7 +82,7 @@ const flightsSlice = createSlice({
       .addCase(findTicketsDetail.pending, (state) => {
         state.status = "loading"
       })
-      .addCase(findTicketsDetail.fulfilled, (state) => {
+      .addCase(findTicketsDetail.fulfilled, (state, action) => {
         state.status = "succeeded"
       })
       .addCase(findTicketsDetail.rejected, (state, action) => {
@@ -86,5 +92,10 @@ const flightsSlice = createSlice({
   },
 })
 
-export const { setHomeData, setFlights, selectFlightDeparture, selectFlightReturn } = flightsSlice.actions;
+export const {
+  setHomeData,
+  setFlights,
+  selectFlightDeparture,
+  selectFlightReturn,
+} = flightsSlice.actions
 export default flightsSlice.reducer

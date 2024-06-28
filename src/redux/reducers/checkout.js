@@ -64,6 +64,9 @@ const checkoutSlice = createSlice({
         setBabyCount: (state, action) => {
             state.babyCount = action.payload;
         },
+        // setTicketDetails: (state, action) => {
+        //     state.ticketDetails = action.payload;
+        // },
     },
     extraReducers: (builder) => {
         builder
@@ -85,6 +88,7 @@ export const {
     setAdultCount,
     setChildCount,
     setBabyCount,
+    setTicketDetails,
 } = checkoutSlice.actions;
 
 export default checkoutSlice.reducer;
