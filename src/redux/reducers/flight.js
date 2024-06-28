@@ -5,7 +5,7 @@ export const fetchFlights = createAsyncThunk(
   "flights/fetchFlights",
   async () => {
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_API}/api/findTIckets`,
+      `${import.meta.env.VITE_BACKEND_API}/api/flights/`,
       {
         headers: {},
       }
@@ -14,16 +14,56 @@ export const fetchFlights = createAsyncThunk(
   }
 )
 
+export const findTicketsDetail = createAsyncThunk(
+  "flights/findTicketsDetail",
+  async ({
+    departure_flight_id,
+    return_flight_id,
+    seat_class,
+    adultCount,
+    childCount,
+  }) => {
+    const response = await axios.post(
+      `${import.meta.env.VITE_BACKEND_API}/api/findTickets/detail`,
+      {
+        departure_flight_id,
+        return_flight_id,
+        seat_class,
+        adultCount,
+        childCount,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    return response.data.data
+  }
+)
+
 const flightsSlice = createSlice({
   name: "flights",
   initialState: {
+    homeData: null,
     data: [],
     status: "idle",
     error: null,
+    selectedFlightDeparture: null,
+    selectedFlightReturn: null,
   },
   reducers: {
+    setHomeData: (state, action) => {
+      state.homeData = action.payload
+    },
     setFlights: (state, action) => {
-      state.flights = action.payload
+      state.data = action.payload
+    },
+    selectFlightDeparture: (state, action) => {
+      state.selectedFlightDeparture = action.payload
+    },
+    selectFlightReturn: (state, action) => {
+      state.selectedFlightReturn = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -39,8 +79,23 @@ const flightsSlice = createSlice({
         state.status = "failed"
         state.error = action.error.message
       })
+      .addCase(findTicketsDetail.pending, (state) => {
+        state.status = "loading"
+      })
+      .addCase(findTicketsDetail.fulfilled, (state, action) => {
+        state.status = "succeeded"
+      })
+      .addCase(findTicketsDetail.rejected, (state, action) => {
+        state.status = "failed"
+        state.error = action.error.message
+      })
   },
 })
 
-export const { setFlights } = flightsSlice.actions
+export const {
+  setHomeData,
+  setFlights,
+  selectFlightDeparture,
+  selectFlightReturn,
+} = flightsSlice.actions
 export default flightsSlice.reducer

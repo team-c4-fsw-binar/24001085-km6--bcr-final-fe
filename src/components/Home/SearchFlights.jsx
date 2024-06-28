@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Form, ListGroup, Modal, Row } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import * as icons from "../../assets/icons";
 
 import { getAllCity } from "../../redux/actions/airport";
-import { findTicket } from "../../redux/actions/ticket";
+import { setHomeData } from "../../redux/reducers/flight";
 
-import DatePickerModal from "../Modal/DatepickerModal";
 import { format } from "date-fns";
+import { findTicket } from "../../redux/actions/ticket";
+import DatePickerModal from "../Modal/DatepickerModal";
 
 import '../styles/others/search.css';
 
@@ -18,9 +19,11 @@ const SearchFlightsComponents = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
 
+  const [validated, setValidated] = useState(false);
+
   // body form
-  const [selectedFrom, setSelectedFrom] = useState('')
-  const [selectedTo, setSelectedTo] = useState('')
+  const [selectedFrom, setSelectedFrom] = useState(null)
+  const [selectedTo, setSelectedTo] = useState(null)
   const [departureDate, setDepartureDate] = useState(new Date());
   const [returnDate, setReturnDate] = useState(null)
   const [totalPassenger, setTotalPassenger] = useState(1)
@@ -41,6 +44,8 @@ const SearchFlightsComponents = () => {
 
   // get city start
   const [cityOptions, setCityOptions] = useState([]);
+
+  const homeData = useSelector((state) => state.flights.homeData);
 
   useEffect(() => {
     (async () => {
@@ -68,13 +73,47 @@ const SearchFlightsComponents = () => {
   }
 
   // get ticket start
-  const onSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    const form = e.currentTarget;
+  
+    if (!form.checkValidity()) {
+      e.stopPropagation(); 
+    } else {
+      dispatch(
+        setHomeData({
+          from: selectedFrom.label,
+          to: selectedTo.label,
+          departure_date: departureDate.toISOString(),
+          return_date: returnDate?.toISOString() || (''),
+          adultCount: adultPassenger,
+          childCount: childPassenger,
+          babyCount: babyPassenger,
+          total_passengers: totalPassenger,
+          seat_class: seatClass,
+          filter : "harga_termurah",
+        })
+      )
 
-    dispatch(findTicket( navigate,
-      selectedFrom.label, selectedTo.label, departureDate, totalPassenger, seatClass, returnDate, 
-      adultPassenger, childPassenger, babyPassenger)
-    );
+      dispatch(
+        findTicket(
+          navigate,
+          selectedFrom.label,
+          selectedTo.label,
+          departureDate,
+          totalPassenger,
+          seatClass,
+          returnDate,
+          adultPassenger,
+          childPassenger,
+          babyPassenger
+        )
+      )
+    }
+  
+    setValidated(true);
+
+    
   }
   // get ticket end
 
@@ -85,6 +124,7 @@ const SearchFlightsComponents = () => {
       border: "none",
       borderRadius: '0',
       borderBottom: '1px solid #d0d0d0',
+      fontWeight: 'bold',
     },
 
     customButton: {
@@ -106,7 +146,7 @@ const SearchFlightsComponents = () => {
   return (
     <>
     
-      <Form>
+      <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <h5 className="fw-bold mb-3">Pilih Jadwal Penerbangan Spesial di <span style={{color:"#7126b5"}}>TerbangAja</span> </h5>
         <Row>
           
@@ -114,7 +154,7 @@ const SearchFlightsComponents = () => {
           <Col md={5} className="d-flex">
             <Form.Group className="mb-3 w-100" controlId="from">
               <div className="d-flex gap-2 w-100">
-                <img src={icons.departureIcon} width={25} alt="departure-icons" />
+                <img src={icons.departureIcon} width={25} alt="Departure city icon" />
                 <Form.Label className="mb-0 align-self-center">From</Form.Label>
                 <Select
                   className="flex-grow-1 inputTextDecorationNone"
@@ -127,14 +167,20 @@ const SearchFlightsComponents = () => {
                       '&:hover': { border: 0 }
                     })
                   }}
-                  value={selectedFrom}
                   onChange={(selectedOption) => setSelectedFrom(selectedOption)}
                   options={cityOptions}
                   placeholder="Select a City Here"
                   isSearchable={true}
                   isClearable={true}
+                  aria-label="Select a departure city"
                 />
+                
               </div>
+              {!validated && (
+                <Form.Control.Feedback type="invalid" style={{ display: 'block' }} className="text-center">
+                  Please select a departure city.
+                </Form.Control.Feedback>
+              )}
             </Form.Group>
           </Col>
 
@@ -149,30 +195,36 @@ const SearchFlightsComponents = () => {
           </Col>
 
           {/* To Input */}
-          <Col>
+          <Col md={5} className="d-flex">
             <Form.Group className="mb-3 w-100" controlId="to">
               <div className="d-flex gap-2 w-100">
-                <img src={icons.departureIcon} width={25} alt="arrival-icons" />
+                <img src={icons.departureIcon} width={25} alt="Departure city icon" />
                 <Form.Label className="mb-0 align-self-center">To</Form.Label>
                 <Select
                   className="flex-grow-1 inputTextDecorationNone"
                   styles={{
-                    container: base => ({ ...base, flexGrow: 1, ...styles.inputForm, cursor: "pointer" }),
+                    container: base => ({ ...base, flexGrow: 1, ...styles.inputForm, cursor: "pointer"}),
                     control: (base) => ({
                       ...base,
                       border: 0, 
                       boxShadow: 'none', 
-                      '&:hover': { border: 0 } 
+                      '&:hover': { border: 0 }
                     })
                   }}
-                  value={selectedTo}
                   onChange={(selectedOption) => setSelectedTo(selectedOption)}
                   options={cityOptions}
                   placeholder="Select a City Here"
                   isSearchable={true}
-                  isClearable={true} 
+                  isClearable={true}
+                  aria-label="Select a arrival city"
                 />
+                
               </div>
+              {!validated && (
+                <Form.Control.Feedback type="invalid" style={{ display: 'block' }} className="text-center">
+                  Please select a arrival city.
+                </Form.Control.Feedback>
+              )}
             </Form.Group>
           </Col>
         </Row>
@@ -183,7 +235,7 @@ const SearchFlightsComponents = () => {
           <Col xs={12} className="d-md-none mb-3">
           <div className='d-flex justify-content-between align-items-center'>
               <div className='d-flex align-items-center gap-1'>
-                <p style={styles.fontTitleRegular16} className='mb-0 pe-2'>Pulang-Pergi?</p>
+                <p style={styles.fontTitleRegular16} className='mb-0 pe-2 fw-bold'>Pulang-Pergi?</p>
               </div>
               <Form.Check
                 type="switch"
@@ -205,7 +257,7 @@ const SearchFlightsComponents = () => {
 
           {/* Departure Date Input */}
           <Col md={2}>
-            <Form.Group className="mb-3 w-100 text-center" >
+            <Form.Group className="mb-3 w-100 text-center inputTextDecorationNone" >
               <Form.Label>Departure</Form.Label>
               <Form.Control 
                 type="text" 
@@ -293,10 +345,9 @@ const SearchFlightsComponents = () => {
 
         </Row>
 
-        <Button as={Link} to="/search" type="submit"
+        <Button type="submit"
           style={{...styles.customButton}}
           className="custom-button"
-          onClick={onSubmit}
         >
           Cari Penerbangan
         </Button>

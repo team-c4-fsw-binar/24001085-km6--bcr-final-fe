@@ -6,6 +6,7 @@ import {
   VerifyOtpPage,
   RegisterPage,
   SearchingPage,
+  ServicePage,
   AccountPage,
   NotificationPage,
   CheckoutPage,
@@ -43,11 +44,11 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: (
-      <div>
+      <>
         <NonProtected>
-          <LoginPage />
+          <LoginPage />,
         </NonProtected>
-      </div>
+      </>
     ),
   },
   {
@@ -105,7 +106,18 @@ const router = createBrowserRouter([
     element: (
       <div>
         <NonProtected>
+          <NavbarComponent />
           <SearchingPage />
+        </NonProtected>
+      </div>
+    ),
+  },
+  {
+    path: "/service",
+    element: (
+      <div>
+        <NonProtected>
+          <ServicePage />
         </NonProtected>
       </div>
     ),

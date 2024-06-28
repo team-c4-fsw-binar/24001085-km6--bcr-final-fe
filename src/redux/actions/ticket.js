@@ -1,8 +1,8 @@
-import axios from "axios"
+import axios from "axios";
 import { setDepartureTicket, setReturnTicket, setUserTicket } from "../reducers/ticket";
 
 export const findTicket = 
-  (navigate, from, to, departureDate, totalPassengers, seatClass, returnDate, adult, child, baby) => 
+  (navigate, from, to, departureDate, totalPassengers, seatClass, returnDate, adult, child, baby, filter="harga_termurah") => 
   async (dispatch) => {
 
     let data = new FormData();
@@ -15,6 +15,7 @@ export const findTicket =
     if (returnDate) {
       data.append('return_date', returnDate.toISOString());
     }
+    data.append('filter', filter);
 
     let config = {
       method: 'post',
@@ -39,7 +40,8 @@ export const findTicket =
         departureDate: departureDate.toISOString(),
         seatClass, 
         returnDate: returnDate ? returnDate.toISOString() : null,
-        passengers: { adult, child, baby, total: totalPassengers }
+        passengers: { adult, child, baby, total: totalPassengers },
+        filter: filter ? filter : "harga_termurah",
       }));
 
       navigate('/search');
