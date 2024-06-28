@@ -239,34 +239,34 @@ const ProfilePage = () => {
                 <Row className="d-flex justify-content-center gap-5">
                     <Col md={4}>
                         <div className="d-flex flex-column align-items-center p-3">
-                            <div style={styles.sidebar}>
+                            <div style={styles.sidebar} className="py-2">
                                 <Button
                                     onClick={() => setActiveTab('profile')}
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.profileIcon} alt="profil" className="me-3" />
-                                    <p className="pt-3">Profil</p>
+                                    <p>Profil</p>
                                 </Button>
                             </div>
-                            <div style={styles.sidebar}>
+                            <div style={styles.sidebar} className="py-2">
                                 <Button
                                     onClick={() => setActiveTab('editProfile')}
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.editIcon} alt="edit" className="me-3" />
-                                    <p className="pt-3">Ubah Profil</p>
+                                    <p>Ubah Profil</p>
                                 </Button>
                             </div>
-                            <div style={styles.sidebar}>
+                            <div style={styles.sidebar} className="py-2">
                                 <Button
                                     onClick={() => setActiveTab('accountSettings')}
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.settingIcon} alt="settings" className="me-3" />
-                                    <p className="pt-3">Pengaturan Akun</p>
+                                    <p>Pengaturan Akun</p>
                                 </Button>
                             </div>
-                            <div style={styles.sidebar}>
+                            <div style={styles.sidebar} className="py-2">
                                 <Button
                                     onClick={() => {
                                         dispatch(logout());
@@ -275,7 +275,7 @@ const ProfilePage = () => {
                                     style={styles.sidebarBody}
                                 >
                                     <Image src={icons.logoutIcon} alt="logout" className="me-3" />
-                                    <p className="pt-3">Keluar</p>
+                                    <p>Keluar</p>
                                 </Button>
                             </div>
                             <div style={styles.textVersion}>Version 1.1.0</div>
