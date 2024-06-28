@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Form, ListGroup, Modal, Row } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 import * as icons from "../../assets/icons";
@@ -45,7 +45,7 @@ const SearchFlightsComponents = () => {
   // get city start
   const [cityOptions, setCityOptions] = useState([]);
 
-  const homeData = useSelector((state) => state.flights.homeData);
+  // const homeData = useSelector((state) => state.flights.homeData);
 
   useEffect(() => {
     (async () => {
@@ -109,10 +109,9 @@ const SearchFlightsComponents = () => {
           babyPassenger
         )
       )
-    }
-  
-    setValidated(true);
 
+      setValidated(true);
+    }
     
   }
   // get ticket end
@@ -146,7 +145,7 @@ const SearchFlightsComponents = () => {
   return (
     <>
     
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
+      <Form validated={validated} onSubmit={handleSubmit}>
         <h5 className="fw-bold mb-3">Pilih Jadwal Penerbangan Spesial di <span style={{color:"#7126b5"}}>TerbangAja</span> </h5>
         <Row>
           
@@ -168,6 +167,7 @@ const SearchFlightsComponents = () => {
                     })
                   }}
                   onChange={(selectedOption) => setSelectedFrom(selectedOption)}
+                  value={selectedFrom}
                   options={cityOptions}
                   placeholder="Select a City Here"
                   isSearchable={true}
@@ -176,7 +176,7 @@ const SearchFlightsComponents = () => {
                 />
                 
               </div>
-              {!validated && (
+              {!selectedFrom && (
                 <Form.Control.Feedback type="invalid" style={{ display: 'block' }} className="text-center">
                   Please select a departure city.
                 </Form.Control.Feedback>
@@ -186,12 +186,13 @@ const SearchFlightsComponents = () => {
 
           {/* Swap Icons */}  
           <Col md={2} className="d-flex align-items-center swap-icon-container">
-            <img 
-              src={icons.swapIcon} width={25} 
-              alt="swap-icon" 
-              style={{cursor: "pointer"}}
-              onClick={swapLocation}
-            />
+            <div onClick={swapLocation}>
+              <img 
+                src={icons.swapIcon} width={25} 
+                alt="swap-icon" 
+                style={{cursor: "pointer"}}
+              />
+            </div>
           </Col>
 
           {/* To Input */}
@@ -211,16 +212,16 @@ const SearchFlightsComponents = () => {
                       '&:hover': { border: 0 }
                     })
                   }}
-                  onChange={(selectedOption) => setSelectedTo(selectedOption)}
+                  value={selectedTo}
+                  onChange={(selectedOption) => { setSelectedTo(selectedOption) }}
                   options={cityOptions}
                   placeholder="Select a City Here"
                   isSearchable={true}
-                  isClearable={true}
-                  aria-label="Select a arrival city"
+                  isClearable={false}
                 />
                 
               </div>
-              {!validated && (
+              {!selectedTo && (
                 <Form.Control.Feedback type="invalid" style={{ display: 'block' }} className="text-center">
                   Please select a arrival city.
                 </Form.Control.Feedback>
