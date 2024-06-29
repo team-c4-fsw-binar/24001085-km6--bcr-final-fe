@@ -60,7 +60,7 @@ const NavbarComponent = () => {
               </>
             ) : (
               <Button as={Link} to="/login" className="custom-button">
-                <RiLoginBoxLine style={{ marginRight: '5px' }} />
+                <RiLoginBoxLine style={{ marginRight: '5px' }}  />
                 Masuk
               </Button>
             )}

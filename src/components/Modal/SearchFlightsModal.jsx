@@ -13,7 +13,7 @@ const SearchFlightsModal = ({ show, onHide }) => {
       </Modal.Header>
 
       <Modal.Body> 
-        <SearchFlightsComponents />
+        <SearchFlightsComponents onHide={onHide} />
       </Modal.Body>
 
     </Modal>
