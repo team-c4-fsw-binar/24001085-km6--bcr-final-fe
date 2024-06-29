@@ -197,10 +197,6 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
     const options = { day: "numeric", month: "long", year: "numeric" }
     return new Date(dateString).toLocaleDateString("id-ID", options)
   }
-  const formatDateHead = (dateString) => {
-    const options = { month: "long", year: "numeric" }
-    return new Date(dateString).toLocaleDateString("id-ID", options)
-  }
 
   const formatTime = (timeString) => {
     const options = { hour: "2-digit", minute: "2-digit", hour12: false }

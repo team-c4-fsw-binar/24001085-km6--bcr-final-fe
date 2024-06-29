@@ -32,21 +32,24 @@ const HistoryPage = () => {
     setModalShowCari(false)
   }
 
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "pad", day: "pad" }
-    const date = new Date(dateString)
-    const year = date.getFullYear().toString()
-    const month = String(date.getMonth() + 1).padStart(2, "0")
-    const day = String(date.getDate()).padStart(2, "0")
+  const formatDate = (date) => {
+    const d = new Date(date)
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, "0") // Bulan dimulai dari 0, sehingga perlu ditambah 1
+    const day = String(d.getDate()).padStart(2, "0")
+
     return `${year}-${month}-${day}`
   }
+
   const BerandaClick = () => {
     navigate("/")
   }
 
   useEffect(() => {
     dispatch(fetchBookings({ token, startDate, endDate, searchInput }))
-  }, [dispatch, token, startDate, endDate, searchInput])
+  }, [dispatch, token, formatDate(startDate), formatDate(endDate), searchInput])
+
+  console.log(startDate)
   return (
     <>
       <div className="shadow" style={{ height: "140px" }}>
@@ -121,7 +124,8 @@ const HistoryPage = () => {
         </div>
       </div>
       {bookingsData?.length === 0 ? (
-        searchInput !== "" || startDate !== "" ? (
+        (searchInput !== "" && bookingsData?.length === 0) ||
+        (startDate !== "" && bookingsData?.length === 0) ? (
           <RiwayatNotfound />
         ) : (
           <Riwayatkosong />

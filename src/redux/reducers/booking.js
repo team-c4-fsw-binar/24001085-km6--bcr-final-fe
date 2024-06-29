@@ -8,7 +8,6 @@ export const fetchBookings = createAsyncThunk(
       code: String(searchInput || ""),
       startDate: String(startDate || ""),
       endDate: String(endDate || ""),
-      airportName: String(searchInput || ""),
     })
 
     try {
