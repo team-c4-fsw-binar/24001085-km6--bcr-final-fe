@@ -12,6 +12,7 @@ import PopupCard from "../../components/Modal/searchHistory"
 import Datepicker from "../../components/Modal/DatepickerModalHistory"
 import RiwayatNotfound from "../../components/History/riwayatNotfound"
 import * as icons from "../../assets/icons"
+import Riwayatkosong from "../../components/History/riwayatkosong"
 
 const HistoryPage = () => {
   const navigate = useNavigate()
@@ -23,50 +24,32 @@ const HistoryPage = () => {
   const [lastSearch, setLastSearch] = useState("")
   const [searchInput, setSearchInput] = useState("")
   const token = useSelector((state) => state.auth.token)
-  const notFound = useSelector((state) => state.bookings.notFound)
-
-  // const formatDate = (date) => {
-  //   return date.toISOString().split("T")[0]
-  // }
+  const bookingData = useSelector((state) => state.bookings.data)
+  const bookingsData = bookingData?.data?.results
 
   const handleSearchSubmit = (search) => {
     setLastSearch(search)
-    setModalShowCari(false) // Close the modal after search
+    setModalShowCari(false)
   }
-  // const formatDatePick = (date) => {
-  //   const d = new Date(date)
-  //   let month = "" + (d.getMonth() + 1)
-  //   let day = "" + d.getDate()
-  //   const year = d.getFullYear()
 
-  //   if (month.length < 2) month = "0" + month
-  //   if (day.length < 2) day = "0" + day
+  const formatDate = (date) => {
+    const d = new Date(date)
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, "0") // Bulan dimulai dari 0, sehingga perlu ditambah 1
+    const day = String(d.getDate()).padStart(2, "0")
 
-  //   return [year, month, day].join("-")
-  // }
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "pad", day: "pad" }
-    const date = new Date(dateString)
-
-    // Year
-    const year = date.getFullYear().toString()
-
-    // Month (zero-padded for consistent format)
-    const month = String(date.getMonth() + 1).padStart(2, "0")
-
-    // Day (zero-padded for consistent format)
-    const day = String(date.getDate()).padStart(2, "0")
-
-    // Return formatted date string
     return `${year}-${month}-${day}`
   }
+
   const BerandaClick = () => {
-    // Mengarahkan ke halaman beranda
     navigate("/")
   }
+
   useEffect(() => {
     dispatch(fetchBookings({ token, startDate, endDate, searchInput }))
-  }, [dispatch, token, startDate, endDate, searchInput])
+  }, [dispatch, token, formatDate(startDate), formatDate(endDate), searchInput])
+
+  console.log(startDate)
   return (
     <>
       <div className="shadow" style={{ height: "140px" }}>
@@ -140,8 +123,13 @@ const HistoryPage = () => {
           />
         </div>
       </div>
-      {notFound ? (
-        <RiwayatNotfound />
+      {bookingsData?.length === 0 ? (
+        (searchInput !== "" && bookingsData?.length === 0) ||
+        (startDate !== "" && bookingsData?.length === 0) ? (
+          <RiwayatNotfound />
+        ) : (
+          <Riwayatkosong />
+        )
       ) : (
         <MainComponent
           startDate={startDate ? formatDate(startDate) : ""}

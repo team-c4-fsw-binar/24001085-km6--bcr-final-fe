@@ -74,16 +74,16 @@ const styles = StyleSheet.create({
 
 const TiketPDF = ({
   booking,
-  priceAdult,
+  priceAdultReturn,
+  priceAdultDeparture,
   seatClasses,
   formatDate,
   formatTime,
   formatCurrency,
-  logoTerbangAja,
 }) => (
   <Document>
     <Page style={styles.page}>
-      <View>
+      <View style={styles.row} className="d-flex justify-content-between">
         <Image src={logoTerbangAjaTiket} style={styles.logo} />
         <Text style={styles.heading}>E-Tiket TerbangAja</Text>
       </View>
@@ -226,9 +226,17 @@ const TiketPDF = ({
           <Text style={styles.text}>
             {booking.adultCount} {booking.adultCount > 1 ? "Adults" : "Adult"}
           </Text>
-          <Text style={styles.text}>
-            {formatCurrency(booking.adultCount * priceAdult)}
-          </Text>
+          {booking?.returnFlight_respon ? (
+            <Text style={styles.text}>
+              {formatCurrency(
+                booking.adultCount * (priceAdultDeparture + priceAdultReturn)
+              )}
+            </Text>
+          ) : (
+            <Text style={styles.text}>
+              {formatCurrency(booking.adultCount * priceAdultDeparture)}
+            </Text>
+          )}
         </View>
         {booking.childCount > 0 && (
           <View style={styles.row}>
@@ -236,9 +244,17 @@ const TiketPDF = ({
               {booking.childCount}{" "}
               {booking.childCount > 1 ? "Children" : "Child"}
             </Text>
-            <Text style={styles.text}>
-              {formatCurrency(booking.childCount * priceAdult)}
-            </Text>
+            {booking?.returnFlight_respon ? (
+              <Text style={styles.text}>
+                {formatCurrency(
+                  booking.childCount * (priceAdultDeparture + priceAdultReturn)
+                )}
+              </Text>
+            ) : (
+              <Text style={styles.text}>
+                {formatCurrency(booking.childCount * priceAdultDeparture)}
+              </Text>
+            )}
           </View>
         )}
         {booking.babyCount > 0 && (

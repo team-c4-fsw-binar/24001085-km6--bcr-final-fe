@@ -42,18 +42,16 @@ const bookingsSlice = createSlice({
       .addCase(fetchBookings.pending, (state) => {
         state.status = "loading"
         state.notFound = false
-        console.log("Fetching bookings: pending")
       })
       .addCase(fetchBookings.fulfilled, (state, action) => {
         state.status = "succeeded"
         state.data = action.payload
         state.notFound = action.payload.data.results.length === 0
-        console.log("Fetching bookings: succeeded", action.payload)
       })
       .addCase(fetchBookings.rejected, (state, action) => {
         state.status = "failed"
         state.error = action.error.message
-        state.notFound = true
+        state.notFound = false
         console.log("Fetching bookings: failed", action.error.message)
       })
   },

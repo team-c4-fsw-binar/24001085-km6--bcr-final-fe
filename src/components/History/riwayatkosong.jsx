@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 import * as images from "../../assets/images"
 
-const Riwayatkosong = ({ show, onClick }) => {
+const Riwayatkosong = () => {
   const navigate = useNavigate()
 
   const CariPenerbangan = () => {
