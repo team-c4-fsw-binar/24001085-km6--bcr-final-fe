@@ -110,18 +110,18 @@ const SearchingPage = () => {
 
   const handleCheckout  = (isReturnFlightOn) => {
 
-    if (isReturnFlightOn == true) {
-      dispatch(setReturnFlightId(selectedReturn.id))
-      dispatch(selectFlightReturn(selectedReturn))
+    if (isReturnFlight) {
+      dispatch(setReturnFlightId(selectedReturn.id));
+      dispatch(selectFlightReturn(selectedReturn));
     }
 
     dispatch(
       findTicketsDetail({
-        departure_flight_id: selectedDeparture.id,
-        return_flight_id: selectedReturn?.id,
-        seat_class: homeData.seat_class,
-        adultCount: homeData.adultCount,
-        childCount: homeData.childCount
+        departure_flight_id: selectedDeparture?.id,
+        return_flight_id: selectedReturn ? selectedReturn.id : '',
+        seat_class: searchParams.seatClass,
+        adultCount: searchParams.passengers.adult,
+        childCount: searchParams.passengers.child,
       })
     )
 
@@ -139,7 +139,7 @@ const SearchingPage = () => {
         homeData.return_date,
         homeData.filter
       )
-    )
+    );
 
     dispatch(setHomeData(homeData))
 

@@ -10,6 +10,7 @@ import {
   InputGroup,
   Nav,
   Navbar,
+  Badge
 } from "react-bootstrap";
 
 import { AiOutlineSearch } from "react-icons/ai";
@@ -27,6 +28,8 @@ const NavbarComponent = () => {
   // const navigate = useNavigate();
 
   const { user, token } = useSelector((state) => state.auth);
+
+  const unreadCount = useSelector((state) => state.notifications.unreadCount);
 
   useEffect(() => {
     dispatch(getProfile())
@@ -46,8 +49,10 @@ const NavbarComponent = () => {
                 <Nav.Link className="m-0 mx-2" as={Link} to={"/history"}>
                   <FaListUl />
                 </Nav.Link>
-                <Nav.Link className="m-0 mx-2" as={Link} to={"/notification"}>
-                  <FaRegBell />
+                <Nav.Link as={Link} to="/notification">
+                  <FaRegBell /> {unreadCount > 0 && (
+                    <Badge variant="danger">{unreadCount}</Badge>
+                  )}
                 </Nav.Link>
                 <Nav.Link className="m-0 mx-2" as={Link} to={"/profile"}>
                   <FiUser />
@@ -55,7 +60,7 @@ const NavbarComponent = () => {
               </>
             ) : (
               <Button as={Link} to="/login" className="custom-button">
-                <RiLoginBoxLine style={{ marginRight: '5px' }} />
+                <RiLoginBoxLine style={{ marginRight: '5px' }}  />
                 Masuk
               </Button>
             )}
