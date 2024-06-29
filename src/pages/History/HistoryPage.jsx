@@ -24,48 +24,26 @@ const HistoryPage = () => {
   const [lastSearch, setLastSearch] = useState("")
   const [searchInput, setSearchInput] = useState("")
   const token = useSelector((state) => state.auth.token)
-  const notFound = useSelector((state) => state.bookings.notFound)
-  const empty = useSelector((state) => state.bookings.empty)
-
-  // const formatDate = (date) => {
-  //   return date.toISOString().split("T")[0]
-  // }
+  const bookingData = useSelector((state) => state.bookings.data)
+  const bookingsData = bookingData?.data?.results
 
   const handleSearchSubmit = (search) => {
     setLastSearch(search)
-    setModalShowCari(false) // Close the modal after search
+    setModalShowCari(false)
   }
-  // const formatDatePick = (date) => {
-  //   const d = new Date(date)
-  //   let month = "" + (d.getMonth() + 1)
-  //   let day = "" + d.getDate()
-  //   const year = d.getFullYear()
 
-  //   if (month.length < 2) month = "0" + month
-  //   if (day.length < 2) day = "0" + day
-
-  //   return [year, month, day].join("-")
-  // }
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "pad", day: "pad" }
     const date = new Date(dateString)
-
-    // Year
     const year = date.getFullYear().toString()
-
-    // Month (zero-padded for consistent format)
     const month = String(date.getMonth() + 1).padStart(2, "0")
-
-    // Day (zero-padded for consistent format)
     const day = String(date.getDate()).padStart(2, "0")
-
-    // Return formatted date string
     return `${year}-${month}-${day}`
   }
   const BerandaClick = () => {
-    // Mengarahkan ke halaman beranda
     navigate("/")
   }
+
   useEffect(() => {
     dispatch(fetchBookings({ token, startDate, endDate, searchInput }))
   }, [dispatch, token, startDate, endDate, searchInput])
@@ -142,12 +120,19 @@ const HistoryPage = () => {
           />
         </div>
       </div>
-
-      <MainComponent
-        startDate={startDate ? formatDate(startDate) : ""}
-        endDate={endDate ? formatDate(endDate) : ""}
-        searchInput={searchInput}
-      />
+      {bookingsData?.length === 0 ? (
+        searchInput !== "" || startDate !== "" ? (
+          <RiwayatNotfound />
+        ) : (
+          <Riwayatkosong />
+        )
+      ) : (
+        <MainComponent
+          startDate={startDate ? formatDate(startDate) : ""}
+          endDate={endDate ? formatDate(endDate) : ""}
+          searchInput={searchInput}
+        />
+      )}
     </>
   )
 }

@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchBookings } from "../../redux/reducers/booking"
+import { useMediaQuery } from "react-responsive"
 
-import DetailPesanan from "./DetailPesanan"
-import {
-  Card,
-  Row,
-  Col,
-  Badge,
-  Image,
-  Container,
-  Spinner,
-  Button,
-} from "react-bootstrap"
+import DetailPesananMD from "./DetailPesananMD"
+import DetailPesananSM from "./DetailPesananSM"
+import { Card, Row, Col, Image, Container, Spinner } from "react-bootstrap"
 
 import Riwayatkosong from "./riwayatkosong"
 
@@ -32,6 +25,8 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
   const [selectedCardIndex, setSelectedCardIndex] = React.useState(null)
   const bookingsData = bookingData?.data?.results
   const token = useSelector((state) => state.auth.token)
+  const [selected, setSelected] = useState(null)
+  const isMediumScreen = useMediaQuery({ query: "(min-width: 768px)" })
 
   const handleMouseEnter = (index) => setHoverIndex(index)
   const handleMouseLeave = () => setHoverIndex(null)
@@ -41,6 +36,18 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
     setSelectedCardIndex(index)
     setIsCardClicked(true)
   }
+
+  const handleSelectChange = (event) => {
+    setSelected(Number(event.target.value))
+  }
+
+  const handleSelect = (id) => {
+    setSelected(id)
+  }
+
+  const selectedBooking = bookingsData?.filter(
+    (booking) => booking.id === selected
+  )
 
   useEffect(() => {
     if (bookingStatus === "idle")
@@ -64,17 +71,6 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
         />
       </div>
     )
-  }
-
-  if (
-    (searchInput !== "" && bookingsData?.length === 0) ||
-    (startDate !== "" && bookingsData?.length === 0)
-  ) {
-    return <RiwayatNotfound />
-  }
-
-  if (bookingsData?.length === 0) {
-    return <Riwayatkosong />
   }
 
   const getPaymentStatus = (payment) => {
@@ -175,6 +171,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       boxShadow: "0 5px 5px rgba(0, 0, 0, 0.2)",
       transition: "all 0.2s ease-in-out",
       cursor: "pointer",
+      maxWidth: "700px",
     },
     riwayatCardHover: {
       transform: "translateY(-3px)",
@@ -191,7 +188,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
     },
     overflowHistory: {
       overflowY: "auto",
-      maxHeight: "800px",
+      maxHeight: "900px",
       paddingRight: "15px",
     },
   }
@@ -231,164 +228,67 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       .format(number)
       .replace("Rp", "IDR")
   }
+
   return (
-    <div className="mt-5" style={styles.overflowHistory}>
-      {bookingsData ? (
-        bookingsData.map((booking, index) => {
-          //   const payment = getPaymentForBooking(booking.id)
-          const payment = booking?.Payment
+    <Row className="m-2">
+      <Col
+        md={7}
+        xs={12}
+        sm={12}
+        className="mt-5"
+        style={styles.overflowHistory}
+      >
+        {bookingsData ? (
+          bookingsData.map((booking, index) => {
+            const payment = booking?.Payment
+            let cardStyle = styles.riwayatCard
+            if (clickedIndex === index || hoverIndex === index) {
+              cardStyle = { ...cardStyle, ...styles.riwayatCardHover }
+            }
+            if (clickedIndex === index) {
+              cardStyle = { ...cardStyle, ...styles.riwayatCardClicked }
+            }
+            const seatClasses = booking.BookingSeats.map(
+              (bookingSeat) => bookingSeat.Seat.seat_class
+            )
 
-          //   const flight = getFlightForBooking(booking.departure_flight_id)
-          let cardStyle = styles.riwayatCard
-          if (clickedIndex === index || hoverIndex === index) {
-            cardStyle = { ...cardStyle, ...styles.riwayatCardHover }
-          }
-          if (clickedIndex === index) {
-            cardStyle = { ...cardStyle, ...styles.riwayatCardClicked }
-          }
-          const seatClasses = booking.BookingSeats.map(
-            (bookingSeat) => bookingSeat.Seat.seat_class
-          )
+            return (
+              <div key={booking.id}>
+                <Row className="relative">
+                  <Col
+                    className="mt-2 mx-1 d-flex justify-content-center"
+                    id="booking-card"
+                  >
+                    <Container>
+                      <Card
+                        key={booking.id}
+                        value={booking.id}
+                        id="riwayat-card"
+                        className="p-4  rounded-3 my-2"
+                        style={cardStyle && { marginLeft: "20px" }}
+                        onMouseEnter={() => handleMouseEnter(index)}
+                        onMouseLeave={handleMouseLeave}
+                        onClick={() => {
+                          handleSelect(booking.id)
+                          handleCardClick(index)
+                        }}
+                      >
+                        {getPaymentStatus(payment)}
 
-          let priceAdultDeparture = 0
-          if (seatClasses[0] === "economy") {
-            priceAdultDeparture = booking.departureFlight_respon?.economyPrice
-          }
-          if (seatClasses[0] === "premium") {
-            priceAdultDeparture = booking.departureFlight_respon?.premiumPrice
-          }
-          if (seatClasses[0] === "business") {
-            priceAdultDeparture = booking.departureFlight_respon?.businessPrice
-          }
-          if (seatClasses[0] === "first_class") {
-            priceAdultDeparture =
-              booking.departureFlight_respon?.firstClassPrice
-          }
-
-          let priceAdultReturn = 0
-          if (seatClasses[0] === "economy") {
-            priceAdultReturn = booking.returnFlight_respon?.economyPrice
-          }
-          if (seatClasses[0] === "premium") {
-            priceAdultReturn = booking.returnFlight_respon?.premiumPrice
-          }
-          if (seatClasses[0] === "business") {
-            priceAdultReturn = booking.returnFlight_respon?.businessPrice
-          }
-          if (seatClasses[0] === "first_class") {
-            priceAdultReturn = booking.returnFlight_respon?.firstClassPrice
-          }
-          return (
-            <div className="container" key={booking.id}>
-              <div className="row">
-                <Col
-                  md={7}
-                  xs={12}
-                  sm={12}
-                  className="mt-2"
-                  id="booking-card"
-                  //   style={styles.customLg}
-                >
-                  <Container>
-                    <Card
-                      key={booking.id}
-                      id="riwayat-card"
-                      className="p-4 mx-2 rounded-3 m-2"
-                      style={cardStyle}
-                      onMouseEnter={() => handleMouseEnter(index)}
-                      onMouseLeave={handleMouseLeave}
-                      onClick={() => handleCardClick(index)}
-                    >
-                      {getPaymentStatus(payment)}
-
-                      <Row className="mx-2 my-2 g-3">
-                        {booking.returnFlight_respon ? (
-                          <Row>
-                            <p
-                              className="fw-bold"
-                              style={{ color: " #A06ECE" }}
-                            >
-                              Keberangkatan
-                            </p>
-                          </Row>
-                        ) : (
-                          ""
-                        )}
-
-                        <Col md={4} sm={4}>
-                          <Row>
-                            <Col>
-                              <Image src={icons.areaIcon} fluid />
-                            </Col>
-                            <Col md={8}>
-                              <p className="fw-bold  m-0">
-                                {
-                                  booking?.departureFlight_respon
-                                    ?.departureAirport_respon?.city
-                                }
-                              </p>
-                              <p className="m-0">
-                                {formatDate(
-                                  booking?.departureFlight_respon?.departureTime
-                                )}
-                              </p>
-                              <p className="m-0">
-                                {formatTime(
-                                  booking?.departureFlight_respon?.departureTime
-                                )}
-                              </p>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col
-                          md={4}
-                          sm={4}
-                          className="d-flex flex-column justify-content-center align-items-center mx-0"
-                        >
-                          <p>
-                            {formatDuration(
-                              booking?.departureFlight_respon?.departureTime,
-                              booking?.departureFlight_respon?.arrivalTime
-                            )}
-                          </p>
-                          <Image src={icons.longArrow} width="100%" />
-                        </Col>
-                        <Col md={4} sm={4}>
-                          <Row>
-                            <Col>
-                              <Image src={icons.areaIcon} fluid />
-                            </Col>
-                            <Col md={8}>
-                              <p className="fw-bold mb-0">
-                                {
-                                  booking?.departureFlight_respon
-                                    ?.arrivalAirport_respon?.city
-                                }
-                              </p>
-                              <p className="m-0">
-                                {formatDate(
-                                  booking?.departureFlight_respon?.arrivalTime
-                                )}
-                              </p>
-                              <p className="m-0">
-                                {formatTime(
-                                  booking?.departureFlight_respon?.arrivalTime
-                                )}
-                              </p>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                      {booking.returnFlight_respon != null ? (
                         <Row className="mx-2 my-2 g-3">
-                          <Row>
-                            <p
-                              className="fw-bold"
-                              style={{ color: " #A06ECE" }}
-                            >
-                              Kepulangan
-                            </p>
-                          </Row>
+                          {booking.returnFlight_respon ? (
+                            <Row>
+                              <p
+                                className="fw-bold"
+                                style={{ color: " #A06ECE" }}
+                              >
+                                Keberangkatan
+                              </p>
+                            </Row>
+                          ) : (
+                            ""
+                          )}
+
                           <Col md={4} sm={4}>
                             <Row>
                               <Col>
@@ -397,18 +297,20 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
                               <Col md={8}>
                                 <p className="fw-bold  m-0">
                                   {
-                                    booking?.returnFlight_respon
+                                    booking?.departureFlight_respon
                                       ?.departureAirport_respon?.city
                                   }
                                 </p>
                                 <p className="m-0">
                                   {formatDate(
-                                    booking?.returnFlight_respon?.departureTime
+                                    booking?.departureFlight_respon
+                                      ?.departureTime
                                   )}
                                 </p>
                                 <p className="m-0">
                                   {formatTime(
-                                    booking?.returnFlight_respon?.departureTime
+                                    booking?.departureFlight_respon
+                                      ?.departureTime
                                   )}
                                 </p>
                               </Col>
@@ -421,8 +323,8 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
                           >
                             <p>
                               {formatDuration(
-                                booking?.returnFlight_respon?.departureTime,
-                                booking?.returnFlight_respon?.arrivalTime
+                                booking?.departureFlight_respon?.departureTime,
+                                booking?.departureFlight_respon?.arrivalTime
                               )}
                             </p>
                             <Image src={icons.longArrow} width="100%" />
@@ -435,76 +337,171 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
                               <Col md={8}>
                                 <p className="fw-bold mb-0">
                                   {
-                                    booking?.returnFlight_respon
+                                    booking?.departureFlight_respon
                                       ?.arrivalAirport_respon?.city
                                   }
                                 </p>
                                 <p className="m-0">
                                   {formatDate(
-                                    booking?.returnFlight_respon?.arrivalTime
+                                    booking?.departureFlight_respon?.arrivalTime
                                   )}
                                 </p>
                                 <p className="m-0">
                                   {formatTime(
-                                    booking?.returnFlight_respon?.arrivalTime
+                                    booking?.departureFlight_respon?.arrivalTime
                                   )}
                                 </p>
                               </Col>
                             </Row>
                           </Col>
                         </Row>
-                      ) : (
-                        ""
-                      )}
-                      <div className="border my-3"></div>
-                      <Row>
-                        <Col md={4} sm={5}>
-                          <p className="m-0 fw-bold">Booking Code : </p>
-                          <p className="ellipsis m-0">{booking.code}</p>
-                        </Col>
-                        <Col md={4} sm={3}>
-                          <p className="m-0 fw-bold">Class :</p>
-                          <p className="m-0">{seatClasses[0]}</p>
-                        </Col>
-                        <Col md={4} sm={4}>
-                          {payment?.status == "failed" ? (
-                            "-"
-                          ) : (
-                            <p
-                              className=" d-flex justify-content-end fw-bold align-center mx-2"
-                              style={{ color: "#A06ECE", fontSize: "15px" }}
+                        {booking.returnFlight_respon != null ? (
+                          <Row className="mx-2 my-2 g-3">
+                            <Row>
+                              <p
+                                className="fw-bold"
+                                style={{ color: " #A06ECE" }}
+                              >
+                                Kepulangan
+                              </p>
+                            </Row>
+                            <Col md={4} sm={4}>
+                              <Row>
+                                <Col>
+                                  <Image src={icons.areaIcon} fluid />
+                                </Col>
+                                <Col md={8}>
+                                  <p className="fw-bold  m-0">
+                                    {
+                                      booking?.returnFlight_respon
+                                        ?.departureAirport_respon?.city
+                                    }
+                                  </p>
+                                  <p className="m-0">
+                                    {formatDate(
+                                      booking?.returnFlight_respon
+                                        ?.departureTime
+                                    )}
+                                  </p>
+                                  <p className="m-0">
+                                    {formatTime(
+                                      booking?.returnFlight_respon
+                                        ?.departureTime
+                                    )}
+                                  </p>
+                                </Col>
+                              </Row>
+                            </Col>
+                            <Col
+                              md={4}
+                              sm={4}
+                              className="d-flex flex-column justify-content-center align-items-center mx-0"
                             >
-                              {formatCurrency(booking.price_amount)}
-                            </p>
-                          )}
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Container>
-                </Col>
-                <DetailPesanan
-                  booking={booking}
-                  payment={payment}
-                  priceAdultReturn={priceAdultReturn}
-                  priceAdultDeparture={priceAdultDeparture}
-                  handlePaymentRedirect={handlePaymentRedirect}
-                  isCardClicked={isCardClicked}
-                  selectedCardIndex={selectedCardIndex}
-                  index={index}
-                  seatClasses={seatClasses}
-                  getPaymentStatus={getPaymentStatus}
-                  formatDate={formatDate}
-                  formatTime={formatTime}
-                  formatCurrency={formatCurrency}
-                />
+                              <p>
+                                {formatDuration(
+                                  booking?.returnFlight_respon?.departureTime,
+                                  booking?.returnFlight_respon?.arrivalTime
+                                )}
+                              </p>
+                              <Image src={icons.longArrow} width="100%" />
+                            </Col>
+                            <Col md={4} sm={4}>
+                              <Row>
+                                <Col>
+                                  <Image src={icons.areaIcon} fluid />
+                                </Col>
+                                <Col md={8}>
+                                  <p className="fw-bold mb-0">
+                                    {
+                                      booking?.returnFlight_respon
+                                        ?.arrivalAirport_respon?.city
+                                    }
+                                  </p>
+                                  <p className="m-0">
+                                    {formatDate(
+                                      booking?.returnFlight_respon?.arrivalTime
+                                    )}
+                                  </p>
+                                  <p className="m-0">
+                                    {formatTime(
+                                      booking?.returnFlight_respon?.arrivalTime
+                                    )}
+                                  </p>
+                                </Col>
+                              </Row>
+                            </Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                        <div className="border my-3"></div>
+                        <Row>
+                          <Col md={4} sm={5}>
+                            <p className="m-0 fw-bold">Booking Code : </p>
+                            <p className="ellipsis m-0">{booking.code}</p>
+                          </Col>
+                          <Col md={4} sm={3}>
+                            <p className="m-0 fw-bold">Class :</p>
+                            <p className="m-0">{seatClasses[0]}</p>
+                          </Col>
+                          <Col md={4} sm={4}>
+                            {payment?.status == "failed" ? (
+                              "-"
+                            ) : (
+                              <p
+                                className=" d-flex justify-content-end fw-bold align-center mx-2"
+                                style={{ color: "#A06ECE", fontSize: "15px" }}
+                              >
+                                {formatCurrency(booking.price_amount)}
+                              </p>
+                            )}
+                          </Col>
+                        </Row>
+                      </Card>
+                    </Container>
+                  </Col>
+                </Row>
+                {selectedBooking?.length > 0 &&
+                !isMediumScreen &&
+                isCardClicked ? (
+                  <DetailPesananSM
+                    booking={selectedBooking[0]}
+                    handlePaymentRedirect={handlePaymentRedirect}
+                    isCardClicked={isCardClicked}
+                    selectedCardIndex={selectedCardIndex}
+                    index={index}
+                    getPaymentStatus={getPaymentStatus}
+                    formatDate={formatDate}
+                    formatTime={formatTime}
+                    formatCurrency={formatCurrency}
+                  />
+                ) : (
+                  ""
+                )}
               </div>
-            </div>
-          )
-        })
-      ) : (
-        <Riwayatkosong />
-      )}
-    </div>
+            )
+          })
+        ) : (
+          <Riwayatkosong />
+        )}
+      </Col>
+      <Col md={5} sm={12}>
+        {selectedBooking?.length > 0 && isMediumScreen && isCardClicked ? (
+          <DetailPesananMD
+            booking={selectedBooking[0]}
+            handlePaymentRedirect={handlePaymentRedirect}
+            isCardClicked={isCardClicked}
+            selectedCardIndex={selectedCardIndex}
+            getPaymentStatus={getPaymentStatus}
+            formatDate={formatDate}
+            formatTime={formatTime}
+            formatCurrency={formatCurrency}
+          />
+        ) : (
+          ""
+        )}
+      </Col>
+    </Row>
   )
 }
 

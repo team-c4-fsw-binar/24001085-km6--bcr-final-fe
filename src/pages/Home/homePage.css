@@ -66,6 +66,10 @@
   color: white;
 }
 
+.cardDestinasi:hover {
+  box-shadow: 0 0 10px 0 rgba(5, 0, 4, 0.619);
+}
+
 
 /* mobile */
 @media (max-width: 768px) {
