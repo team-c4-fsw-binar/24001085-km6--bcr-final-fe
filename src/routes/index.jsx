@@ -18,6 +18,7 @@ import {
 import UserProtected from "../components/Protected/Protected"
 import NonProtected from "../components/Protected/NonProtected"
 import NavbarComponent from "../components/Navigation/Navbar"
+import PageProtected from "../components/Protected/PageProtected"
 
 const router = createBrowserRouter([
   {
@@ -105,10 +106,12 @@ const router = createBrowserRouter([
     path: "/search",
     element: (
       <div>
-        <NonProtected>
-          <NavbarComponent />
-          <SearchingPage />
-        </NonProtected>
+        {/* <PageProtected> */}
+          <NonProtected>
+            <NavbarComponent />
+            <SearchingPage />
+          </NonProtected>
+        {/* </PageProtected> */}
       </div>
     ),
   },
@@ -148,10 +151,12 @@ const router = createBrowserRouter([
     path: "/checkout",
     element: (
       <div>
-        <UserProtected>
-          <NavbarComponent />
-          <CheckoutPage />
-        </UserProtected>
+        {/* <PageProtected> */}
+          <UserProtected>
+            <NavbarComponent />
+            <CheckoutPage />
+          </UserProtected>
+        {/* </PageProtected> */}
       </div>
     ),
   },

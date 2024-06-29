@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Form, ListGroup, Modal, Row } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 import * as icons from "../../assets/icons";
@@ -11,10 +11,11 @@ import { setHomeData } from "../../redux/reducers/flight";
 import { format } from "date-fns";
 import { findTicket } from "../../redux/actions/ticket";
 import DatePickerModal from "../Modal/DatepickerModal";
+import propTypes from "prop-types";
 
 import '../styles/others/search.css';
 
-const SearchFlightsComponents = () => {
+const SearchFlightsComponents = ({ onHide }) => {
   // redux
   const dispatch = useDispatch();
   const navigate = useNavigate()
@@ -35,6 +36,7 @@ const SearchFlightsComponents = () => {
   const [babyPassenger, setBabyPassenger] = useState(0);
   
   const [toggleSwitch, setToggleSwitch] = useState(false);
+  const [showFeedBack, setShowFeedBack] = useState(false);
   
   // modal
   const [modalShow, setModalShow] = useState(false);
@@ -45,7 +47,7 @@ const SearchFlightsComponents = () => {
   // get city start
   const [cityOptions, setCityOptions] = useState([]);
 
-  const homeData = useSelector((state) => state.flights.homeData);
+  // const homeData = useSelector((state) => state.flights.homeData);
 
   useEffect(() => {
     (async () => {
@@ -76,14 +78,18 @@ const SearchFlightsComponents = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
+
+    if (!selectedFrom || !selectedTo) {
+      setShowFeedBack(true);
+    }
   
     if (!form.checkValidity()) {
       e.stopPropagation(); 
     } else {
       dispatch(
         setHomeData({
-          from: selectedFrom.label,
-          to: selectedTo.label,
+          from: selectedFrom.value,
+          to: selectedTo.value,
           departure_date: departureDate.toISOString(),
           return_date: returnDate?.toISOString() || (''),
           adultCount: adultPassenger,
@@ -98,8 +104,8 @@ const SearchFlightsComponents = () => {
       dispatch(
         findTicket(
           navigate,
-          selectedFrom.label,
-          selectedTo.label,
+          selectedFrom.value,
+          selectedTo.value,
           departureDate,
           totalPassenger,
           seatClass,
@@ -109,10 +115,9 @@ const SearchFlightsComponents = () => {
           babyPassenger
         )
       )
-    }
-  
-    setValidated(true);
 
+      setValidated(true);
+    }
     
   }
   // get ticket end
@@ -124,7 +129,7 @@ const SearchFlightsComponents = () => {
       border: "none",
       borderRadius: '0',
       borderBottom: '1px solid #d0d0d0',
-      fontWeight: 'bold',
+      fontWeight: '600',
     },
 
     customButton: {
@@ -146,7 +151,7 @@ const SearchFlightsComponents = () => {
   return (
     <>
     
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
+      <Form validated={validated} onSubmit={handleSubmit}>
         <h5 className="fw-bold mb-3">Pilih Jadwal Penerbangan Spesial di <span style={{color:"#7126b5"}}>TerbangAja</span> </h5>
         <Row>
           
@@ -168,15 +173,15 @@ const SearchFlightsComponents = () => {
                     })
                   }}
                   onChange={(selectedOption) => setSelectedFrom(selectedOption)}
+                  value={selectedFrom}
                   options={cityOptions}
                   placeholder="Select a City Here"
                   isSearchable={true}
                   isClearable={true}
-                  aria-label="Select a departure city"
                 />
                 
               </div>
-              {!validated && (
+              {showFeedBack && !selectedFrom && (
                 <Form.Control.Feedback type="invalid" style={{ display: 'block' }} className="text-center">
                   Please select a departure city.
                 </Form.Control.Feedback>
@@ -186,19 +191,20 @@ const SearchFlightsComponents = () => {
 
           {/* Swap Icons */}  
           <Col md={2} className="d-flex align-items-center swap-icon-container">
-            <img 
-              src={icons.swapIcon} width={25} 
-              alt="swap-icon" 
-              style={{cursor: "pointer"}}
-              onClick={swapLocation}
-            />
+            <div onClick={swapLocation}>
+              <img 
+                src={icons.swapIcon} width={25} 
+                alt="swap-icon" 
+                style={{cursor: "pointer"}}
+              />
+            </div>
           </Col>
 
           {/* To Input */}
           <Col md={5} className="d-flex">
             <Form.Group className="mb-3 w-100" controlId="to">
               <div className="d-flex gap-2 w-100">
-                <img src={icons.departureIcon} width={25} alt="Departure city icon" />
+                <img src={icons.arrivalIcon} width={25} alt="Departure city icon" />
                 <Form.Label className="mb-0 align-self-center">To</Form.Label>
                 <Select
                   className="flex-grow-1 inputTextDecorationNone"
@@ -211,16 +217,16 @@ const SearchFlightsComponents = () => {
                       '&:hover': { border: 0 }
                     })
                   }}
-                  onChange={(selectedOption) => setSelectedTo(selectedOption)}
+                  value={selectedTo}
+                  onChange={(selectedOption) => { setSelectedTo(selectedOption) }}
                   options={cityOptions}
                   placeholder="Select a City Here"
                   isSearchable={true}
                   isClearable={true}
-                  aria-label="Select a arrival city"
                 />
                 
               </div>
-              {!validated && (
+              {showFeedBack && !selectedTo && (
                 <Form.Control.Feedback type="invalid" style={{ display: 'block' }} className="text-center">
                   Please select a arrival city.
                 </Form.Control.Feedback>
@@ -348,6 +354,7 @@ const SearchFlightsComponents = () => {
         <Button type="submit"
           style={{...styles.customButton}}
           className="custom-button"
+          onClick={onHide}
         >
           Cari Penerbangan
         </Button>
@@ -443,6 +450,10 @@ const SearchFlightsComponents = () => {
       </Modal>
     </>
   )
+}
+
+SearchFlightsComponents.propTypes = {
+  onHide: propTypes.any
 }
 
 export default SearchFlightsComponents;
