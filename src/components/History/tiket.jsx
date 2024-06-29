@@ -74,7 +74,8 @@ const styles = StyleSheet.create({
 
 const TiketPDF = ({
   booking,
-  priceAdult,
+  priceAdultReturn,
+  priceAdultDeparture,
   seatClasses,
   formatDate,
   formatTime,
@@ -82,7 +83,7 @@ const TiketPDF = ({
 }) => (
   <Document>
     <Page style={styles.page}>
-      <View>
+      <View style={styles.row} className="d-flex justify-content-between">
         <Image src={logoTerbangAjaTiket} style={styles.logo} />
         <Text style={styles.heading}>E-Tiket TerbangAja</Text>
       </View>
@@ -227,11 +228,13 @@ const TiketPDF = ({
           </Text>
           {booking?.returnFlight_respon ? (
             <Text style={styles.text}>
-              {formatCurrency(booking.adultCount * priceAdult * 2)}
+              {formatCurrency(
+                booking.adultCount * (priceAdultDeparture + priceAdultReturn)
+              )}
             </Text>
           ) : (
             <Text style={styles.text}>
-              {formatCurrency(booking.adultCount * priceAdult)}
+              {formatCurrency(booking.adultCount * priceAdultDeparture)}
             </Text>
           )}
         </View>
@@ -243,11 +246,13 @@ const TiketPDF = ({
             </Text>
             {booking?.returnFlight_respon ? (
               <Text style={styles.text}>
-                {formatCurrency(booking.childCount * priceAdult * 2)}
+                {formatCurrency(
+                  booking.childCount * (priceAdultDeparture + priceAdultReturn)
+                )}
               </Text>
             ) : (
               <Text style={styles.text}>
-                {formatCurrency(booking.childCount * priceAdult)}
+                {formatCurrency(booking.childCount * priceAdultDeparture)}
               </Text>
             )}
           </View>

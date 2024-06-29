@@ -16,6 +16,8 @@ import {
 
 import Riwayatkosong from "./riwayatkosong"
 
+import RiwayatNotfound from "./riwayatNotfound"
+
 import * as icons from "../../assets/icons"
 
 import "../styles/history/riwayat.css"
@@ -64,7 +66,14 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
     )
   }
 
-  if (bookingStatus === "failed") {
+  if (
+    (searchInput !== "" && bookingsData?.length === 0) ||
+    (startDate !== "" && bookingsData?.length === 0)
+  ) {
+    return <RiwayatNotfound />
+  }
+
+  if (bookingsData?.length === 0) {
     return <Riwayatkosong />
   }
 
@@ -223,8 +232,8 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
       .replace("Rp", "IDR")
   }
   return (
-    <div className="" style={styles.overflowHistory}>
-      {bookingsData && bookingsData.length > 0 ? (
+    <div className="mt-5" style={styles.overflowHistory}>
+      {bookingsData ? (
         bookingsData.map((booking, index) => {
           //   const payment = getPaymentForBooking(booking.id)
           const payment = booking?.Payment
@@ -241,20 +250,34 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
             (bookingSeat) => bookingSeat.Seat.seat_class
           )
 
-          let priceAdult = 0
+          let priceAdultDeparture = 0
           if (seatClasses[0] === "economy") {
-            priceAdult = booking.departureFlight_respon.economyPrice
+            priceAdultDeparture = booking.departureFlight_respon?.economyPrice
           }
           if (seatClasses[0] === "premium") {
-            priceAdult = booking.departureFlight_respon.premiumPrice
+            priceAdultDeparture = booking.departureFlight_respon?.premiumPrice
           }
           if (seatClasses[0] === "business") {
-            priceAdult = booking.departureFlight_respon.businessPrice
+            priceAdultDeparture = booking.departureFlight_respon?.businessPrice
           }
           if (seatClasses[0] === "first_class") {
-            priceAdult = booking.departureFlight_respon.firstClassPrice
+            priceAdultDeparture =
+              booking.departureFlight_respon?.firstClassPrice
           }
 
+          let priceAdultReturn = 0
+          if (seatClasses[0] === "economy") {
+            priceAdultReturn = booking.returnFlight_respon?.economyPrice
+          }
+          if (seatClasses[0] === "premium") {
+            priceAdultReturn = booking.returnFlight_respon?.premiumPrice
+          }
+          if (seatClasses[0] === "business") {
+            priceAdultReturn = booking.returnFlight_respon?.businessPrice
+          }
+          if (seatClasses[0] === "first_class") {
+            priceAdultReturn = booking.returnFlight_respon?.firstClassPrice
+          }
           return (
             <div className="container" key={booking.id}>
               <div className="row">
@@ -262,7 +285,7 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
                   md={7}
                   xs={12}
                   sm={12}
-                  className="mt-4"
+                  className="mt-2"
                   id="booking-card"
                   //   style={styles.customLg}
                 >
@@ -462,7 +485,8 @@ const MainComponent = ({ startDate, endDate, searchInput }) => {
                 <DetailPesanan
                   booking={booking}
                   payment={payment}
-                  priceAdult={priceAdult}
+                  priceAdultReturn={priceAdultReturn}
+                  priceAdultDeparture={priceAdultDeparture}
                   handlePaymentRedirect={handlePaymentRedirect}
                   isCardClicked={isCardClicked}
                   selectedCardIndex={selectedCardIndex}

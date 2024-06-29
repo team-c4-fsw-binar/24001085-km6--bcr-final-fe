@@ -11,7 +11,8 @@ import TikePDF from "./tiket"
 const DetailPesanan = ({
   booking,
   payment,
-  priceAdult,
+  priceAdultReturn,
+  priceAdultDeparture,
   handlePaymentRedirect,
   isCardClicked,
   selectedCardIndex,
@@ -26,9 +27,9 @@ const DetailPesanan = ({
     detailMDnoReturn: {
       maxHeight: "600px",
       position: "absolute",
-      top: "78%",
+      top: "80%",
       left: "75%",
-      transform: "translate(-50%,-67%)",
+      transform: "translate(-50%,-60%)",
       margin: "20px",
       padding: "10px",
     },
@@ -37,7 +38,7 @@ const DetailPesanan = ({
       position: "absolute",
       top: "98%",
       left: "75%",
-      transform: "translate(-50%, -139%)",
+      transform: "translate(-50%, -123%)",
       margin: "20px",
       padding: "10px",
     },
@@ -47,9 +48,9 @@ const DetailPesanan = ({
     expiredOrFailed: {
       maxHeight: "300px",
       position: "absolute",
-      top: "100%",
+      top: "105%",
       left: "75%",
-      transform: "translate(-50%, -190%)",
+      transform: "translate(-50%, -180%)",
       margin: "20px",
       padding: "10px",
     },
@@ -57,7 +58,7 @@ const DetailPesanan = ({
       position: "relative",
     },
   }
-  const detailRef = useRef()
+
   const isMediumScreen = useMediaQuery({ query: "(min-width: 768px)" })
   let styleForCardMD
   {
@@ -134,7 +135,8 @@ const DetailPesanan = ({
             {booking?.departureFlight_respon?.departureAirport_respon?.name}
           </p>
           <div className="border my-2"></div>
-          {payment?.status === "Expired" || payment?.status === "Failed" ? (
+          {(payment?.status === "Expired" || payment?.status === "Failed") &&
+          booking.returnFlight_respon ? (
             ""
           ) : (
             <>
@@ -151,11 +153,12 @@ const DetailPesanan = ({
               <Row>
                 <Col md={6} sm={6}>
                   <Image
+                    fluid
                     className="col-md-6 col-sm-6"
                     src={booking?.departureFlight_respon?.Airline?.imgUrl}
                     style={{
                       weight: "20%",
-                      height: "auto",
+                      height: "35px",
                     }}
                   />
                 </Col>
@@ -194,15 +197,73 @@ const DetailPesanan = ({
               Kedatangan
             </p>
           </Row>
-          {/* tanggal */}
+
           <p className="m-0">
-            {" "}
             {formatDate(booking?.departureFlight_respon?.arrivalTime)}
           </p>
           <p className="m-0 fw-medium">
             {booking?.departureFlight_respon?.arrivalAirport_respon?.name}
           </p>
           <div className="border my-2"></div>
+          {payment?.status === "Expired" || payment?.status === "Failed" ? (
+            ""
+          ) : booking.returnFlight_respon ? (
+            <>
+              <div>
+                <p className="fw-bold col-6 mb-0">Rincian Harga</p>
+              </div>
+
+              <Row>
+                <p className="col">
+                  {booking.adultCount}{" "}
+                  {booking.adultCount > 1 ? "Adults" : "Adult"}
+                </p>
+                {booking?.returnFlight_respon ? (
+                  <p className="col d-flex justify-content-end">
+                    {formatCurrency(booking.adultCount * priceAdultDeparture)}
+                  </p>
+                ) : (
+                  <p className="col d-flex justify-content-end">
+                    {formatCurrency(booking.adultCount * priceAdultDeparture)}
+                  </p>
+                )}
+              </Row>
+              {booking.childCount != 0 ? (
+                <Row>
+                  <p className="col">
+                    {booking.childCount}{" "}
+                    {booking.childCount > 1 ? "Childs" : "Child"}
+                  </p>
+                  {booking?.returnFlight_respon ? (
+                    <p className="col d-flex justify-content-end">
+                      {formatCurrency(booking.childCount * priceAdultDeparture)}
+                    </p>
+                  ) : (
+                    <p className="col d-flex justify-content-end">
+                      {formatCurrency(booking.childCount * priceAdultDeparture)}
+                    </p>
+                  )}
+                </Row>
+              ) : (
+                ""
+              )}
+              {booking.babyCount != 0 ? (
+                <Row>
+                  <p className="col">
+                    {" "}
+                    {booking.babyCount}{" "}
+                    {booking.babyCount > 1 ? "Babies" : "Baby"}
+                  </p>
+                  <p className="col d-flex justify-content-end">IDR 0</p>
+                </Row>
+              ) : (
+                ""
+              )}
+              <div className="border my-2 "></div>
+            </>
+          ) : (
+            ""
+          )}
           {booking.returnFlight_respon != null ? (
             <div>
               <Row className="d-flex mb-0">
@@ -246,7 +307,7 @@ const DetailPesanan = ({
                         src={booking?.departureFlight_respon?.Airline?.imgUrl}
                         style={{
                           weight: "20%",
-                          height: "auto",
+                          height: "35px",
                         }}
                       />
                     </Col>
@@ -313,15 +374,15 @@ const DetailPesanan = ({
                 </p>
                 {booking?.returnFlight_respon ? (
                   <p className="col d-flex justify-content-end">
-                    {formatCurrency(booking.adultCount * priceAdult * 2)}
+                    {formatCurrency(booking.adultCount * priceAdultReturn)}
                   </p>
                 ) : (
                   <p className="col d-flex justify-content-end">
-                    {formatCurrency(booking.adultCount * priceAdult)}
+                    {formatCurrency(booking.adultCount * priceAdultDeparture)}
                   </p>
                 )}
               </Row>
-              {booking.childCount > 0 ? (
+              {booking.childCount != 0 ? (
                 <Row>
                   <p className="col">
                     {booking.childCount}{" "}
@@ -329,11 +390,11 @@ const DetailPesanan = ({
                   </p>
                   {booking?.returnFlight_respon ? (
                     <p className="col d-flex justify-content-end">
-                      {formatCurrency(booking.childCount * priceAdult * 2)}
+                      {formatCurrency(booking.childCount * priceAdultReturn)}
                     </p>
                   ) : (
                     <p className="col d-flex justify-content-end">
-                      {formatCurrency(booking.childCount * priceAdult)}
+                      {formatCurrency(booking.childCount)}
                     </p>
                   )}
                 </Row>
@@ -356,68 +417,75 @@ const DetailPesanan = ({
 
               <Row className="my-4">
                 <p
-                  className="col-md-6 fw-bold mb-4"
+                  sm={4}
+                  className="col-md-6 d-flex align-items-center justify-content-start fw-bold "
                   style={{ fontSize: "20px" }}
                 >
                   Total
                 </p>
                 <p
-                  className="col-md-6 d-flex justify-content-end fw-bold"
+                  sm={4}
+                  className="col-md-6 d-flex align-items-center justify-content-end  fw-bold"
                   style={{ color: " #A06ECE", fontSize: "20px" }}
                 >
                   {formatCurrency(booking.price_amount)}
                 </p>
-                {payment?.status === "Success" ? (
-                  <PDFDownloadLink
-                    className="custom-button rounded-4"
-                    document={
-                      <TikePDF
-                        logoTerbangAja={logoTerbangAja}
-                        booking={booking}
-                        payment={payment}
-                        priceAdult={priceAdult}
-                        handlePaymentRedirect={handlePaymentRedirect}
-                        isCardClicked={isCardClicked}
-                        selectedCardIndex={selectedCardIndex}
-                        index={index}
-                        seatClasses={seatClasses}
-                        getPaymentStatus={getPaymentStatus}
-                        formatDate={formatDate}
-                        formatTime={formatTime}
-                        formatCurrency={formatCurrency}
-                      />
-                    }
-                    fileName="Tiket_TerbangAja.pdf"
-                  >
-                    {" "}
-                    <Button
-                      className="custom-button d-flex justify-content-center"
-                      style={{ width: "800px", height: "60px" }}
-                      size="lg"
-                    >
-                      Cetak Tiket
-                    </Button>
-                  </PDFDownloadLink>
-                ) : payment?.status === "Pending" ? (
-                  <Button
-                    className="custom-button-bayar"
-                    size="lg"
-                    onClick={() => handlePaymentRedirect(payment.redirect_url)}
-                  >
-                    Lanjut Bayar
-                  </Button>
-                ) : payment?.status === "Need Method" ? (
-                  <Button
-                    className="custom-button-bayar"
-                    size="lg"
-                    onClick={() => handlePaymentRedirect(payment.redirect_url)}
-                  >
-                    Lanjut Bayar
-                  </Button>
-                ) : (
-                  ""
-                )}
               </Row>
+              {payment?.status === "Success" ? (
+                <PDFDownloadLink
+                  className="custom-button rounded-4 "
+                  style={{ textDecoration: "none" }}
+                  document={
+                    <TikePDF
+                      logoTerbangAja={logoTerbangAja}
+                      booking={booking}
+                      payment={payment}
+                      priceAdultReturn={priceAdultReturn}
+                      priceAdultDeparture={priceAdultDeparture}
+                      handlePaymentRedirect={handlePaymentRedirect}
+                      isCardClicked={isCardClicked}
+                      selectedCardIndex={selectedCardIndex}
+                      index={index}
+                      seatClasses={seatClasses}
+                      getPaymentStatus={getPaymentStatus}
+                      formatDate={formatDate}
+                      formatTime={formatTime}
+                      formatCurrency={formatCurrency}
+                    />
+                  }
+                  fileName="Tiket_TerbangAja.pdf"
+                >
+                  {" "}
+                  <Button
+                    className="custom-button d-flex justify-content-center"
+                    style={{
+                      width: "800px",
+                      height: "60px",
+                    }}
+                    size="lg"
+                  >
+                    Cetak Tiket
+                  </Button>
+                </PDFDownloadLink>
+              ) : payment?.status === "Pending" ? (
+                <Button
+                  className="custom-button-bayar"
+                  size="lg"
+                  onClick={() => handlePaymentRedirect(payment.redirect_url)}
+                >
+                  Lanjut Bayar
+                </Button>
+              ) : payment?.status === "Need Method" ? (
+                <Button
+                  className="custom-button-bayar"
+                  size="lg"
+                  onClick={() => handlePaymentRedirect(payment.redirect_url)}
+                >
+                  Lanjut Bayar
+                </Button>
+              ) : (
+                ""
+              )}
             </>
           )}
         </Card>

@@ -12,6 +12,7 @@ import PopupCard from "../../components/Modal/searchHistory"
 import Datepicker from "../../components/Modal/DatepickerModalHistory"
 import RiwayatNotfound from "../../components/History/riwayatNotfound"
 import * as icons from "../../assets/icons"
+import Riwayatkosong from "../../components/History/riwayatkosong"
 
 const HistoryPage = () => {
   const navigate = useNavigate()
@@ -24,6 +25,7 @@ const HistoryPage = () => {
   const [searchInput, setSearchInput] = useState("")
   const token = useSelector((state) => state.auth.token)
   const notFound = useSelector((state) => state.bookings.notFound)
+  const empty = useSelector((state) => state.bookings.empty)
 
   // const formatDate = (date) => {
   //   return date.toISOString().split("T")[0]
@@ -140,15 +142,12 @@ const HistoryPage = () => {
           />
         </div>
       </div>
-      {notFound ? (
-        <RiwayatNotfound />
-      ) : (
-        <MainComponent
-          startDate={startDate ? formatDate(startDate) : ""}
-          endDate={endDate ? formatDate(endDate) : ""}
-          searchInput={searchInput}
-        />
-      )}
+
+      <MainComponent
+        startDate={startDate ? formatDate(startDate) : ""}
+        endDate={endDate ? formatDate(endDate) : ""}
+        searchInput={searchInput}
+      />
     </>
   )
 }
