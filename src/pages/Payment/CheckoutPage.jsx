@@ -92,26 +92,23 @@ const CheckoutPage = () => {
       )
     }
   }, [checkout])
-
   useEffect(() => {
     const fetch = async () => {
       try {
-        const departureFlightId = selectedFlightDeparture?.id
-        const returnFlightId = selectedFlightReturn?.id
-        const seatClass = homeData?.seat_class
-        const adultCount = homeData?.adultCount
-        const childCount = homeData?.childCount
-
+        const departureFlightId = selectedFlightDeparture?.id;
+        const returnFlightId = selectedFlightReturn?.id;
+        const seatClass = homeData?.seat_class;
+        const adultCount = homeData?.adultCount;
+        const childCount = homeData?.childCount;
+  
         if (!departureFlightId) {
-          console.error("Departure flight ID is missing")
-          return
+          return;
         }
-
+  
         if (!returnFlightId) {
-          console.error("Return flight ID is missing")
-          return
+          return;
         }
-
+  
         const actionResult = await dispatch(
           findTicketsDetail({
             departure_flight_id: departureFlightId,
@@ -120,21 +117,14 @@ const CheckoutPage = () => {
             adultCount: adultCount,
             childCount: childCount,
           })
-        )
-
-        console.log("TicketsDetail search successful!", actionResult)
-        console.log("Payload:", {
-          departureFlightId,
-          seatClass,
-          adultCount,
-          childCount,
-        })
+        );
       } catch (error) {
-        console.error("Error fetching TicketsDetail", error)
+        
       }
-    }
-    fetch()
-  }, [dispatch, selectedFlightDeparture, selectedFlightReturn, homeData])
+    };
+    fetch();
+  }, [dispatch, selectedFlightDeparture, selectedFlightReturn, homeData]);
+  
 
   // Update time every second
   useEffect(() => {
@@ -286,7 +276,7 @@ const CheckoutPage = () => {
           setReturnSeats(returnSeatsData.data || [])
         }
       } catch (error) {
-        console.error("Failed to fetch seats data:", error)
+        
       }
     }
 
@@ -439,7 +429,6 @@ const CheckoutPage = () => {
         babyCount: checkout.babyCount,
       }
       const response = await dispatch(postBooking(bookingData));
-      console.log(response);
       setIsSaved(true);
       setSuccess("Data Anda berhasil tersimpan!");
       setLanjutBayar(response.data.redirect_url);

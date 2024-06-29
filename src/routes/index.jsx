@@ -106,12 +106,12 @@ const router = createBrowserRouter([
     path: "/search",
     element: (
       <div>
-        {/* <PageProtected> */}
+        <PageProtected>
           <NonProtected>
             <NavbarComponent />
             <SearchingPage />
           </NonProtected>
-        {/* </PageProtected> */}
+        </PageProtected>
       </div>
     ),
   },
@@ -151,12 +151,12 @@ const router = createBrowserRouter([
     path: "/checkout",
     element: (
       <div>
-        {/* <PageProtected> */}
+        <PageProtected>
           <UserProtected>
             <NavbarComponent />
             <CheckoutPage />
           </UserProtected>
-        {/* </PageProtected> */}
+        </PageProtected>
       </div>
     ),
   },

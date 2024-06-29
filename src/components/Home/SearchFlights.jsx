@@ -47,8 +47,6 @@ const SearchFlightsComponents = ({ onHide }) => {
   // get city start
   const [cityOptions, setCityOptions] = useState([]);
 
-  // const homeData = useSelector((state) => state.flights.homeData);
-
   useEffect(() => {
     (async () => {
       try {
@@ -121,8 +119,6 @@ const SearchFlightsComponents = ({ onHide }) => {
     
   }
   // get ticket end
-
-
   
   const styles = {
     inputForm: {

@@ -10,14 +10,13 @@ import {
   Modal,
   Row,
 } from "react-bootstrap"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 
 import * as icons from "../../assets/icons"
 import * as images from "../../assets/images"
 
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
-import Pagination from "react-bootstrap/Pagination"
 import { BiSortAlt2 } from "react-icons/bi"
 import { FaArrowLeft } from "react-icons/fa"
 import { useDispatch, useSelector } from "react-redux"
@@ -36,32 +35,24 @@ import {
 } from "../../redux/reducers/flight"
 import "../styles/searchingPage.css"
 
-const SearchingPage = () => {
-  const [showModalFliter, setShowModalFilter] = useState(false)
-  const [gantiFilter, setGantiFilter] = useState(false)
-  const [showModalUbah, setShowModalUbah] = useState(false)
-  const [isEmpty, setIsEmpty] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isTiketHabis, setIsTiketHabis] = useState(false)
-  const [selectedDeparture, setSelectedDeparture] = useState(null)
-  const [selectedReturn, setSelectedReturn] = useState('')
-  const [showReturnFlights, setShowReturnFlights] = useState(false)
-  const [isReturnFlightOn, setIsReturnFlightOn] = useState(false)
-  const [selectedFilter, setSelectedFilter] = useState("harga_termurah")
+const useQuery = () => {
+  const location = useLocation()
+  return new URLSearchParams(location.search)
+}
 
-  const handleFilterOnClose = () => setShowModalFilter(false)
-  const handleUbahOnClose = () => setShowModalUbah(false)
+const SearchingPage = () => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const query = useQuery()
+  const [queryParams, setQueryParams] = useState({
+    filter: JSON.parse(query.get("filter")),
+  })
 
-  const ticketStatus = useSelector((state) => state.ticket.status)
   const tickets = useSelector((state) => state.ticket)
   const homeData = useSelector((state) => state.flights.homeData)
 
   const searchParams = tickets.data.userTicket
-
-  console.log("searchparams", searchParams)
 
   const departureData = tickets.data.departureTicket
   const returnData = tickets.data.returnTicket
@@ -69,8 +60,19 @@ const SearchingPage = () => {
   const departureFlights = departureData?.results || []
   const returnFlights = returnData?.results || []
 
-  console.log("dep flights", departureFlights)
-  console.log("ret flights", returnFlights)
+  const [showModalFliter, setShowModalFilter] = useState(false)
+  const [gantiFilter, setGantiFilter] = useState(false)
+  const [showModalUbah, setShowModalUbah] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isTiketHabis, setIsTiketHabis] = useState(false)
+  const [selectedDeparture, setSelectedDeparture] = useState(null)
+  const [selectedReturn, setSelectedReturn] = useState('')
+  const [showReturnFlights, setShowReturnFlights] = useState(false)
+  const [isReturnFlightOn, setIsReturnFlightOn] = useState(homeData.return_date != "")
+  const [selectedFilter, setSelectedFilter] = useState("harga_termurah")
+
+  const handleFilterOnClose = () => setShowModalFilter(false)
+  const handleUbahOnClose = () => setShowModalUbah(false)
 
   const handlePilih = (flight, type) => {
     if (type === "departure") {
@@ -87,10 +89,9 @@ const SearchingPage = () => {
   const handleFilterSelection = (filter) => {
     setSelectedFilter(filter)
     setGantiFilter(true)
+    setQueryParams((prev) => ({ filter: filter }))
     setShowModalFilter(false)
   }
-
-  let pagination = []
 
   const getFlightPrice = (flight) => {
     switch (homeData.seat_class) {
@@ -107,26 +108,7 @@ const SearchingPage = () => {
     }
   }
 
-  const handleGanti = (type) => {
-    // if (type === "departure") {
-    //   setSelectedDeparture(null)
-    //   setSelectedReturn(null)
-    // } else {
-    //   setSelectedReturn(null) 
-    // }
-  }
-
-  // select flight mba wulan (masih pake flight id lewat url)
-  const handleCheckout = (isReturnFlight) => {
-    if (!selectedDeparture) {
-      console.error("Selected departure flight is null");
-      return;
-    }
-  
-    if (isReturnFlight && !selectedReturn) {
-      console.error("Selected return flight is null");
-      return;
-    }
+  const handleCheckout  = (isReturnFlight) => {
 
     if (isReturnFlight) {
       dispatch(setReturnFlightId(selectedReturn.id));
@@ -143,11 +125,9 @@ const SearchingPage = () => {
       })
     )
 
-    console.log((state) => state.checkout.ticketDetails)
-
-    dispatch(setDepartureFlightId(selectedDeparture.id));
-    dispatch(setSeatClass(searchParams.seatClass));
-    dispatch(selectFlightDeparture(selectedDeparture));
+    dispatch(setDepartureFlightId(selectedDeparture.id))
+    dispatch(setSeatClass(homeData.seat_class))
+    dispatch(selectFlightDeparture(selectedDeparture))
 
     dispatch(
       fetchFlights(
@@ -161,43 +141,12 @@ const SearchingPage = () => {
       )
     );
 
-    dispatch(setHomeData(homeData));
-    console.log("homeData", homeData);
+    dispatch(setHomeData(homeData))
 
     navigate(`/checkout`)
   }
-  
 
   useEffect(() => {
-    // setSearchParams(tickets.userTicket)
-
-    if (ticketStatus === "idle") {
-      dispatch(
-        findTicket(
-          navigate,
-          searchParams.from,
-          searchParams.to,
-          searchParams.departureDate.slice(0, 10),
-          searchParams.passengers.total,
-          searchParams.seatClass,
-          searchParams.returnDate,
-          searchParams.passengers.adult,
-          searchParams.passengers.child,
-          searchParams.passengers.baby,
-          selectedFilter
-        )
-      )
-      
-      setIsReturnFlightOn(homeData.return_date != '')
-
-    } else if (ticketStatus === "loading") {
-      setIsLoading(true)
-      dispatch(fetchFlights(searchParams))
-    } else {
-      setIsLoading(false)
-    }
-
-    // still not working
     if (gantiFilter) {
       dispatch(
         findTicket(
@@ -211,28 +160,14 @@ const SearchingPage = () => {
           searchParams.passengers.adult,
           searchParams.passengers.child,
           searchParams.passengers.baby,
-          selectedFilter
+          queryParams.filter
         )
       )
-
-      setGantiFilter(true)
-
-      console.log("ganti filter udah false", gantiFilter)
+      setGantiFilter(false)
+      setIsReturnFlightOn(homeData.return_date != "")
     }
 
-  }, [
-    ticketStatus,
-    dispatch,
-    searchParams,
-    departureFlights,
-    returnFlights,
-
-    // the variables below would cause a nonstop re-rendering
-    // selectedFilter,
-    // isReturnFlightOn,
-    // gantiFilter,
-    // pagination,
-  ])
+  }, [dispatch,gantiFilter,])
 
   const styles = {
     customButton: {
@@ -342,16 +277,22 @@ const SearchingPage = () => {
     bgTransparent: {
       backgroundColor: "transparent",
     },
+    enableClickEvent: {
+      PointerEvents: "auto",
+    },
+    disableClickEvent: {
+      PointerEvents: "none",
+    }
   }
 
   const formatDate = (inputDate) => {
-    // Ubah format input tanggal dari yyyy-mm-dd menjadi Date object
-    const date = new Date(inputDate)
+    if (inputDate !== "") {
+      const date = new Date(inputDate)
+      const formattedDate = format(date, "d MMMM yyyy", { locale: id })
 
-    // Format tanggal menjadi 'd MMMM yyyy' menggunakan date-fns
-    const formattedDate = format(date, "d MMMM yyyy", { locale: id })
-
-    return formattedDate
+      return formattedDate
+    }
+    return inputDate
   }
 
   const capitalizeFirstLetter = (string) => {
@@ -375,44 +316,23 @@ const SearchingPage = () => {
     <div>
       <Container>
         <h3 className="my-4 fw-bold">Pilih Penerbangan</h3>
-        <Row className="mb-3 d-flex justify-content-between">
+        <Row className="mb-3 d-flex justify-content-between align-items-center ">
           <Col md={9} className="text-left">
             <Link to="/">
               <Button
                 style={{ ...styles.customButton, ...styles.buttonKembali }}
               >
                 <FaArrowLeft style={{ marginRight: "10px" }} />
-                {homeData.from} to {homeData.to} -{" "}
-                {homeData.total_passengers} Penumpang -{" "}
-                {capitalizeFirstLetter(homeData.seat_class)}
+                {homeData.from} to {homeData.to} - {homeData.total_passengers}{" "}
+                Penumpang - {capitalizeFirstLetter(homeData.seat_class)}
               </Button>
             </Link>
           </Col>
-          <Col className="text-right" md={3}>
-            <Button
-              style={styles.buttonUbah}
-              onClick={() => setShowModalUbah(true)}
-            >
-              Ubah Pencarian
-            </Button>
-          </Col>
-        </Row>
-        
-        <Row>
-          <Col md={9}></Col>
           <Col className="text-right">
             <Button
               variant=""
               onClick={() => setShowModalFilter(true)}
-              className="mb-3 text-right ml-auto w-100 outline-button"
-              // style={styles.outlineButton}
-              // onMouseOver={(e) =>
-              //   (e.currentTarget.style = {
-              //     ...styles.outlineButton,
-              //     ...styles.outlineButtonHover,
-              //   })
-              // }
-              // onMouseOut={(e) => (e.currentTarget.style = styles.outlineButton)}
+              className="text-right ml-auto w-100 outline-button"
             >
               <BiSortAlt2 />{" "}
               {selectedFilter.replace("_", " ").replace("_", " ")}
@@ -502,9 +422,7 @@ const SearchingPage = () => {
                           {homeData.from} -&gt; {homeData.to}
                         </b>
                       </p>
-                      <p>
-                        {formatDate(homeData.departure_date.slice(0, 10))}
-                      </p>
+                      <p>{formatDate(homeData.departure_date.slice(0, 10))}</p>
                       {"\n"}
                       {selectedDeparture ? (
                         <>
@@ -529,18 +447,12 @@ const SearchingPage = () => {
                             {selectedDeparture.departureTime.slice(11, 16)} -{" "}
                             {selectedDeparture.arrivalTime.slice(11, 16)}
                           </p>
-                          {/* <Button
-                            className="custom-button button-pilih mt-2 w-100"
-                            onClick={handleGanti("departure")}
-                          >
-                            Ganti pilihan
-                          </Button> */}
                         </>
                       ) : (
                         "Belum dipilih"
                       )}
                     </Card.Text>
-                    {isReturnFlightOn ? (
+                    {homeData.return_date ? (
                       <Card.Text>
                         <br />
                         <h6 style={styles.ungu}>Pulang</h6>
@@ -549,9 +461,7 @@ const SearchingPage = () => {
                             {homeData.to} -&gt; {homeData.from}
                           </b>
                         </p>
-                        <p>
-                          {formatDate(homeData.return_date.slice(0, 10))}
-                        </p>
+                        <p>{formatDate(homeData.return_date?.slice(0, 10))}</p>
                         {"\n"}
                         {selectedReturn ? (
                           <>
@@ -576,12 +486,6 @@ const SearchingPage = () => {
                               {selectedReturn.departureTime.slice(11, 16)} -{" "}
                               {selectedReturn.arrivalTime.slice(11, 16)}
                             </p>
-                            {/* <Button
-                              className="custom-button button-pilih mt-2 w-100"
-                              onClick={handleGanti("return")}
-                            >
-                              Ganti pilihan
-                            </Button> */}
                           </>
                         ) : (
                           "Belum dipilih"
@@ -591,18 +495,22 @@ const SearchingPage = () => {
                       <></>
                     )}
                   </Card.Body>
-                  <Card.Footer style={styles.bgTransparent}>
-                    <Button
-                      className="custom-button button-pilih mt-2 w-100"
-                      onClick={() => handleCheckout(isReturnFlightOn)}
-                    >
-                      Checkout
-                    </Button>
-                  </Card.Footer>
+                  {(!isReturnFlightOn && selectedDeparture) ||
+                  (isReturnFlightOn && selectedReturn) ? (
+                    <Card.Footer style={styles.bgTransparent}>
+                      <Button
+                        className="custom-button button-pilih mt-2 w-100"
+                        onClick={() => handleCheckout(isReturnFlightOn)}
+                      >
+                        Checkout
+                      </Button>
+                    </Card.Footer>
+                  ) : (
+                    <></>
+                  )}
                 </Card>
               </Col>
               <Col md={9} className="text-center">
-                {/* loading not working anymore bcs of the new redux */}
                 {isLoading ? (
                   <>
                     <p className="my-3" style={styles.textAbu}>
@@ -612,7 +520,8 @@ const SearchingPage = () => {
                   </>
                 ) : (
                   <>
-                    {isEmpty ? (
+                    {departureFlights.length === 0 ||
+                    (homeData.return_date && returnFlights.length === 0) ? (
                       <>
                         <Image src={images.emptyPage}></Image>
                         <p>Maaf, pencarian Anda tidak ditemukan</p>
@@ -620,7 +529,6 @@ const SearchingPage = () => {
                       </>
                     ) : (
                       <>
-                        {/* logic: if return flight is on and user has selected departure, show return flights, else show departure flights */}
                         {selectedDeparture && isReturnFlightOn ? (
                           <>
                             {returnFlights.map((flight) => (
@@ -634,10 +542,7 @@ const SearchingPage = () => {
                                     key={flight.id}
                                   >
                                     <Accordion.Header
-                                      style={{
-                                        backgroundColor: "transparent",
-                                        borderColor: "#7126b5",
-                                      }}
+                                      style={styles.enableClickEvent}
                                     >
                                       <div className="d-flex justify-content-between w-100">
                                         <div className="w-100">
@@ -691,7 +596,10 @@ const SearchingPage = () => {
                                               className="d-flex flex-column align-items-center p-0"
                                             >
                                               <h6 className="fw-bold">
-                                                {flight.arrivalTime.slice(11, 16)}
+                                                {flight.arrivalTime.slice(
+                                                  11,
+                                                  16
+                                                )}
                                               </h6>
                                               <p>
                                                 {
@@ -715,10 +623,11 @@ const SearchingPage = () => {
                                                 IDR {getFlightPrice(flight)}
                                               </h6>
                                               <Button
-                                                className="custom-button button-pilih mt-2"
+                                                className="custom-button button-pilih mt-2 w-100"
                                                 onClick={() =>
                                                   handlePilih(flight, "return")
                                                 }
+                                                style={styles.disableClickEvent}
                                               >
                                                 Pilih
                                               </Button>
@@ -756,7 +665,8 @@ const SearchingPage = () => {
                                               </h6>
                                               <h5 className="fw-bold">
                                                 {
-                                                  flight?.departureAirport_respon
+                                                  flight
+                                                    ?.departureAirport_respon
                                                     ?.name
                                                 }
                                               </h5>
@@ -790,12 +700,13 @@ const SearchingPage = () => {
                                                 Informasi:
                                               </h6>
                                               <p className="mb-0">
-                                                Baggage {flight?.Airline?.baggage}{" "}
-                                                kg
+                                                Baggage{" "}
+                                                {flight?.Airline?.baggage} kg
                                               </p>
                                               <p className="mb-0">
                                                 Cabin baggage{" "}
-                                                {flight?.Airline?.cabinBaggage} kg
+                                                {flight?.Airline?.cabinBaggage}{" "}
+                                                kg
                                               </p>
                                             </Col>
                                           </Row>
@@ -874,7 +785,7 @@ const SearchingPage = () => {
                                               md="1"
                                               className="d-flex flex-column align-items-center"
                                             >
-                                              <h6 className="fw-bold">
+                                              <h6 className="fw-bold my-1">
                                                 {flight.departureTime.slice(
                                                   11,
                                                   16
@@ -891,7 +802,7 @@ const SearchingPage = () => {
                                               md="5"
                                               className="d-flex flex-column align-items-center"
                                             >
-                                              <p className="my-0">
+                                              <p className="mt-2">
                                                 {msToTime(
                                                   flight.departureTime,
                                                   flight.arrivalTime
@@ -900,14 +811,17 @@ const SearchingPage = () => {
                                               <div className="arrow-pic p-0">
                                                 <Image src={icons.longArrow} />
                                               </div>
-                                              <p>direct</p>
+                                              <p className="mb-2">direct</p>
                                             </Col>
                                             <Col
                                               md="1"
                                               className="d-flex flex-column align-items-center p-0"
                                             >
                                               <h6 className="fw-bold">
-                                                {flight.arrivalTime.slice(11, 16)}
+                                                {flight.arrivalTime.slice(
+                                                  11,
+                                                  16
+                                                )}
                                               </h6>
                                               <p>
                                                 {
@@ -918,7 +832,7 @@ const SearchingPage = () => {
                                             </Col>
                                             <Col
                                               md="1"
-                                              className="d-flex flex-column align-items-center"
+                                              className="d-flex flex-column align-items-center my-2"
                                             >
                                               <Image src={icons.baggageDelay} />
                                             </Col>
@@ -933,7 +847,10 @@ const SearchingPage = () => {
                                               <Button
                                                 className="custom-button button-pilih mt-2"
                                                 onClick={() =>
-                                                  handlePilih(flight, "departure")
+                                                  handlePilih(
+                                                    flight,
+                                                    "departure"
+                                                  )
                                                 }
                                               >
                                                 Pilih
@@ -972,7 +889,8 @@ const SearchingPage = () => {
                                               </h6>
                                               <h5 className="fw-bold">
                                                 {
-                                                  flight?.departureAirport_respon
+                                                  flight
+                                                    ?.departureAirport_respon
                                                     ?.name
                                                 }
                                               </h5>
@@ -1006,12 +924,13 @@ const SearchingPage = () => {
                                                 Informasi:
                                               </h6>
                                               <p className="mb-0">
-                                                Baggage {flight?.Airline?.baggage}{" "}
-                                                kg
+                                                Baggage{" "}
+                                                {flight?.Airline?.baggage} kg
                                               </p>
                                               <p className="mb-0">
                                                 Cabin baggage{" "}
-                                                {flight?.Airline?.cabinBaggage} kg
+                                                {flight?.Airline?.cabinBaggage}{" "}
+                                                kg
                                               </p>
                                             </Col>
                                           </Row>
@@ -1054,8 +973,6 @@ const SearchingPage = () => {
                             ))}
                           </>
                         )}
-                        {/* somehow not showing */}
-                        <Pagination>{pagination}</Pagination>
                       </>
                     )}
                   </>

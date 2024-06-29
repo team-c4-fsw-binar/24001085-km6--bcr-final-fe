@@ -28,6 +28,8 @@ const NavbarComponent = () => {
 
   const { user, token } = useSelector((state) => state.auth)
 
+  const unreadCount = useSelector((state) => state.notifications.unreadCount)
+
   useEffect(() => {
     dispatch(getProfile())
   }, [dispatch, token])
