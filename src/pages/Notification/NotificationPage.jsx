@@ -15,6 +15,7 @@ const NotificationPage = () => {
     const [currentNotification, setCurrentNotification] = useState(null);
     const [filter, setFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -25,11 +26,16 @@ const NotificationPage = () => {
             const response = await dispatch(getNotification());
             if (response) {
                 setNotifications(response);
+                setUnreadCount(response.filter(notif => !notif.isRead).length); // Update unread count
             }
             setLoading(false);
         };
 
         fetchNotifications();
+
+        const intervalId = setInterval(fetchNotifications, 10000); // Poll every 10 seconds
+
+        return () => clearInterval(intervalId);
     }, [dispatch]);
 
     const handleMarkAsRead = async (id) => {
@@ -45,6 +51,7 @@ const NotificationPage = () => {
                         notif.id === id ? { ...notif, isRead: true } : notif
                     )
                 );
+                setUnreadCount(prev => prev - 1); // Update unread count
             }
         }
         setCurrentNotification(notification);
@@ -208,12 +215,12 @@ const NotificationPage = () => {
                                             <small style={styles.fontBodyRegular14} className="text-muted">
                                                 {new Date(notification.updatedAt).toLocaleString()}
                                             </small>
-                                            <span className="ml-2">
+                                            {/* <span className="ml-2">
                                                 <i
                                                     className={`bi bi-dot ${notification.isRead ? "text-success" : "text-danger"
                                                         }`}
                                                 ></i>
-                                            </span>
+                                            </span> */}
                                         </Col>
                                     </Row>
                                 </Card.Body>
