@@ -35,6 +35,7 @@ const SearchFlightsComponents = () => {
   const [babyPassenger, setBabyPassenger] = useState(0);
   
   const [toggleSwitch, setToggleSwitch] = useState(false);
+  const [showFeedBack, setShowFeedBack] = useState(false);
   
   // modal
   const [modalShow, setModalShow] = useState(false);
@@ -76,14 +77,18 @@ const SearchFlightsComponents = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
+
+    if (!selectedFrom || !selectedTo) {
+      setShowFeedBack(true);
+    }
   
     if (!form.checkValidity()) {
       e.stopPropagation(); 
     } else {
       dispatch(
         setHomeData({
-          from: selectedFrom.label,
-          to: selectedTo.label,
+          from: selectedFrom.value,
+          to: selectedTo.value,
           departure_date: departureDate.toISOString(),
           return_date: returnDate?.toISOString() || (''),
           adultCount: adultPassenger,
@@ -98,8 +103,8 @@ const SearchFlightsComponents = () => {
       dispatch(
         findTicket(
           navigate,
-          selectedFrom.label,
-          selectedTo.label,
+          selectedFrom.value,
+          selectedTo.value,
           departureDate,
           totalPassenger,
           seatClass,
@@ -123,7 +128,7 @@ const SearchFlightsComponents = () => {
       border: "none",
       borderRadius: '0',
       borderBottom: '1px solid #d0d0d0',
-      fontWeight: 'bold',
+      fontWeight: '600',
     },
 
     customButton: {
@@ -175,7 +180,7 @@ const SearchFlightsComponents = () => {
                 />
                 
               </div>
-              {!selectedFrom && (
+              {showFeedBack && !selectedFrom && (
                 <Form.Control.Feedback type="invalid" style={{ display: 'block' }} className="text-center">
                   Please select a departure city.
                 </Form.Control.Feedback>
@@ -220,7 +225,7 @@ const SearchFlightsComponents = () => {
                 />
                 
               </div>
-              {!selectedTo && (
+              {showFeedBack && !selectedTo && (
                 <Form.Control.Feedback type="invalid" style={{ display: 'block' }} className="text-center">
                   Please select a arrival city.
                 </Form.Control.Feedback>
