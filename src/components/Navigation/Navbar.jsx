@@ -10,6 +10,7 @@ import {
   InputGroup,
   Nav,
   Navbar,
+  Badge
 } from "react-bootstrap";
 
 import { AiOutlineSearch } from "react-icons/ai";
@@ -26,7 +27,9 @@ const NavbarComponent = () => {
   const dispatch = useDispatch();
   // const navigate = useNavigate();
 
-  const  { user, token } = useSelector((state) => state.auth);
+  const { user, token } = useSelector((state) => state.auth);
+
+  const unreadCount = useSelector((state) => state.notifications.unreadCount);
 
   useEffect(() => {
     dispatch(getProfile())
@@ -40,23 +43,16 @@ const NavbarComponent = () => {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-          <InputGroup className="w-50 mx-lg-auto my-2 my-lg-0">
-            <FormControl
-              placeholder="Cari di sini ..."
-              className="input-rounded"
-            />
-            <InputGroup.Text className="input-rounded">
-              <AiOutlineSearch  onClick={() => {}}/>
-            </InputGroup.Text>
-          </InputGroup>
           <Nav className="ms-auto d-flex align-items-center">
             {user ? (
               <>
                 <Nav.Link className="m-0 mx-2" as={Link} to={"/history"}>
                   <FaListUl />
                 </Nav.Link>
-                <Nav.Link className="m-0 mx-2" as={Link} to={"/notification"}>
-                  <FaRegBell />
+                <Nav.Link as={Link} to="/notification">
+                  <FaRegBell /> {unreadCount > 0 && (
+                    <Badge variant="danger">{unreadCount}</Badge>
+                  )}
                 </Nav.Link>
                 <Nav.Link className="m-0 mx-2" as={Link} to={"/profile"}>
                   <FiUser />
@@ -64,7 +60,7 @@ const NavbarComponent = () => {
               </>
             ) : (
               <Button as={Link} to="/login" className="custom-button">
-                <RiLoginBoxLine style={{ marginRight: '5px' }}/>
+                <RiLoginBoxLine style={{ marginRight: '5px' }} />
                 Masuk
               </Button>
             )}

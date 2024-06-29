@@ -1,32 +1,41 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Image, Modal, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Modal, Button, Dropdown, DropdownButton, FormControl, InputGroup } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotification, putNotification } from "../../redux/actions/notification";
 import * as icons from "../../assets/icons";
 import * as images from "../../assets/images";
 import { ToastContainer } from 'react-toastify';
+import { BsFunnel } from "react-icons/bs";
 
 const NotificationPage = () => {
     const [notifications, setNotifications] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [currentNotification, setCurrentNotification] = useState(null);
+    const [filter, setFilter] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const token = useSelector((state) => state.auth.token);
-
-
 
     useEffect(() => {
         const fetchNotifications = async () => {
             const response = await dispatch(getNotification());
             if (response) {
                 setNotifications(response);
+                setUnreadCount(response.filter(notif => !notif.isRead).length); // Update unread count
             }
+            setLoading(false);
         };
 
         fetchNotifications();
+
+        const intervalId = setInterval(fetchNotifications, 10000); // Poll every 10 seconds
+
+        return () => clearInterval(intervalId);
     }, [dispatch]);
 
     const handleMarkAsRead = async (id) => {
@@ -42,6 +51,7 @@ const NotificationPage = () => {
                         notif.id === id ? { ...notif, isRead: true } : notif
                     )
                 );
+                setUnreadCount(prev => prev - 1); // Update unread count
             }
         }
         setCurrentNotification(notification);
@@ -52,6 +62,19 @@ const NotificationPage = () => {
         setShowModal(false);
         setCurrentNotification(null);
     };
+
+    const filteredNotifications = notifications.filter((notification) => {
+        const matchesFilter = filter === 'all' ||
+            (filter === 'read' && notification.isRead) ||
+            (filter === 'unread' && !notification.isRead);
+
+        const matchesSearch = searchQuery === '' ||
+            notification.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            notification.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            notification.content.toLowerCase().includes(searchQuery.toLowerCase());
+
+        return matchesFilter && matchesSearch;
+    });
 
     const styles = {
         fontBodyRegular10: { fontWeight: 400, fontSize: '10px' },
@@ -82,10 +105,6 @@ const NotificationPage = () => {
             cursor: 'pointer',
         },
 
-        // cardBody: {
-        //     borderBottom: '1px solid #E5E5E5',
-        // },
-
         // button beranda
         bgBeranda: {
             backgroundColor: '#A06ECE',
@@ -101,6 +120,13 @@ const NotificationPage = () => {
         bgNoread: {
             backgroundColor: '#a06ece2f',
         },
+        btnOutlinePurple: {
+            backgroundColor: 'transparent',
+            color: '#7126B5',
+            border: '1px solid #7126B5',
+            boxShadow: 'none',
+        },
+
     };
 
     return (
@@ -119,67 +145,93 @@ const NotificationPage = () => {
                                 </Link>
                             </div>
                         </div>
-                        {/* <Link to="/filter">
-                            <Image src={icons.filterButton} alt="filter" />
-                        </Link>
-                        <Link to="/search">
+                    </div>
+                    <div className="d-flex gap-2 mx-3 mt-4 align-items-center">
+                    <InputGroup>
+                        <FormControl
+                            placeholder="Search"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            style={styles.btnOutlinePurple}
+                        />
+                        <Button style={styles.btnOutlinePurple}>
                             <Image src={icons.searchIcon} alt="search" />
-                        </Link> */}
+                        </Button>
+                    </InputGroup>
+                    <DropdownButton
+                        id="dropdown-basic-button"
+                        title={<BsFunnel />}
+                        variant=""
+                        className="rounded-3 m-0"
+                        style={styles.btnOutlinePurple}
+                        onSelect={(e) => setFilter(e)}
+                    >
+                        <Dropdown.Item eventKey="all">Semua</Dropdown.Item>
+                        <Dropdown.Item eventKey="read">Sudah dibaca</Dropdown.Item>
+                        <Dropdown.Item eventKey="unread">Belum dibaca</Dropdown.Item>
+                    </DropdownButton>
                     </div>
                 </Container>
             </div>
             <Container className="py-5">
-                {notifications && notifications.length > 0 ? (
-                    notifications.map((notification) => (
-                        <Card
-                            key={notification.id}
-                            className="mb-2"
-                            style={styles.card}
-                            onClick={() => handleMarkAsRead(notification.id)} // Call handleMarkAsRead onClick
-                        >
-                            <Card.Body
-                                style={{
-                                    ...styles.cardBody,
-                                    ...(notification.isRead ? {} : styles.bgNoread), // Apply bgNoread style conditionally
-                                }}
-                            >
-                                <Row>
-                                    <Col md={10}>
-                                        <div className="d-flex align-items-start">
-                                            <Image src={icons.notifIcon} alt="notif" className="me-3" />
-                                            <div>
-                                                <Card.Title style={styles.fontBodyRegular14} className="text-muted">
-                                                    {notification.type}
-                                                </Card.Title>
-                                                <Card.Text style={styles.fontTitleRegular16}>
-                                                    {notification.title}
-                                                    <br />
-                                                    <span style={styles.fontBodyRegular14} className="text-muted">
-                                                        {notification.content}
-                                                    </span>
-                                                </Card.Text>
-                                            </div>
-                                        </div>
-                                    </Col>
-                                    <Col md={2} className="text-end">
-                                        <small style={styles.fontBodyRegular14} className="text-muted">
-                                            {new Date(notification.updatedAt).toLocaleString()}
-                                        </small>
-                                        <span className="ml-2">
-                                            <i
-                                                className={`bi bi-dot ${notification.isRead ? "text-success" : "text-danger"
-                                                    }`}
-                                            ></i>
-                                        </span>
-                                    </Col>
-                                </Row>
-                            </Card.Body>
-                        </Card>
-                    ))
-                ) : (
+                {loading ? (
                     <center>
                         <Image src={images.loadingPage} alt="loading" />
                     </center>
+                ) : (
+                    filteredNotifications.length > 0 ? (
+                        filteredNotifications.map((notification) => (
+                            <Card
+                                key={notification.id}
+                                className="mb-2"
+                                style={styles.card}
+                                onClick={() => handleMarkAsRead(notification.id)}
+                            >
+                                <Card.Body
+                                    style={{
+                                        ...styles.cardBody,
+                                        ...(notification.isRead ? {} : styles.bgNoread),
+                                    }}
+                                >
+                                    <Row>
+                                        <Col md={10}>
+                                            <div className="d-flex align-items-start">
+                                                <Image src={icons.notifIcon} alt="notif" className="me-3" />
+                                                <div>
+                                                    <Card.Title style={styles.fontBodyRegular14} className="text-muted">
+                                                        {notification.type}
+                                                    </Card.Title>
+                                                    <Card.Text style={styles.fontTitleRegular16}>
+                                                        {notification.title}
+                                                        <br />
+                                                        <span style={styles.fontBodyRegular14} className="text-muted">
+                                                            {notification.content}
+                                                        </span>
+                                                    </Card.Text>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                        <Col md={2} className="text-end">
+                                            <small style={styles.fontBodyRegular14} className="text-muted">
+                                                {new Date(notification.updatedAt).toLocaleString()}
+                                            </small>
+                                            {/* <span className="ml-2">
+                                                <i
+                                                    className={`bi bi-dot ${notification.isRead ? "text-success" : "text-danger"
+                                                        }`}
+                                                ></i>
+                                            </span> */}
+                                        </Col>
+                                    </Row>
+                                </Card.Body>
+                            </Card>
+                        ))
+                    ) : (
+                        <center>
+                            <Image src={images.emptyPage} alt="empty" />
+                            <p>Maaf, Pencarian Tidak Ditemukan</p>
+                        </center>
+                    )
                 )}
             </Container>
 

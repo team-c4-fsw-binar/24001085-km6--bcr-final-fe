@@ -116,32 +116,38 @@ const SearchingPage = () => {
     // }
   }
 
-  console.log("homeData di searchpage", homeData)
-
-  console.log("ini apa??", isReturnFlightOn)
   // select flight mba wulan (masih pake flight id lewat url)
-  const handleCheckout  = (isReturnFlightOn) => {
+  const handleCheckout = (isReturnFlight) => {
+    if (!selectedDeparture) {
+      console.error("Selected departure flight is null");
+      return;
+    }
+  
+    if (isReturnFlight && !selectedReturn) {
+      console.error("Selected return flight is null");
+      return;
+    }
 
-    if (isReturnFlightOn == true) {
-      dispatch(setReturnFlightId(selectedReturn.id))
-      dispatch(selectFlightReturn(selectedReturn))
+    if (isReturnFlight) {
+      dispatch(setReturnFlightId(selectedReturn.id));
+      dispatch(selectFlightReturn(selectedReturn));
     }
 
     dispatch(
       findTicketsDetail({
-        departure_flight_id: selectedDeparture.id,
-        return_flight_id: selectedReturn?.id,
-        seat_class: homeData.seat_class,
-        adultCount: homeData.adultCount,
-        childCount: homeData.childCount
+        departure_flight_id: selectedDeparture?.id,
+        return_flight_id: selectedReturn ? selectedReturn.id : '',
+        seat_class: searchParams.seatClass,
+        adultCount: searchParams.passengers.adult,
+        childCount: searchParams.passengers.child,
       })
     )
 
     console.log((state) => state.checkout.ticketDetails)
 
-    dispatch(setDepartureFlightId(selectedDeparture.id))
-    dispatch(setSeatClass(homeData.seat_class))
-    dispatch(selectFlightDeparture(selectedDeparture))
+    dispatch(setDepartureFlightId(selectedDeparture.id));
+    dispatch(setSeatClass(searchParams.seatClass));
+    dispatch(selectFlightDeparture(selectedDeparture));
 
     dispatch(
       fetchFlights(
@@ -153,11 +159,10 @@ const SearchingPage = () => {
         homeData.return_date,
         homeData.filter
       )
-    )
+    );
 
-    dispatch(setHomeData(homeData))
-
-    console.log("homeData", homeData)
+    dispatch(setHomeData(homeData));
+    console.log("homeData", homeData);
 
     navigate(`/checkout`)
   }
