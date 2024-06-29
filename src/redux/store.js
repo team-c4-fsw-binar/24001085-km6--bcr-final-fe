@@ -7,6 +7,7 @@ import airportsReducer from "./reducers/airport"
 import checkoutReducer from "./reducers/checkout"
 import homeReducer from "./reducers/home"
 import ticketReducer from "./reducers/ticket"
+import notificationsReducer from "./reducers/notifications"
 import reducers from "./reducers"
 
 // this will make a global state/temporary database in frontend
@@ -24,6 +25,7 @@ export default configureStore(
       checkout: checkoutReducer,
       home: homeReducer,
       ticket: ticketReducer,
+      notifications: notificationsReducer,
     },
   } // state database
 )

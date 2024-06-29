@@ -1,3 +1,4 @@
+// checkoutSlice.js
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { findTicketsDetail } from '../actions/checkout';
@@ -29,9 +30,9 @@ const checkoutSlice = createSlice({
             publisher_country: '', identity_expire_date: ''
         }],
         seatClass: '',
-        adultCount: 1,
-        childCount: 0,
-        babyCount: 0,
+        adultCount: null,
+        childCount: null,
+        babyCount: null,
         ticketDetails: {},
         error: null,
     },
@@ -64,9 +65,12 @@ const checkoutSlice = createSlice({
         setBabyCount: (state, action) => {
             state.babyCount = action.payload;
         },
-        // setTicketDetails: (state, action) => {
-        //     state.ticketDetails = action.payload;
-        // },
+        updatePassengerCounts: (state, action) => {
+            const { adultCount, childCount, babyCount } = action.payload;
+            state.adultCount = adultCount;
+            state.childCount = childCount;
+            state.babyCount = babyCount;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -88,7 +92,7 @@ export const {
     setAdultCount,
     setChildCount,
     setBabyCount,
-    setTicketDetails,
+    updatePassengerCounts,
 } = checkoutSlice.actions;
 
 export default checkoutSlice.reducer;
