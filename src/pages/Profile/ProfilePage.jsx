@@ -57,7 +57,6 @@ const ProfilePage = () => {
             .catch((error) => {
                 setIsLoading(false); // Stop loading on error
                 toast.error("Failed to save profile changes.");
-                console.error("Error saving profile:", error);
             });
     };
 
@@ -102,7 +101,6 @@ const ProfilePage = () => {
             .catch((error) => {
                 setIsLoading(false);
                 toast.error("Failed to change password.");
-                console.error("Error changing password:", error);
             });
     };
 

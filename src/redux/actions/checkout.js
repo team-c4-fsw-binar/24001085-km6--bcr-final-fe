@@ -18,9 +18,6 @@ export const postBooking = (bookingData, token) => {
             babyCount: bookingData.babyCount
         };
 
-        console.log('Booking Data:', postData);
-        console.log('Token:', token);
-
         try {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/bookings`, {
                 method: 'POST',
@@ -47,12 +44,10 @@ export const postBooking = (bookingData, token) => {
                 }
                 return responseData;
             } else {
-                console.error('Error Response:', responseData);
                 toast.error('Anda gagal melakukan Booking!');
                 dispatch({ type: 'POST_BOOKING_FAILURE', error: 'Anda gagal melakukan Booking' });
             }
         } catch (error) {
-            console.error('Fetch Error:', error);
             toast.error('Anda gagal melakukan Booking!');
             dispatch({ type: 'POST_BOOKING_FAILURE', error: error.message });
         }
