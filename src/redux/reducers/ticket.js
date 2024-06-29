@@ -1,6 +1,5 @@
 import axios from "axios";
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-// import { findTicket } from '../actions/ticket';
 
 const initialState = {
   status : 'idle',

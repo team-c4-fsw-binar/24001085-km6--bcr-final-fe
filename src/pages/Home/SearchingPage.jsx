@@ -17,7 +17,6 @@ import * as images from "../../assets/images"
 
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
-import Pagination from "react-bootstrap/Pagination"
 import { BiSortAlt2 } from "react-icons/bi"
 import { FaArrowLeft } from "react-icons/fa"
 import { useDispatch, useSelector } from "react-redux"
@@ -50,13 +49,10 @@ const SearchingPage = () => {
     filter: JSON.parse(query.get("filter")),
   })
 
-  const ticketStatus = useSelector((state) => state.ticket.status)
   const tickets = useSelector((state) => state.ticket)
   const homeData = useSelector((state) => state.flights.homeData)
 
   const searchParams = tickets.data.userTicket
-
-  console.log("searchparams", searchParams)
 
   const departureData = tickets.data.departureTicket
   const returnData = tickets.data.returnTicket
@@ -64,14 +60,9 @@ const SearchingPage = () => {
   const departureFlights = departureData?.results || []
   const returnFlights = returnData?.results || []
 
-  console.log("dep flights", departureFlights)
-  console.log("ret flights", returnFlights)
-
   const [showModalFliter, setShowModalFilter] = useState(false)
   const [gantiFilter, setGantiFilter] = useState(false)
   const [showModalUbah, setShowModalUbah] = useState(false)
-  const [isDepartureEmpty, setIsDepartureEmpty] = useState(false)
-  const [isReturnEmpty, setIsReturnEmpty] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isTiketHabis, setIsTiketHabis] = useState(false)
   const [selectedDeparture, setSelectedDeparture] = useState(null)
@@ -82,15 +73,6 @@ const SearchingPage = () => {
 
   const handleFilterOnClose = () => setShowModalFilter(false)
   const handleUbahOnClose = () => setShowModalUbah(false)
-
-  useEffect(() => {
-    if (departureFlights.length === 0) {
-      setIsDepartureEmpty(true)
-    }
-    if (homeData.returnDate != "" && returnFlights.length === 0) {
-      setIsReturnEmpty(true)
-    }
-  }, [departureFlights, returnFlights])
 
   const handlePilih = (flight, type) => {
     if (type === "departure") {
@@ -111,8 +93,6 @@ const SearchingPage = () => {
     setShowModalFilter(false)
   }
 
-  let pagination = []
-
   const getFlightPrice = (flight) => {
     switch (homeData.seat_class) {
       case "economy":
@@ -128,7 +108,6 @@ const SearchingPage = () => {
     }
   }
 
-  console.log("homeData di searchpage", homeData)
   const handleCheckout  = (isReturnFlightOn) => {
 
     if (isReturnFlightOn == true) {
@@ -145,8 +124,6 @@ const SearchingPage = () => {
         childCount: homeData.childCount
       })
     )
-
-    console.log((state) => state.checkout.ticketDetails)
 
     dispatch(setDepartureFlightId(selectedDeparture.id))
     dispatch(setSeatClass(homeData.seat_class))
@@ -165,8 +142,6 @@ const SearchingPage = () => {
     )
 
     dispatch(setHomeData(homeData))
-
-    console.log("homeData", homeData)
 
     navigate(`/checkout`)
   }
@@ -188,10 +163,7 @@ const SearchingPage = () => {
           queryParams.filter
         )
       )
-      console.log("searchparams yang masuk", searchParams)
-      console.log("Flight search successful!", actionResult)
-      console.log("Payload:", queryParams)
-      setGantiFilter(false) // Set gantiFilter to false after dispatch
+      setGantiFilter(false)
       setIsReturnFlightOn(homeData.return_date != "")
     }
 
@@ -315,10 +287,7 @@ const SearchingPage = () => {
 
   const formatDate = (inputDate) => {
     if (inputDate !== "") {
-      // Ubah format input tanggal dari yyyy-mm-dd menjadi Date object
       const date = new Date(inputDate)
-
-      // Format tanggal menjadi 'd MMMM yyyy' menggunakan date-fns
       const formattedDate = format(date, "d MMMM yyyy", { locale: id })
 
       return formattedDate
@@ -347,44 +316,23 @@ const SearchingPage = () => {
     <div>
       <Container>
         <h3 className="my-4 fw-bold">Pilih Penerbangan</h3>
-        <Row className="mb-3 d-flex justify-content-between">
+        <Row className="mb-3 d-flex justify-content-between align-items-center ">
           <Col md={9} className="text-left">
             <Link to="/">
               <Button
                 style={{ ...styles.customButton, ...styles.buttonKembali }}
               >
                 <FaArrowLeft style={{ marginRight: "10px" }} />
-                {homeData.from} to {homeData.to} -{" "}
-                {homeData.total_passengers} Penumpang -{" "}
-                {capitalizeFirstLetter(homeData.seat_class)}
+                {homeData.from} to {homeData.to} - {homeData.total_passengers}{" "}
+                Penumpang - {capitalizeFirstLetter(homeData.seat_class)}
               </Button>
             </Link>
           </Col>
-          <Col className="text-right" md={3}>
-            <Button
-              style={styles.buttonUbah}
-              onClick={() => setShowModalUbah(true)}
-            >
-              Ubah Pencarian
-            </Button>
-          </Col>
-        </Row>
-        
-        <Row>
-          <Col md={9}></Col>
           <Col className="text-right">
             <Button
               variant=""
               onClick={() => setShowModalFilter(true)}
-              className="mb-3 text-right ml-auto w-100 outline-button"
-              // style={styles.outlineButton}
-              // onMouseOver={(e) =>
-              //   (e.currentTarget.style = {
-              //     ...styles.outlineButton,
-              //     ...styles.outlineButtonHover,
-              //   })
-              // }
-              // onMouseOut={(e) => (e.currentTarget.style = styles.outlineButton)}
+              className="text-right ml-auto w-100 outline-button"
             >
               <BiSortAlt2 />{" "}
               {selectedFilter.replace("_", " ").replace("_", " ")}
@@ -474,9 +422,7 @@ const SearchingPage = () => {
                           {homeData.from} -&gt; {homeData.to}
                         </b>
                       </p>
-                      <p>
-                        {formatDate(homeData.departure_date.slice(0, 10))}
-                      </p>
+                      <p>{formatDate(homeData.departure_date.slice(0, 10))}</p>
                       {"\n"}
                       {selectedDeparture ? (
                         <>
@@ -506,7 +452,7 @@ const SearchingPage = () => {
                         "Belum dipilih"
                       )}
                     </Card.Text>
-                    {isReturnFlightOn ? (
+                    {homeData.return_date ? (
                       <Card.Text>
                         <br />
                         <h6 style={styles.ungu}>Pulang</h6>
@@ -515,9 +461,7 @@ const SearchingPage = () => {
                             {homeData.to} -&gt; {homeData.from}
                           </b>
                         </p>
-                        <p>
-                          {(formatDate(homeData.return_date?.slice(0, 10)))}
-                        </p>
+                        <p>{formatDate(homeData.return_date?.slice(0, 10))}</p>
                         {"\n"}
                         {selectedReturn ? (
                           <>
@@ -551,23 +495,22 @@ const SearchingPage = () => {
                       <></>
                     )}
                   </Card.Body>
-                  {(!isReturnFlightOn && selectedDeparture) || (isReturnFlightOn && selectedReturn) ? (
-                  <Card.Footer style={styles.bgTransparent}>
-                    <Button
-                      className="custom-button button-pilih mt-2 w-100"
-                      onClick={() => handleCheckout(isReturnFlightOn)}
-                    >
-                      Checkout
-                    </Button>
-                  </Card.Footer>
-                    
+                  {(!isReturnFlightOn && selectedDeparture) ||
+                  (isReturnFlightOn && selectedReturn) ? (
+                    <Card.Footer style={styles.bgTransparent}>
+                      <Button
+                        className="custom-button button-pilih mt-2 w-100"
+                        onClick={() => handleCheckout(isReturnFlightOn)}
+                      >
+                        Checkout
+                      </Button>
+                    </Card.Footer>
                   ) : (
                     <></>
                   )}
                 </Card>
               </Col>
               <Col md={9} className="text-center">
-                {/* loading not working anymore bcs of the new redux */}
                 {isLoading ? (
                   <>
                     <p className="my-3" style={styles.textAbu}>
@@ -577,7 +520,8 @@ const SearchingPage = () => {
                   </>
                 ) : (
                   <>
-                    {isDepartureEmpty || (isReturnFlightOn && isReturnEmpty) ? (
+                    {departureFlights.length === 0 ||
+                    (homeData.return_date && returnFlights.length === 0) ? (
                       <>
                         <Image src={images.emptyPage}></Image>
                         <p>Maaf, pencarian Anda tidak ditemukan</p>
@@ -585,7 +529,6 @@ const SearchingPage = () => {
                       </>
                     ) : (
                       <>
-                        {/* logic: if return flight is on and user has selected departure, show return flights, else show departure flights */}
                         {selectedDeparture && isReturnFlightOn ? (
                           <>
                             {returnFlights.map((flight) => (
@@ -599,9 +542,7 @@ const SearchingPage = () => {
                                     key={flight.id}
                                   >
                                     <Accordion.Header
-                                      style={
-                                        styles.enableClickEvent
-                                      }
+                                      style={styles.enableClickEvent}
                                     >
                                       <div className="d-flex justify-content-between w-100">
                                         <div className="w-100">
@@ -655,7 +596,10 @@ const SearchingPage = () => {
                                               className="d-flex flex-column align-items-center p-0"
                                             >
                                               <h6 className="fw-bold">
-                                                {flight.arrivalTime.slice(11, 16)}
+                                                {flight.arrivalTime.slice(
+                                                  11,
+                                                  16
+                                                )}
                                               </h6>
                                               <p>
                                                 {
@@ -682,7 +626,8 @@ const SearchingPage = () => {
                                                 className="custom-button button-pilih mt-2 w-100"
                                                 onClick={() =>
                                                   handlePilih(flight, "return")
-                                                } style={styles.disableClickEvent}
+                                                }
+                                                style={styles.disableClickEvent}
                                               >
                                                 Pilih
                                               </Button>
@@ -720,7 +665,8 @@ const SearchingPage = () => {
                                               </h6>
                                               <h5 className="fw-bold">
                                                 {
-                                                  flight?.departureAirport_respon
+                                                  flight
+                                                    ?.departureAirport_respon
                                                     ?.name
                                                 }
                                               </h5>
@@ -754,12 +700,13 @@ const SearchingPage = () => {
                                                 Informasi:
                                               </h6>
                                               <p className="mb-0">
-                                                Baggage {flight?.Airline?.baggage}{" "}
-                                                kg
+                                                Baggage{" "}
+                                                {flight?.Airline?.baggage} kg
                                               </p>
                                               <p className="mb-0">
                                                 Cabin baggage{" "}
-                                                {flight?.Airline?.cabinBaggage} kg
+                                                {flight?.Airline?.cabinBaggage}{" "}
+                                                kg
                                               </p>
                                             </Col>
                                           </Row>
@@ -871,7 +818,10 @@ const SearchingPage = () => {
                                               className="d-flex flex-column align-items-center p-0"
                                             >
                                               <h6 className="fw-bold">
-                                                {flight.arrivalTime.slice(11, 16)}
+                                                {flight.arrivalTime.slice(
+                                                  11,
+                                                  16
+                                                )}
                                               </h6>
                                               <p>
                                                 {
@@ -897,7 +847,10 @@ const SearchingPage = () => {
                                               <Button
                                                 className="custom-button button-pilih mt-2"
                                                 onClick={() =>
-                                                  handlePilih(flight, "departure")
+                                                  handlePilih(
+                                                    flight,
+                                                    "departure"
+                                                  )
                                                 }
                                               >
                                                 Pilih
@@ -936,7 +889,8 @@ const SearchingPage = () => {
                                               </h6>
                                               <h5 className="fw-bold">
                                                 {
-                                                  flight?.departureAirport_respon
+                                                  flight
+                                                    ?.departureAirport_respon
                                                     ?.name
                                                 }
                                               </h5>
@@ -970,12 +924,13 @@ const SearchingPage = () => {
                                                 Informasi:
                                               </h6>
                                               <p className="mb-0">
-                                                Baggage {flight?.Airline?.baggage}{" "}
-                                                kg
+                                                Baggage{" "}
+                                                {flight?.Airline?.baggage} kg
                                               </p>
                                               <p className="mb-0">
                                                 Cabin baggage{" "}
-                                                {flight?.Airline?.cabinBaggage} kg
+                                                {flight?.Airline?.cabinBaggage}{" "}
+                                                kg
                                               </p>
                                             </Col>
                                           </Row>
@@ -1018,8 +973,6 @@ const SearchingPage = () => {
                             ))}
                           </>
                         )}
-                        {/* somehow not showing */}
-                        <Pagination>{pagination}</Pagination>
                       </>
                     )}
                   </>
