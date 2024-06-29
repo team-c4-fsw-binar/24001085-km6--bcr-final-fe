@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Card, Col, Container, Row, Spinner } from "react-bootstrap";
+import { Card, Col, Container, Image, Row } from "react-bootstrap";
 import * as icons from "../../assets/icons";
 import * as images from "../../assets/images";
 import SearchFlightsComponents from "../../components/Home/SearchFlights";
@@ -25,7 +25,7 @@ export default function HomePage() {
         // set today's date
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        
+
         const { results } = await getFlights();
 
         // find flights that have time in today or later
@@ -100,8 +100,8 @@ export default function HomePage() {
 
       <Container className="mb-4">
         {isLoading ? (
-          <div className="text-center">
-            <Spinner animation="border" variant="primary" />
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+            <Image src={images.loadingPage} ></Image>
           </div>
         ) : (
           <>

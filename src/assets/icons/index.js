@@ -1,4 +1,5 @@
 import departureIcon from "./departure-icon.svg"
+import arrivalIcon from "./arrival-icon.svg"
 import dateIcon from "./date-icon.svg"
 import swapIcon from "./swap-icon.svg"
 import seatIcon from "./seat-icon.svg"
@@ -26,6 +27,7 @@ import profileIcon from "./profile.svg"
 
 export {
   departureIcon,
+  arrivalIcon,
   dateIcon,
   swapIcon,
   seatIcon,

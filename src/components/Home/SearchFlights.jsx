@@ -11,10 +11,11 @@ import { setHomeData } from "../../redux/reducers/flight";
 import { format } from "date-fns";
 import { findTicket } from "../../redux/actions/ticket";
 import DatePickerModal from "../Modal/DatepickerModal";
+import propTypes from "prop-types";
 
 import '../styles/others/search.css';
 
-const SearchFlightsComponents = () => {
+const SearchFlightsComponents = ({ onHide }) => {
   // redux
   const dispatch = useDispatch();
   const navigate = useNavigate()
@@ -203,7 +204,7 @@ const SearchFlightsComponents = () => {
           <Col md={5} className="d-flex">
             <Form.Group className="mb-3 w-100" controlId="to">
               <div className="d-flex gap-2 w-100">
-                <img src={icons.departureIcon} width={25} alt="Departure city icon" />
+                <img src={icons.arrivalIcon} width={25} alt="Departure city icon" />
                 <Form.Label className="mb-0 align-self-center">To</Form.Label>
                 <Select
                   className="flex-grow-1 inputTextDecorationNone"
@@ -353,6 +354,7 @@ const SearchFlightsComponents = () => {
         <Button type="submit"
           style={{...styles.customButton}}
           className="custom-button"
+          onClick={onHide}
         >
           Cari Penerbangan
         </Button>
@@ -448,6 +450,10 @@ const SearchFlightsComponents = () => {
       </Modal>
     </>
   )
+}
+
+SearchFlightsComponents.propTypes = {
+  onHide: propTypes.any
 }
 
 export default SearchFlightsComponents;
