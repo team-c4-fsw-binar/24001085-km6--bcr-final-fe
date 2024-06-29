@@ -107,10 +107,8 @@ const router = createBrowserRouter([
     element: (
       <div>
         <PageProtected>
-          <NonProtected>
-            <NavbarComponent />
-            <SearchingPage />
-          </NonProtected>
+          <NavbarComponent />
+          <SearchingPage />
         </PageProtected>
       </div>
     ),
