@@ -7,6 +7,8 @@ const PageProtected = ({ children }) => {
   const navigate = useNavigate();
   const homeData = useSelector((state) => state.flights.homeData)
 
+  console.log(homeData)
+
   useEffect(() => {
     if (!homeData) {
       navigate("/")
@@ -21,7 +23,7 @@ const PageProtected = ({ children }) => {
 }
 
 PageProtected.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.any
 }
 
 export default PageProtected;

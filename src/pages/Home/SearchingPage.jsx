@@ -108,7 +108,7 @@ const SearchingPage = () => {
     }
   }
 
-  const handleCheckout  = (isReturnFlightOn) => {
+  const handleCheckout  = (isReturnFlight) => {
 
     if (isReturnFlight) {
       dispatch(setReturnFlightId(selectedReturn.id));
@@ -148,7 +148,7 @@ const SearchingPage = () => {
 
   useEffect(() => {
     if (gantiFilter) {
-      const actionResult = dispatch(
+      dispatch(
         findTicket(
           navigate,
           searchParams.from,
