@@ -21,9 +21,22 @@ export default function HomePage() {
     const fetchFlightsData = async () => {
       try {
         setIsLoading(true);
+
+        // set today's date
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
         const { results } = await getFlights();
-        const shuffledResults = results.sort(() => 0.5 - Math.random());
-        setFlights(shuffledResults.slice(0, 8));
+
+        // find flights that have time in today or later
+        const filteredResults = results.filter((flight) => {
+          const flightDate = new Date(flight.arrivalTime);
+          return flightDate >= today;
+        });
+
+        const shuffledFilteredResults = filteredResults.sort(() => 0.5 - Math.random()).slice(0, 8);
+
+        setFlights(shuffledFilteredResults);
       } catch (err) {
         console.error('Failed to fetch flights:', err);
       } finally {
@@ -40,15 +53,8 @@ export default function HomePage() {
     return date.toLocaleDateString('id-ID', options);
   };
 
-  const formatDepartureDate = (date) => {
-    if (!date) return '';
-    const d = new Date(date);
-    return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long' });
-  };
-
   const findDestination = (e, flight) => {
     e.preventDefault();
-    console.log(flight)
     {
       dispatch(
         setHomeData({
@@ -124,7 +130,7 @@ export default function HomePage() {
 
                         <h6 className="fw-bold my-1" style={{ fontSize: '14px', color: '#7126b5' }}>{flight?.Airline?.name}</h6>
                         <p className="fw-bold my-1" style={{ fontSize: '14px' }}>
-                          {formatDepartureDate(new Date())} - {formatDate(flight?.arrivalTime)}
+                          Tanggal {formatDate(flight?.arrivalTime)}
                         </p>
                         <p className="fw-bold my-1" style={{ fontSize: '14px' }}>Mulai Dari
                           <span style={{ color: '#ff0000' }}>
